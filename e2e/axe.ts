@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { chromium } from '@playwright/test';
 
 const base = process.argv[2] ?? 'http://localhost:5173';
-const routes = ['/', '/plan', '/tradeoffs', '/compare', '/why', '/stress', '/report', '/method'];
+const routes = ['/', '/plan', '/tradeoffs', '/compare', '/why', '/stress', '/report', '/method', '/about', '/plan?s=70'];
 const browser = await chromium.launch({ channel: 'chrome' });
 let serious = 0;
 for (const width of [1440, 375]) {

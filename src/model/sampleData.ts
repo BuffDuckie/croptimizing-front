@@ -142,8 +142,9 @@ export function getSampleContext() {
     { id: 'region_c', label: 'TODO: region C', slope: -0.7 },
   ].map((r) => {
     const series: { date: string; value: number }[] = [];
+    // Quarterly points keep the static example files small; the real series can be monthly.
     for (let y = 2005; y <= 2024; y++) {
-      for (let m = 1; m <= 12; m++) {
+      for (let m = 1; m <= 12; m += 3) {
         const t = y - 2005 + (m - 1) / 12;
         const v = 3 + r.slope * t + 1.8 * Math.sin((2 * Math.PI * (m - 3)) / 12) + (other() - 0.5) * 1.2;
         series.push({ date: `${y}-${String(m).padStart(2, '0')}`, value: Math.round(v * 10) / 10 });

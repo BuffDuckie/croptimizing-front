@@ -33,6 +33,30 @@ are final; tell the front-end team before changing any.
 - Text fields (rotation names, explanations, stress-test labels, backtest strategy
   names, assumptions) come back in the requested `lang`.
 
+### Changed meaning: `current`
+
+`current` is now the farmer's current plan **cut back to fit the water budget**
+(`fitToBudget` in `src/model/engine.ts`): take the plan's highest-need year across
+the scenario years; if it needs more than the cap, scale every irrigated rotation by
+`cap / need` and move the rest to fallow. A plan that already fits is unchanged. Use
+the same rule for `stressTests[].current*` and the backtest's current-plan row (fit
+on the training years). Send the untrimmed plan as `currentAsFarmed`.
+
+### Optional fields (judging upgrades)
+
+All optional; the UI hides a feature when its field is missing. The sample engine
+fills every one, so `public/results/` has exact examples.
+
+| Field | What it is |
+| --- | --- |
+| `currentAsFarmed` | `{ mix, metrics }` for the current plan before the cut. Shown only on Show the math. |
+| `sources` | Per-dataset flag, `"sample"` or `"real"`, for `weather`, `grace`, `etCheck`, `cropBudgets`, `prices`, `soil`, `otherRegions`. A missing dataset counts as sample. Drives every Sample tag and the Status column. |
+| `validation.lpCrossCheck` | `{ method, maxShareDifference (0 to 1), note }` from an exact solver run on the same data. Shown under the backtest. |
+| `sensitivity[]` | `{ case, value, avgProfit, worst1in5, mix, mixChanged }` for `profitDown`/`profitUp` (profit of every rotation but fallow x0.8/x1.2), `waterCostDown`/`waterCostUp` (only when a water cost is set), `efficiencyLow`/`efficiencyHigh` (0.65/0.85). Null numbers and mix when nothing fits. |
+| `classic` | `{ points[], atSuggested, largestGap }`: the mean-variance efficient set among feasible mixes (no mix has both higher average and lower standard deviation) and the worst-years gap vs. our best plan at the same or higher average. |
+| `riskMetrics` | `{ recommended, current, fallowAvg }`, each `{ sd, sharpe, sortino, diversification }`. Benchmark is the fallow average; Sortino uses downside deviation below it. Nulls when undefined. |
+| `context.otherRegions[]` | `{ id, label, series: { date, value }[], source }`: GRACE storage (cm) for other farm regions. |
+
 ### When no mix fits
 
 Return **HTTP 422** with this body. The UI tells the farmer which limit to relax and
