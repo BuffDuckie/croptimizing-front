@@ -12,6 +12,10 @@
     --dur-slow: 320ms;
     --dur-enter: 420ms;
     color-scheme: light;
+    --c-primary: theme('colors.primary');
+    --c-secondary: theme('colors.secondary');
+    --c-accent: theme('colors.accent');
+    --c-accent-strong: theme('colors.accent-strong');
   }
   html {
     -webkit-text-size-adjust: 100%;
@@ -146,3 +150,17 @@
 .popover-panel[data-state='open'] { animation: pop-in var(--dur-base) var(--ease-out); }
 @keyframes sheet-in { from { opacity: 0; transform: translateY(-8px); } }
 .mobile-sheet[data-state='open'] { animation: sheet-in var(--dur-slow) var(--ease-out); }
+
+/* Disclosure panels open by animating grid rows (tier 2). */
+.disclosure-body { grid-template-rows: 0fr; transition: grid-template-rows var(--dur-slow) var(--ease-out); }
+.disclosure-body[data-open='true'] { grid-template-rows: 1fr; }
+
+/* Loading placeholders. */
+@keyframes shimmer { from { background-position: -400px 0; } to { background-position: 400px 0; } }
+.skeleton {
+  background: linear-gradient(90deg, theme('colors.border-soft') 0, theme('colors.bg') 50%, theme('colors.border-soft') 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+/* Mix segments and meters glide to new values (tier 2). */
+.mix-seg, .meter-fill { transition: width var(--dur-slow) var(--ease-out); }

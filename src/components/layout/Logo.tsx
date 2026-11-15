@@ -14,9 +14,9 @@ export function LogoMark({ className = 'h-7 w-7' }: { className?: string }) {
 
 export function Wordmark() {
   return (
-    <span className="flex items-center gap-2.5">
+    <span className="flex items-center gap-2 sm:gap-2.5">
       <LogoMark />
-      <span className="text-[1.1875rem] font-semibold tracking-[-0.015em] text-white">Croptimizing</span>
+      <span className="text-[1.0625rem] font-semibold sm:text-[1.1875rem] tracking-[-0.015em] text-white">Croptimizing</span>
     </span>
   );
 }

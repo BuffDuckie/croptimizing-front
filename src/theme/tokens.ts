@@ -22,6 +22,10 @@ export const colors = {
   'accent-tint': '#E0F7FF',
   'warning-tint': '#FEF3E2',
   'danger-tint': '#FDECEC',
+  /** Danger on dark (navy) backgrounds only. */
+  'danger-bright': '#FCA5A5',
+  /** Field soil tone for the hero map on navy. */
+  'field-soil': '#163E7A',
 } as const;
 
 export const rotationColors = {

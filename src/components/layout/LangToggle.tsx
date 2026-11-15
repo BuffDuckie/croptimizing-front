@@ -19,7 +19,7 @@ export function LangToggle() {
           lang={lng}
           aria-pressed={active === lng}
           onClick={() => void i18n.changeLanguage(lng)}
-          className={`relative z-10 min-h-[36px] min-w-[44px] rounded-[6px] px-2.5 text-sm font-semibold transition-colors duration-base ${
+          className={`relative z-10 min-h-[36px] min-w-[40px] rounded-[6px] px-2 sm:min-w-[44px] sm:px-2.5 text-sm font-semibold transition-colors duration-base ${
             active === lng ? 'text-primary' : 'text-white/85 hover:text-white'
           }`}
         >

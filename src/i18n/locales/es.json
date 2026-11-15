@@ -30,14 +30,38 @@
     "notAffiliated": "No es un producto oficial de la NASA."
   },
   "pages": {
-    "start": { "title": "Inicio", "intro": "Empiece con la granja de demostración o cuéntenos sobre la suya." },
-    "plan": { "title": "Mi plan", "intro": "Mueva los tres controles. Su plan se actualiza al instante." },
-    "tradeoffs": { "title": "Compensaciones", "intro": "Vea qué cede a cambio de más seguridad y cuánto le cuesta tener menos agua." },
-    "compare": { "title": "Comparar rotaciones", "intro": "Vea cada rotación lado a lado, incluida la que siembra hoy." },
-    "why": { "title": "Por qué esta región", "intro": "Vea lo que dicen los satélites y registros de clima de la NASA sobre el agua aquí." },
-    "stress": { "title": "Prueba de estrés", "intro": "Elija un año difícil del pasado y vea cómo le habría ido a cada plan." },
-    "report": { "title": "Informe", "intro": "Imprima esta página o guárdela como PDF para compartirla con su agente de extensión." },
-    "method": { "title": "Ver los cálculos", "intro": "Cada número de esta herramienta, de dónde viene y cómo lo calculamos." }
+    "start": {
+      "title": "Inicio",
+      "intro": "Empiece con la granja de demostración o cuéntenos sobre la suya."
+    },
+    "plan": {
+      "title": "Mi plan",
+      "intro": "Mueva los tres controles. Su plan se actualiza al instante."
+    },
+    "tradeoffs": {
+      "title": "Compensaciones",
+      "intro": "Vea qué cede a cambio de más seguridad y cuánto le cuesta tener menos agua."
+    },
+    "compare": {
+      "title": "Comparar rotaciones",
+      "intro": "Vea cada rotación lado a lado, incluida la que siembra hoy."
+    },
+    "why": {
+      "title": "Por qué esta región",
+      "intro": "Vea lo que dicen los satélites y registros de clima de la NASA sobre el agua aquí."
+    },
+    "stress": {
+      "title": "Prueba de estrés",
+      "intro": "Elija un año difícil del pasado y vea cómo le habría ido a cada plan."
+    },
+    "report": {
+      "title": "Informe",
+      "intro": "Imprima esta página o guárdela como PDF para compartirla con su agente de extensión."
+    },
+    "method": {
+      "title": "Ver los cálculos",
+      "intro": "Cada número de esta herramienta, de dónde viene y cómo lo calculamos."
+    }
   },
   "common": {
     "showMath": "Ver los cálculos",
@@ -55,17 +79,50 @@
     "comingSoon": "próximamente"
   },
   "glossary": {
-    "acreFoot": { "term": "Acre-pie", "def": "El agua necesaria para cubrir un acre con un pie de profundidad, unos 326,000 galones." },
-    "et": { "term": "Evapotranspiración", "def": "El agua que sale de un campo como vapor, desde el suelo y a través de las hojas del cultivo." },
-    "et0": { "term": "ET de referencia", "def": "Cuánta agua usaría un pasto estándar con este clima; es el punto de partida para calcular el agua del cultivo." },
-    "worst1in5": { "term": "Peores años, 1 de cada 5", "def": "Su ganancia promedio en los 4 peores años de los últimos 20." },
-    "frontier": { "term": "Frontera eficiente", "def": "Los planes en los que no puede ganar más en promedio sin que le vaya peor en los años malos." },
-    "soilScore": { "term": "Puntaje de salud del suelo", "def": "Un puntaje de 0 a 100 de cuánto mejora el suelo una rotación: leguminosas, raíces vivas, residuos, poca labranza y variedad." },
-    "shadowPrice": { "term": "Valor del agua", "def": "Cuánto vale para usted un acre-pie más, en ganancia extra por acre." },
-    "grace": { "term": "GRACE", "def": "Satélites gemelos de la NASA que miden cambios en el agua subterránea a partir de pequeños cambios en la gravedad de la Tierra." },
-    "power": { "term": "NASA POWER", "def": "Registros diarios de clima de la NASA para cualquier punto de la Tierra, hechos con satélites y modelos." },
-    "fallow": { "term": "Barbecho", "def": "Tierra que se deja sin sembrar y sin regar por una temporada o un año." },
-    "rotation": { "term": "Rotación", "def": "El orden de los cultivos que siembra en el mismo campo a lo largo de las temporadas." }
+    "acreFoot": {
+      "term": "Acre-pie",
+      "def": "El agua necesaria para cubrir un acre con un pie de profundidad, unos 326,000 galones."
+    },
+    "et": {
+      "term": "Evapotranspiración",
+      "def": "El agua que sale de un campo como vapor, desde el suelo y a través de las hojas del cultivo."
+    },
+    "et0": {
+      "term": "ET de referencia",
+      "def": "Cuánta agua usaría un pasto estándar con este clima; es el punto de partida para calcular el agua del cultivo."
+    },
+    "worst1in5": {
+      "term": "Peores años, 1 de cada 5",
+      "def": "Su ganancia promedio en los 4 peores años de los últimos 20."
+    },
+    "frontier": {
+      "term": "Frontera eficiente",
+      "def": "Los planes en los que no puede ganar más en promedio sin que le vaya peor en los años malos."
+    },
+    "soilScore": {
+      "term": "Puntaje de salud del suelo",
+      "def": "Un puntaje de 0 a 100 de cuánto mejora el suelo una rotación: leguminosas, raíces vivas, residuos, poca labranza y variedad."
+    },
+    "shadowPrice": {
+      "term": "Valor del agua",
+      "def": "Cuánto vale para usted un acre-pie más, en ganancia extra por acre."
+    },
+    "grace": {
+      "term": "GRACE",
+      "def": "Satélites gemelos de la NASA que miden cambios en el agua subterránea a partir de pequeños cambios en la gravedad de la Tierra."
+    },
+    "power": {
+      "term": "NASA POWER",
+      "def": "Registros diarios de clima de la NASA para cualquier punto de la Tierra, hechos con satélites y modelos."
+    },
+    "fallow": {
+      "term": "Barbecho",
+      "def": "Tierra que se deja sin sembrar y sin regar por una temporada o un año."
+    },
+    "rotation": {
+      "term": "Rotación",
+      "def": "El orden de los cultivos que siembra en el mismo campo a lo largo de las temporadas."
+    }
   },
   "rotations": {
     "alfalfa": "Alfalfa",
@@ -74,6 +131,168 @@
     "barley_fallow": "Cebada y luego barbecho",
     "fallow": "Barbecho"
   },
-  "months": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
-  "notFound": { "title": "No encontramos esa página", "back": "Ir al inicio" }
+  "months": [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic"
+  ],
+  "notFound": {
+    "title": "No encontramos esa página",
+    "back": "Ir al inicio"
+  },
+  "start": {
+    "eyebrow": "Condado de Pinal, Arizona",
+    "headlineA": "Planee sus cultivos como un inversionista: la mayor ganancia para su ",
+    "headlineWater": "agua",
+    "headlineB": ", su suelo y sus peores años.",
+    "sub": "Croptimizing prueba cada mezcla de cultivos con 20 años pasados de clima y precios, y le muestra el plan que cabe en su agua en cada uno de ellos.",
+    "cta": "Probar la granja de demostración de Pinal",
+    "ctaOwn": "Configurar su propia granja",
+    "credit": "Clima: NASA POWER. Agua subterránea: NASA GRACE-FO.",
+    "hero": {
+      "label": "Animación: una granja de alfalfa y algodón necesita {{need}} acre-pies de agua por acre en su año más alto. Su presupuesto baja a {{budget}}. Los campos cambian a una mezcla que cabe, que habría ganado {{avg}} por acre en un año promedio y {{worst}} en los peores años, 1 de cada 5.",
+      "needs": "Sus campos necesitan",
+      "budget": "Su presupuesto",
+      "cut": "2023: sin agua del río Colorado para granjas del centro de Arizona",
+      "over": "Sobre el presupuesto",
+      "fits": "Cabe en todos los años",
+      "avg": "Año promedio",
+      "worst": "Peores años, 1 de cada 5",
+      "replay": "Repetir",
+      "perAcre": "/acre",
+      "needsShort": "Necesita",
+      "budgetShort": "Presupuesto"
+    },
+    "stats": {
+      "title": "El agua ya no está. Las decisiones siguen en sus manos.",
+      "cut65": "menos agua del río Colorado para granjas del centro de Arizona en 2022",
+      "zero": "de esa agua para esas granjas en 2023 y 2024",
+      "years": "años pasados de clima y precios detrás de cada plan",
+      "source": "Fuente: ASU Arizona Water Innovation Initiative."
+    },
+    "steps": {
+      "title": "Tres decisiones. Un plan que puede revisar.",
+      "s1t": "Fije su agua",
+      "s1d": "Díganos con cuántos acre-pies por acre puede contar. El plan debe caber aun en el año más caluroso.",
+      "s2t": "Elija cuánto riesgo acepta",
+      "s2d": "Mueva el control hacia ir a lo seguro o buscar más ganancia. Verá lo que cuesta cada opción.",
+      "s3t": "Vea su plan",
+      "s3d": "Reciba una mezcla de cultivos en acres, lo que habría ganado en años normales y malos, y por qué.",
+      "previewWater": "Presupuesto de agua",
+      "previewRisk": "Comodidad con el riesgo",
+      "safe": "Ir a lo seguro",
+      "bold": "Buscar más ganancia",
+      "previewPlan": "Mezcla sugerida"
+    },
+    "form": {
+      "title": "Configure su propia granja",
+      "intro": "Use sus propios acres, agua y cultivos. Nada sale de esta página.",
+      "name": "Nombre de la granja",
+      "namePh": "Por ejemplo, Lote Norte",
+      "acres": "Tamaño de la granja (acres)",
+      "water": "Agua con la que puede contar (AF/acre)",
+      "region": "Región",
+      "pinal": "Condado de Pinal, AZ",
+      "plains": "Altas Planicies de Kansas",
+      "shares": "Lo que siembra hoy (% de acres)",
+      "total": "Total: {{n}}%",
+      "totalOk": "Suma 100%",
+      "totalBad": "Haga que sume 100%",
+      "submit": "Ver mi plan",
+      "errAcres": "Escriba un tamaño entre 1 y 100,000 acres.",
+      "errWater": "Escriba entre 0.5 y 6.0 acre-pies por acre.",
+      "defaultName": "Mi granja"
+    }
+  },
+  "plan": {
+    "farm": "{{name}}, {{acres}} acres",
+    "reset": "Restablecer ajustes",
+    "controls": "Sus ajustes",
+    "edit": "Cambiar ajustes",
+    "hide": "Ocultar ajustes",
+    "summary": "Agua {{water}} AF · Riesgo {{risk}} · Suelo {{soil}}",
+    "water": "Presupuesto de agua",
+    "waterUnit": "AF por acre",
+    "waterText": "{{n}} acre-pies por acre",
+    "risk": "Comodidad con el riesgo",
+    "riskSafe": "Ir a lo seguro",
+    "riskBold": "Buscar más ganancia",
+    "riskText": "{{n}} de 100, {{lean}}",
+    "leanSafe": "hacia lo seguro",
+    "leanMiddle": "equilibrado",
+    "leanBold": "hacia más ganancia",
+    "soil": "Mínimo de salud del suelo",
+    "soilText": "{{n}} de 100",
+    "more": "Más opciones",
+    "maxShare": "Lo máximo que sembraría de cada rotación",
+    "maxShareText": "{{n}} por ciento como máximo",
+    "waterCost": "Costo extra por acre-pie",
+    "waterCostHelp": "Déjelo en $0 si sus presupuestos de cultivo ya cuentan el agua.",
+    "efficiency": "Eficiencia de riego",
+    "efficiencyHelp": "El goteo y una buena programación la suben. Más alta significa menos agua por acre para el mismo cultivo.",
+    "efficiencyText": "{{n}} por ciento",
+    "mixTitle": "Según 20 años pasados, esta mezcla cabe en {{water}} AF por acre en todos los años",
+    "mixSub": "Plan sugerido para sus {{acres}} acres",
+    "currentRow": "Lo que siembra hoy",
+    "suggestedRow": "Sugerido",
+    "mixAria": "Mezcla de cultivos: {{list}}.",
+    "avg": "Ganancia en un año promedio",
+    "avgHelp": "Promedio de los 20 años pasados.",
+    "worst": "Peores años, 1 de cada 5",
+    "worstHelp": "Promedio de los 4 peores años de 20.",
+    "waterCard": "Agua en el año más alto",
+    "waterOf": "de un presupuesto de {{budget}} AF",
+    "soilCard": "Puntaje de suelo",
+    "vsCurrent": "frente a su plan actual",
+    "currentWas": "Plan actual: {{v}}",
+    "overBudget": "Su plan actual necesita {{need}} AF por acre en su año más alto. Su presupuesto es {{budget}}. No cabe.",
+    "overShort": "Sobre el presupuesto",
+    "withinShort": "Dentro del presupuesto",
+    "waterValueTitle": "Un acre-pie más vale {{v}} por acre para usted",
+    "waterValueBody": "Si pudiera conseguir 0.1 acre-pies más por acre, su plan ganaría unos {{tenth}} más por acre. Úselo para valorar agua rentada o almacenada.",
+    "waterValueZero": "El agua no es su límite ahora",
+    "waterValueZeroBody": "Su mínimo de suelo o su ajuste de riesgo deciden este plan. Más agua no lo cambiaría.",
+    "next": "Vea más de cerca",
+    "toTradeoffs": "Ver las compensaciones",
+    "toCompare": "Comparar rotaciones",
+    "toWhy": "Por qué esta región",
+    "infeasibleTitle": "Ninguna mezcla de cultivos cabe en estos límites",
+    "infeasibleSoil": "Con {{water}} AF por acre, el puntaje de suelo más alto que alcanza una mezcla es {{max}}.",
+    "infeasibleWaterNeed": "Para mantener un mínimo de suelo de {{soil}}, necesita al menos {{need}} AF por acre.",
+    "infeasibleShare": "Sus límites por rotación no dejan ninguna mezcla que cubra toda su granja.",
+    "setSoil": "Poner el mínimo de suelo en {{n}}",
+    "setWater": "Poner el agua en {{n}} AF",
+    "clearShares": "Quitar límites por rotación",
+    "updating": "Actualizando",
+    "mathTitle": "Cómo se eligió este plan",
+    "mathSteps": "Probamos las 10,626 mezclas de las cinco rotaciones en pasos de 5%. Solo dejamos las que se mantienen dentro de {{water}} AF por acre en cada uno de los 20 años y tienen al menos {{soil}} de puntaje de suelo. Entre ellas, elegimos la de mejor equilibrio entre ganancia promedio y ganancia en los peores años para su ajuste de riesgo ({{risk}} de 100).",
+    "mathTable": "Su plan sugerido en números",
+    "colRotation": "Rotación",
+    "colShare": "Proporción",
+    "colAcres": "Acres",
+    "colCurrent": "Acres actuales",
+    "assumptions": "Supuestos"
+  },
+  "strip": {
+    "titleBetter": "Su plan sugerido aguanta mejor los años malos",
+    "titleCost": "Ajustarse a su agua cuesta {{v}} por acre en sus peores años",
+    "subtitle": "20 años de un vistazo: lo que cada plan habría ganado en cada año pasado.",
+    "how1": "Cada punto es un año pasado, de 2005 a 2024. Los puntos más a la derecha ganaron más por acre.",
+    "how2": "El área sombreada contiene los 4 peores años. El triángulo rojo marca su promedio: ese es el número de los peores años, 1 de cada 5.",
+    "tableCaption": "Ganancia por acre en cada año pasado",
+    "year": "Año",
+    "aria": "Gráfica de puntos de 20 años pasados. Peores años del plan sugerido: promedio de {{recWorst}} por acre; plan actual: {{curWorst}} por acre.",
+    "band": "Peores años, 1 de cada 5",
+    "avgMark": "Promedio de esos 4 años",
+    "axis": "Ganancia por acre en cada uno de los 20 años ($/acre)"
+  }
 }

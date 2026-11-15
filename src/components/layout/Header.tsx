@@ -35,13 +35,13 @@ export function Header({ showSample }: { showSample: boolean }) {
         <Link to="/" className="-mx-1 rounded-ctl px-1 py-2 no-underline" aria-label="Croptimizing, start">
           <Wordmark />
         </Link>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {showSample && <SampleBadge />}
           <LangToggle />
           <button
             ref={menuBtn}
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-ctl text-white transition-colors duration-fast hover:bg-white/10 md:hidden"
+            className="-mr-1.5 inline-flex h-11 w-11 items-center justify-center rounded-ctl text-white transition-colors duration-fast hover:bg-white/10 md:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? t('app.closeMenu') : t('app.menu')}

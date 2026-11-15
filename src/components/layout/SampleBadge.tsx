@@ -8,11 +8,11 @@ export function SampleBadge() {
     <Popover
       label={t('app.sampleBadge')}
       align="end"
-      triggerClassName="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-warning-tint px-3 text-sm font-semibold text-warning ring-1 ring-inset ring-warning/30 transition-transform duration-fast active:scale-[0.97]"
+      triggerClassName="inline-flex min-h-[36px] min-w-[36px] items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-warning-tint px-2 text-sm sm:px-3 font-semibold text-warning ring-1 ring-inset ring-warning/30 transition-transform duration-fast active:scale-[0.97]"
       trigger={
         <>
           <FlaskConical aria-hidden="true" className="h-4 w-4" />
-          <span>{t('app.sampleBadge')}</span>
+          <span className="hidden sm:inline">{t('app.sampleBadge')}</span>
         </>
       }
     >

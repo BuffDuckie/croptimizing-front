@@ -29,14 +29,38 @@
     "notAffiliated": "Not an official NASA product."
   },
   "pages": {
-    "start": { "title": "Start", "intro": "Start with the demo farm, or tell us about your own." },
-    "plan": { "title": "My plan", "intro": "Move the three sliders. Your plan updates as you go." },
-    "tradeoffs": { "title": "Trade-offs", "intro": "See what you give up for more safety, and what less water costs you." },
-    "compare": { "title": "Compare rotations", "intro": "Look at each rotation side by side, including what you grow today." },
-    "why": { "title": "Why this region", "intro": "See what NASA satellites and weather records say about water here." },
-    "stress": { "title": "Stress test", "intro": "Pick a hard year from the past and see how each plan would have done." },
-    "report": { "title": "Report", "intro": "Print this page or save it as a PDF to share with your extension agent." },
-    "method": { "title": "Show the math", "intro": "Every number in this tool, where it comes from, and how we got it." }
+    "start": {
+      "title": "Start",
+      "intro": "Start with the demo farm, or tell us about your own."
+    },
+    "plan": {
+      "title": "My plan",
+      "intro": "Move the three sliders. Your plan updates as you go."
+    },
+    "tradeoffs": {
+      "title": "Trade-offs",
+      "intro": "See what you give up for more safety, and what less water costs you."
+    },
+    "compare": {
+      "title": "Compare rotations",
+      "intro": "Look at each rotation side by side, including what you grow today."
+    },
+    "why": {
+      "title": "Why this region",
+      "intro": "See what NASA satellites and weather records say about water here."
+    },
+    "stress": {
+      "title": "Stress test",
+      "intro": "Pick a hard year from the past and see how each plan would have done."
+    },
+    "report": {
+      "title": "Report",
+      "intro": "Print this page or save it as a PDF to share with your extension agent."
+    },
+    "method": {
+      "title": "Show the math",
+      "intro": "Every number in this tool, where it comes from, and how we got it."
+    }
   },
   "common": {
     "showMath": "Show the math",
@@ -54,17 +78,50 @@
     "comingSoon": "coming soon"
   },
   "glossary": {
-    "acreFoot": { "term": "Acre-foot", "def": "The water it takes to cover one acre one foot deep, about 326,000 gallons." },
-    "et": { "term": "Evapotranspiration", "def": "Water that leaves a field as vapor, from the soil and through the crop's leaves." },
-    "et0": { "term": "Reference ET", "def": "How much water a standard grass field would use in this weather, the starting point for crop water needs." },
-    "worst1in5": { "term": "Worst 1-in-5 years", "def": "Your average profit in the 4 worst years out of the last 20." },
-    "frontier": { "term": "Efficient frontier", "def": "The set of plans where you cannot get more average profit without doing worse in bad years." },
-    "soilScore": { "term": "Soil-health score", "def": "A 0 to 100 score for how much a rotation builds soil: legumes, living roots, residue, low tillage, and variety." },
-    "shadowPrice": { "term": "Water value", "def": "What one more acre-foot is worth to you, in extra profit per acre." },
-    "grace": { "term": "GRACE", "def": "NASA twin satellites that weigh changes in water stored underground by measuring tiny shifts in Earth's gravity." },
-    "power": { "term": "NASA POWER", "def": "NASA's daily weather records for any spot on Earth, built from satellites and weather models." },
-    "fallow": { "term": "Fallow", "def": "Land left unplanted and unwatered for a season or a year." },
-    "rotation": { "term": "Rotation", "def": "The order of crops you grow on the same field over the seasons." }
+    "acreFoot": {
+      "term": "Acre-foot",
+      "def": "The water it takes to cover one acre one foot deep, about 326,000 gallons."
+    },
+    "et": {
+      "term": "Evapotranspiration",
+      "def": "Water that leaves a field as vapor, from the soil and through the crop's leaves."
+    },
+    "et0": {
+      "term": "Reference ET",
+      "def": "How much water a standard grass field would use in this weather, the starting point for crop water needs."
+    },
+    "worst1in5": {
+      "term": "Worst 1-in-5 years",
+      "def": "Your average profit in the 4 worst years out of the last 20."
+    },
+    "frontier": {
+      "term": "Efficient frontier",
+      "def": "The set of plans where you cannot get more average profit without doing worse in bad years."
+    },
+    "soilScore": {
+      "term": "Soil-health score",
+      "def": "A 0 to 100 score for how much a rotation builds soil: legumes, living roots, residue, low tillage, and variety."
+    },
+    "shadowPrice": {
+      "term": "Water value",
+      "def": "What one more acre-foot is worth to you, in extra profit per acre."
+    },
+    "grace": {
+      "term": "GRACE",
+      "def": "NASA twin satellites that weigh changes in water stored underground by measuring tiny shifts in Earth's gravity."
+    },
+    "power": {
+      "term": "NASA POWER",
+      "def": "NASA's daily weather records for any spot on Earth, built from satellites and weather models."
+    },
+    "fallow": {
+      "term": "Fallow",
+      "def": "Land left unplanted and unwatered for a season or a year."
+    },
+    "rotation": {
+      "term": "Rotation",
+      "def": "The order of crops you grow on the same field over the seasons."
+    }
   },
   "rotations": {
     "alfalfa": "Alfalfa",
@@ -73,6 +130,168 @@
     "barley_fallow": "Barley then fallow",
     "fallow": "Fallow"
   },
-  "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  "notFound": { "title": "We could not find that page", "back": "Go to the start" }
+  "months": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
+  "notFound": {
+    "title": "We could not find that page",
+    "back": "Go to the start"
+  },
+  "start": {
+    "eyebrow": "Pinal County, Arizona",
+    "headlineA": "Plan your crops like an investor: the most profit for your ",
+    "headlineWater": "water",
+    "headlineB": ", your soil, and your worst years.",
+    "sub": "Croptimizing tests every mix of crops against 20 past years of weather and prices, then shows the plan that fits your water in every one of them.",
+    "cta": "Try the Pinal County demo farm",
+    "ctaOwn": "Set up your own farm",
+    "credit": "Weather: NASA POWER. Groundwater: NASA GRACE-FO.",
+    "hero": {
+      "label": "Animation: a farm of alfalfa and cotton fields needs {{need}} acre-feet of water per acre in its highest year. Its budget drops to {{budget}}. The fields switch to a mix that fits, which would have earned {{avg}} per acre in an average year and {{worst}} in the worst 1-in-5 years.",
+      "needs": "Your fields need",
+      "budget": "Your budget",
+      "cut": "2023: Colorado River water for central Arizona farms cut to zero",
+      "over": "Over budget",
+      "fits": "Fits in every year",
+      "avg": "Average year",
+      "worst": "Worst 1-in-5 years",
+      "replay": "Replay",
+      "perAcre": "/acre",
+      "needsShort": "Needs",
+      "budgetShort": "Budget"
+    },
+    "stats": {
+      "title": "The water is already gone. The decisions are not.",
+      "cut65": "less Colorado River water for central Arizona farms in 2022",
+      "zero": "of that water left for those farms in 2023 and 2024",
+      "years": "past years of weather and prices behind every plan",
+      "source": "Source: ASU Arizona Water Innovation Initiative."
+    },
+    "steps": {
+      "title": "Three choices. One plan you can check.",
+      "s1t": "Set your water",
+      "s1d": "Tell us how many acre-feet per acre you can count on. The plan must fit it even in the hottest year.",
+      "s2t": "Choose your comfort with risk",
+      "s2d": "Slide toward playing it safe or going for more profit. You see what each choice costs.",
+      "s3t": "See your plan",
+      "s3d": "Get a crop mix in acres, what it would have earned in normal and bad years, and why.",
+      "previewWater": "Water budget",
+      "previewRisk": "Risk comfort",
+      "safe": "Play it safe",
+      "bold": "Go for more profit",
+      "previewPlan": "Suggested mix"
+    },
+    "form": {
+      "title": "Set up your own farm",
+      "intro": "Use your own acres, water, and crops. Nothing leaves this page.",
+      "name": "Farm name",
+      "namePh": "For example, North 40",
+      "acres": "Farm size (acres)",
+      "water": "Water you can count on (AF/acre)",
+      "region": "Region",
+      "pinal": "Pinal County, AZ",
+      "plains": "Kansas High Plains",
+      "shares": "What you grow today (% of acres)",
+      "total": "Total: {{n}}%",
+      "totalOk": "Adds up to 100%",
+      "totalBad": "Make these add up to 100%",
+      "submit": "See my plan",
+      "errAcres": "Enter a farm size between 1 and 100,000 acres.",
+      "errWater": "Enter between 0.5 and 6.0 acre-feet per acre.",
+      "defaultName": "My farm"
+    }
+  },
+  "plan": {
+    "farm": "{{name}}, {{acres}} acres",
+    "reset": "Reset settings",
+    "controls": "Your settings",
+    "edit": "Change settings",
+    "hide": "Hide settings",
+    "summary": "Water {{water}} AF · Risk {{risk}} · Soil {{soil}}",
+    "water": "Water budget",
+    "waterUnit": "AF per acre",
+    "waterText": "{{n}} acre-feet per acre",
+    "risk": "Risk comfort",
+    "riskSafe": "Play it safe",
+    "riskBold": "Go for more profit",
+    "riskText": "{{n}} out of 100, {{lean}}",
+    "leanSafe": "leaning safe",
+    "leanMiddle": "balanced",
+    "leanBold": "leaning toward profit",
+    "soil": "Soil-health minimum",
+    "soilText": "{{n}} out of 100",
+    "more": "More options",
+    "maxShare": "Most you would plant of each rotation",
+    "maxShareText": "{{n}} percent at most",
+    "waterCost": "Extra cost per acre-foot",
+    "waterCostHelp": "Leave at $0 if your crop budgets already count water.",
+    "efficiency": "Irrigation efficiency",
+    "efficiencyHelp": "Drip and good scheduling raise this. Higher means less water per acre for the same crop.",
+    "efficiencyText": "{{n}} percent",
+    "mixTitle": "Based on 20 past years, this mix fits {{water}} AF per acre in every year",
+    "mixSub": "Suggested plan for your {{acres}} acres",
+    "currentRow": "What you grow today",
+    "suggestedRow": "Suggested",
+    "mixAria": "Crop mix: {{list}}.",
+    "avg": "Average year profit",
+    "avgHelp": "Average of the 20 past years.",
+    "worst": "Worst 1-in-5 years",
+    "worstHelp": "Average of the 4 worst years out of 20.",
+    "waterCard": "Water in the highest year",
+    "waterOf": "of {{budget}} AF budget",
+    "soilCard": "Soil score",
+    "vsCurrent": "vs. your current plan",
+    "currentWas": "Current plan: {{v}}",
+    "overBudget": "Your current plan needs {{need}} AF per acre in its highest year. Your budget is {{budget}}. It does not fit.",
+    "overShort": "Over budget",
+    "withinShort": "Within budget",
+    "waterValueTitle": "One more acre-foot is worth {{v}} per acre to you",
+    "waterValueBody": "If you could get 0.1 more acre-feet per acre, your plan would earn about {{tenth}} more per acre. Use this when you price leased or banked water.",
+    "waterValueZero": "Water is not your limit right now",
+    "waterValueZeroBody": "Your soil minimum or your risk setting decides this plan. Extra water would not change it.",
+    "next": "Look closer",
+    "toTradeoffs": "See the trade-offs",
+    "toCompare": "Compare rotations",
+    "toWhy": "Why this region",
+    "infeasibleTitle": "No crop mix fits these limits",
+    "infeasibleSoil": "At {{water}} AF per acre, the highest soil score any mix reaches is {{max}}.",
+    "infeasibleWaterNeed": "To keep a soil minimum of {{soil}}, you need at least {{need}} AF per acre.",
+    "infeasibleShare": "Your limits on each rotation leave no mix that covers your whole farm.",
+    "setSoil": "Set soil minimum to {{n}}",
+    "setWater": "Set water to {{n}} AF",
+    "clearShares": "Clear rotation limits",
+    "updating": "Updating",
+    "mathTitle": "How this plan was picked",
+    "mathSteps": "We tried all 10,626 mixes of the five rotations in 5% steps. We kept only mixes that stay within {{water}} AF per acre in every one of the 20 years and score at least {{soil}} for soil. Among those, we picked the one with the best blend of average profit and worst-years profit for your risk setting ({{risk}} out of 100).",
+    "mathTable": "Your suggested plan in numbers",
+    "colRotation": "Rotation",
+    "colShare": "Share",
+    "colAcres": "Acres",
+    "colCurrent": "Current acres",
+    "assumptions": "Assumptions"
+  },
+  "strip": {
+    "titleBetter": "Your suggested plan holds up better in bad years",
+    "titleCost": "Fitting your water costs {{v}} per acre in your worst years",
+    "subtitle": "20 years at a glance: what each plan would have earned in each past year.",
+    "how1": "Each dot is one past year, from 2005 to 2024. Dots further right earned more per acre.",
+    "how2": "The shaded area holds the 4 worst years. The red triangle marks their average: that is the worst 1-in-5 years number.",
+    "tableCaption": "Profit per acre in each past year",
+    "year": "Year",
+    "aria": "Dot chart of 20 past years. Suggested plan worst 1-in-5 years average {{recWorst}} per acre; current plan {{curWorst}} per acre.",
+    "band": "Worst 1-in-5 years",
+    "avgMark": "Average of those 4 years",
+    "axis": "Profit per acre in each of the 20 years ($/acre)"
+  }
 }
