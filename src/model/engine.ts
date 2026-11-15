@@ -336,6 +336,8 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
       checkLocally: txt.checkLocally,
       yearlyWaterAf: water.map((w) => round(w, 3)),
       families: ROTATION_FAMILIES[id],
+      pests: txt.pests,
+      infiltration: txt.infiltration,
     };
   });
 }

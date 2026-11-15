@@ -458,7 +458,10 @@
       "sourceFixed": "Meses fijos, todavía no salen del clima diario.",
       "heatAria": "Meses de riesgo por calor: {{list}}.",
       "frostAria": "Meses de riesgo por heladas: {{list}}."
-    }
+    },
+    "pests": "Ciclos de plagas:",
+    "infiltration": "Agua que entra al suelo (infiltración):",
+    "todoLine": "TODO: una oración sencilla del equipo de ciencia."
   },
   "why": {
     "lead": "El agua aquí escasea por ambos lados: hay menos bajo tierra y cada cultivo necesita más con el calor.",

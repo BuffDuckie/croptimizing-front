@@ -14,6 +14,8 @@ type RotationText = {
   benefits: string;
   gaps: string;
   checkLocally: string;
+  pests: string;
+  infiltration: string;
 };
 
 export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
@@ -27,6 +29,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Steady hay income, living roots all year, nitrogen for the next crop, and almost no tillage once planted.',
       gaps: 'We model alfalfa as a 4-year stand averaged per year. We do not model stand decline, pests, or hay quality discounts.',
       checkLocally: 'Ask about your stand age, hay contracts, and whether deficit irrigation in summer makes sense on your soil.',
+      pests: 'TODO: how this rotation affects pest cycles, in one plain sentence.',
+      infiltration: 'TODO: how this rotation affects water soaking in, in one plain sentence.',
     },
     cotton_barley: {
       name: 'Cotton then barley',
@@ -37,6 +41,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Two crops a year, a winter cover of living roots, and residue that protects the soil.',
       gaps: 'Cotton prices and yields vary a lot. We use 20 past years of prices, which may not match the next 20.',
       checkLocally: 'Check gin access, pink bollworm history, and whether your barley can be sold or grazed nearby.',
+      pests: 'TODO: how this rotation affects pest cycles, in one plain sentence.',
+      infiltration: 'TODO: how this rotation affects water soaking in, in one plain sentence.',
     },
     durum_sorghum: {
       name: 'Durum wheat then sorghum',
@@ -47,6 +53,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Uses winter water when evaporation is low, adds crop variety, and returns a lot of residue.',
       gaps: 'Summer sorghum after durum is a tight window. We do not model planting delays or quality premiums for durum.',
       checkLocally: 'Ask about durum contracts and protein premiums, and whether sorghum fits your equipment and harvest timing.',
+      pests: 'TODO: how this rotation affects pest cycles, in one plain sentence.',
+      infiltration: 'TODO: how this rotation affects water soaking in, in one plain sentence.',
     },
     barley_fallow: {
       name: 'Barley then fallow',
@@ -57,6 +65,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Low water use, low risk, and some income on land that might otherwise sit idle.',
       gaps: 'Bare summer soil can blow and lose organic matter. We do not model dust control costs.',
       checkLocally: 'Ask about dust control rules for fallow ground and whether a summer cover crop could fit.',
+      pests: 'TODO: how this rotation affects pest cycles, in one plain sentence.',
+      infiltration: 'TODO: how this rotation affects water soaking in, in one plain sentence.',
     },
     fallow: {
       name: 'Fallow',
@@ -67,6 +77,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Frees water for your other fields and is easy to undo next year.',
       gaps: 'We use a flat cost of about $40 per acre. Real costs depend on weeds, dust rules, and land payments.',
       checkLocally: 'Ask about any fallowing programs that pay for conserved water in your district.',
+      pests: 'TODO: how this rotation affects pest cycles, in one plain sentence.',
+      infiltration: 'TODO: how this rotation affects water soaking in, in one plain sentence.',
     },
   },
   es: {
@@ -79,6 +91,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Ingreso estable de heno, raíces vivas todo el año, nitrógeno para el siguiente cultivo y casi nada de labranza una vez sembrada.',
       gaps: 'Modelamos la alfalfa como un cultivo de 4 años promediado por año. No modelamos el deterioro del cultivo, plagas ni descuentos por calidad del heno.',
       checkLocally: 'Pregunte por la edad de su alfalfa, contratos de heno y si el riego deficitario en verano conviene en su suelo.',
+      pests: 'TODO: cómo afecta esta rotación los ciclos de plagas, en una oración sencilla.',
+      infiltration: 'TODO: cómo afecta esta rotación la infiltración del agua, en una oración sencilla.',
     },
     cotton_barley: {
       name: 'Algodón y luego cebada',
@@ -89,6 +103,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Dos cultivos al año, raíces vivas en invierno y residuos que protegen el suelo.',
       gaps: 'Los precios y rendimientos del algodón varían mucho. Usamos 20 años de precios pasados, que pueden no parecerse a los próximos 20.',
       checkLocally: 'Revise el acceso a despepitadora, el historial de gusano rosado y si puede vender o pastorear la cebada cerca.',
+      pests: 'TODO: cómo afecta esta rotación los ciclos de plagas, en una oración sencilla.',
+      infiltration: 'TODO: cómo afecta esta rotación la infiltración del agua, en una oración sencilla.',
     },
     durum_sorghum: {
       name: 'Trigo duro y luego sorgo',
@@ -99,6 +115,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Usa agua de invierno cuando la evaporación es baja, agrega variedad y deja muchos residuos.',
       gaps: 'Sembrar sorgo después del trigo duro deja poco margen. No modelamos retrasos de siembra ni primas por calidad.',
       checkLocally: 'Pregunte por contratos de trigo duro y primas por proteína, y si el sorgo le cuadra con su equipo y fechas de cosecha.',
+      pests: 'TODO: cómo afecta esta rotación los ciclos de plagas, en una oración sencilla.',
+      infiltration: 'TODO: cómo afecta esta rotación la infiltración del agua, en una oración sencilla.',
     },
     barley_fallow: {
       name: 'Cebada y luego barbecho',
@@ -109,6 +127,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Poco uso de agua, poco riesgo y algo de ingreso en tierra que de otro modo quedaría sin uso.',
       gaps: 'El suelo desnudo en verano puede volarse y perder materia orgánica. No modelamos costos de control de polvo.',
       checkLocally: 'Pregunte por las reglas de control de polvo para tierra en barbecho y si cabe un cultivo de cobertura en verano.',
+      pests: 'TODO: cómo afecta esta rotación los ciclos de plagas, en una oración sencilla.',
+      infiltration: 'TODO: cómo afecta esta rotación la infiltración del agua, en una oración sencilla.',
     },
     fallow: {
       name: 'Barbecho',
@@ -119,6 +139,8 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       benefits: 'Libera agua para sus otros campos y es fácil de revertir el próximo año.',
       gaps: 'Usamos un costo fijo de unos $40 por acre. Los costos reales dependen de malezas, reglas de polvo y pagos de tierra.',
       checkLocally: 'Pregunte si su distrito tiene programas que paguen por el agua conservada con barbecho.',
+      pests: 'TODO: cómo afecta esta rotación los ciclos de plagas, en una oración sencilla.',
+      infiltration: 'TODO: cómo afecta esta rotación la infiltración del agua, en una oración sencilla.',
     },
   },
 };

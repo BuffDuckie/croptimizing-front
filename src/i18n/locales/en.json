@@ -457,7 +457,10 @@
       "sourceFixed": "Fixed months, not yet from daily weather.",
       "heatAria": "Heat-risk months: {{list}}.",
       "frostAria": "Frost-risk months: {{list}}."
-    }
+    },
+    "pests": "Pest cycles:",
+    "infiltration": "Water soaking in (infiltration):",
+    "todoLine": "TODO: one plain sentence from the science teammate."
   },
   "why": {
     "lead": "Water here is getting scarcer from both ends: less underground, and more needed by every crop in the heat.",

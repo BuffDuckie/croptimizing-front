@@ -170,6 +170,17 @@ function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: Rot
         <SoilBreakdown soil={card.soil} selected={controls.soilParts} />
       </section>
 
+      <dl className="space-y-2 rounded-ctl bg-secondary-tint/60 p-4 text-base">
+        <div>
+          <dt className="inline font-semibold text-text">{t('compare.pests')} </dt>
+          <dd className="inline text-text">{card.pests ?? t('compare.todoLine')}</dd>
+        </div>
+        <div>
+          <dt className="inline font-semibold text-text">{t('compare.infiltration')} </dt>
+          <dd className="inline text-text">{card.infiltration ?? t('compare.todoLine')}</dd>
+        </div>
+      </dl>
+
       <div className="space-y-4 border-t border-border-soft pt-5">
         {blocks.map((b) => (
           <div key={b.key} className="grid grid-cols-[1.75rem_1fr] gap-x-2">
