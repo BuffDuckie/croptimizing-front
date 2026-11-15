@@ -137,9 +137,9 @@ export function getSampleContext() {
   // Three other farm regions, sample only. Labels are placeholders for the team to confirm.
   const other = mulberry32(SEED + 2);
   const otherRegions = [
-    { id: 'region_a', label: 'TODO: region A', slope: -0.6 },
-    { id: 'region_b', label: 'TODO: region B', slope: -0.45 },
-    { id: 'region_c', label: 'TODO: region C', slope: -0.7 },
+    { id: 'region_a', label: 'Sample Region A', slope: -0.6 },
+    { id: 'region_b', label: 'Sample Region B', slope: -0.45 },
+    { id: 'region_c', label: 'Sample Region C', slope: -0.7 },
   ].map((r) => {
     const series: { date: string; value: number }[] = [];
     // Quarterly points keep the static example files small; the real series can be monthly.
