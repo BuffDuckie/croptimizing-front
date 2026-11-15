@@ -638,7 +638,8 @@
       "why": "Por qué peores años y no varianza",
       "risk": "Medidas de riesgo de finanzas",
       "flow": "Cómo fluyen los datos",
-      "soil": "Cómo calificamos el suelo"
+      "soil": "Cómo calificamos el suelo",
+      "checks": "Cómo revisamos nuestro trabajo"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -849,6 +850,25 @@
           "diversity": "TODO: una línea con la razón de este puntaje."
         }
       }
+    },
+    "checks": {
+      "intro": "También listamos las pruebas que no pasamos, para que usted juzgue cuánto confiar en los números.",
+      "caption": "Pruebas del modelo y los datos: resultado, lo que encontramos y la fuente.",
+      "head": [
+        "Prueba",
+        "Resultado",
+        "Lo que encontramos",
+        "Fuente"
+      ],
+      "pass": "Pasa",
+      "partial": "Parcial",
+      "fail": "No pasa",
+      "notRun": "Sin correr todavía",
+      "lpLabel": "Verificación con solucionador exacto ({{method}})",
+      "lpLabelNone": "Verificación con solucionador exacto",
+      "lpDetail": "La mayor diferencia con la solución exacta es {{x}}% de los acres; un paso de nuestra cuadrícula es {{step}}%.",
+      "lpNone": "TODO: la corrida exacta de programación lineal del backend llena esto.",
+      "open": "Abrir"
     }
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión.",

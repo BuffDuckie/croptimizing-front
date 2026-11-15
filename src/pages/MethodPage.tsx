@@ -2,6 +2,7 @@ import { Download } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataTable } from '../components/charts/ChartCard';
+import { ChecksTable } from '../components/charts/ChecksTable';
 import { CorrelationHeatmap } from '../components/charts/CorrelationHeatmap';
 import { SensitivityChart } from '../components/charts/SensitivityChart';
 import { SoilRubric } from '../components/charts/SoilRubric';
@@ -12,7 +13,7 @@ import { af, money, whole } from '../lib/format';
 import { useSourceRows } from '../hooks/useSourceRows';
 import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 
-const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'flow', 'soil', 'correlations', 'backtest', 'sensitivity', 'why', 'risk', 'current', 'scenarios', 'assumptions'] as const;
+const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'flow', 'soil', 'correlations', 'backtest', 'checks', 'sensitivity', 'why', 'risk', 'current', 'scenarios', 'assumptions'] as const;
 
 // Formulas (KaTeX) load after the page text so the page paints fast.
 const MathFormulas = lazy(() => import('../components/lazy/MathFormulas'));
@@ -128,11 +129,14 @@ export default function MethodPage() {
                 className="min-w-[560px]"
               />
             </div>
-            {data.validation?.lpCrossCheck && (
-              <p className="mt-4 max-w-3xl text-base text-text">
-                {t('method.crossCheck', { x: whole(data.validation.lpCrossCheck.maxShareDifference * 100, lang) })} {data.validation.lpCrossCheck.note} ({data.validation.lpCrossCheck.method})
-              </p>
-            )}
+          </section>
+
+          <section id="checks" className="scroll-mt-36">
+            <h2 className="text-3xl font-semibold">{t('method.sec.checks')}</h2>
+            <p className="mt-3 max-w-3xl text-base text-text">{t('method.checks.intro')}</p>
+            <div className="mt-5">
+              <ChecksTable validation={data.validation} />
+            </div>
           </section>
 
           {data.sensitivity && data.sensitivity.length > 0 && (

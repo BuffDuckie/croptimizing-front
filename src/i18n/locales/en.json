@@ -637,7 +637,8 @@
       "why": "Why worst years, not variance",
       "risk": "Risk measures from finance",
       "flow": "How the data flows",
-      "soil": "How we score soil"
+      "soil": "How we score soil",
+      "checks": "How we checked our work"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -848,6 +849,25 @@
           "diversity": "TODO: one-line reason for this score."
         }
       }
+    },
+    "checks": {
+      "intro": "We list the checks we fail too, so you can judge how far to trust the numbers.",
+      "caption": "Checks on the model and data: result, what was found, and the source.",
+      "head": [
+        "Check",
+        "Result",
+        "What we found",
+        "Source"
+      ],
+      "pass": "Pass",
+      "partial": "Partial",
+      "fail": "Fail",
+      "notRun": "Not run yet",
+      "lpLabel": "Exact-solver cross-check ({{method}})",
+      "lpLabelNone": "Exact-solver cross-check",
+      "lpDetail": "The largest difference from the exact solution is {{x}}% of acres; one step of our grid is {{step}}%.",
+      "lpNone": "TODO: the backend's exact linear-program run fills this in.",
+      "open": "Open"
     }
   },
   "about": {
