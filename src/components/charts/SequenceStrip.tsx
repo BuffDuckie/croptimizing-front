@@ -17,11 +17,9 @@ export function SequenceStrip({ card }: { card: RotationCard }) {
         {cells.map((c, i) => (
           <li key={i} className="min-w-0">
             <span className="block text-center text-sm font-semibold text-text-muted">{t('compare.seq.year', { n: i + 1 })}</span>
-            <span
-              className={`mt-1 flex min-h-[44px] items-center justify-center rounded-[5px] px-1.5 py-1 text-center text-sm font-semibold leading-tight ${
-                card.id === 'fallow' ? 'hatch-dark bg-bg text-text ring-1 ring-inset ring-border' : `${ROT_BG[card.id]} text-white`
-              }`}
-            >
+            {/* Dark text on a light cell with the rotation's color as a bar: readable at any size. */}
+            <span className={`relative mt-1 flex min-h-[44px] items-center justify-center overflow-hidden rounded-[5px] bg-bg px-1.5 pb-1 pt-2.5 text-center text-sm font-semibold leading-tight text-text ring-1 ring-inset ring-border ${card.id === 'fallow' ? 'hatch-dark' : ''}`}>
+              <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1.5 ${ROT_BG[card.id]}`} />
               {c}
             </span>
           </li>

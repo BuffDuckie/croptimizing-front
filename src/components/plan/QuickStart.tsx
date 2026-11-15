@@ -54,7 +54,7 @@ export function QuickStart() {
               value={preset}
               onChange={setPreset}
               className="!grid-cols-1"
-              options={presets.map((p) => ({ value: p.id, label: `${p.label} (${af(presetBudget(p.afPerAcre), lang)} AF)` }))}
+              options={presets.map((p) => ({ value: p.id, label: `${p.label} · ${af(presetBudget(p.afPerAcre), lang)} AF` }))}
             />
           </fieldset>
           <fieldset className="min-w-0">

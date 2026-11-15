@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { chromium } from '@playwright/test';
 
 const base = process.argv[2] ?? 'http://localhost:5173';
-const routes = ['/', '/plan', '/tradeoffs', '/compare', '/why', '/stress', '/report', '/method', '/about', '/plan?s=70'];
+const routes = ['/', '/plan', '/plan?goal=soil', '/tradeoffs', '/tradeoffs?view=soil', '/compare', '/why', '/stress', '/report', '/method', '/about', '/plan?s=70'];
 const browser = await chromium.launch({ channel: 'chrome' });
 let serious = 0;
 for (const width of [1440, 375]) {
@@ -11,7 +11,7 @@ for (const width of [1440, 375]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
     const page = await context.newPage();
     for (const r of routes) {
-      await page.goto(`${base}${r}?lang=${lang}`, { waitUntil: 'networkidle' });
+      await page.goto(`${base}${r}${r.includes('?') ? '&' : '?'}lang=${lang}`, { waitUntil: 'networkidle' });
       await page.waitForTimeout(500);
       const res = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
       for (const v of res.violations) {

@@ -41,7 +41,7 @@ function WaterPresets() {
                 onClick={() => setControl('water', budget)}
                 className={`min-h-[44px] rounded-l-full py-1.5 pl-3.5 pr-1 text-left text-sm leading-tight ${on ? 'font-semibold text-text' : 'font-medium text-text'}`}
               >
-                {p.label} <span className="tnum whitespace-nowrap text-text-muted">({af(budget, lang)} AF)</span>
+                {p.label} <span className="tnum whitespace-nowrap text-text-muted">· {af(budget, lang)} AF</span>
               </button>
               <Popover
                 label={t('plan.preset.sourceFor', { name: p.label })}
