@@ -506,7 +506,19 @@
     "pests": "Ciclos de plagas:",
     "infiltration": "Agua que entra al suelo (infiltración):",
     "todoLine": "TODO: una oración sencilla del equipo de ciencia.",
-    "fits": "En todos sus acres, cabe en su agua ({{w}} AF/acre) en {{k}} de {{n}} años."
+    "fits": "En todos sus acres, cabe en su agua ({{w}} AF/acre) en {{k}} de {{n}} años.",
+    "seqTitle": "Cuatro años en un campo",
+    "seq": {
+      "year": "Año {{n}}",
+      "stand": "Alfalfa, año {{n}} del cultivo",
+      "cotton_barley": "Algodón, luego cebada",
+      "durum_sorghum": "Trigo duro, luego sorgo",
+      "barley_fallow": "Cebada, luego barbecho",
+      "fallow": "Barbecho",
+      "aria": "{{name}} en cuatro años: {{list}}.",
+      "carry": "Nitrógeno que queda:",
+      "carryTodo": "TODO: cuánto nitrógeno deja esta rotación para el siguiente cultivo, del equipo de ciencia."
+    }
   },
   "why": {
     "lead": "El agua aquí escasea por ambos lados: hay menos bajo tierra y cada cultivo necesita más con el calor.",

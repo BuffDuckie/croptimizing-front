@@ -505,7 +505,19 @@
     "pests": "Pest cycles:",
     "infiltration": "Water soaking in (infiltration):",
     "todoLine": "TODO: one plain sentence from the science teammate.",
-    "fits": "On every acre, fits your water ({{w}} AF/acre) in {{k}} of {{n}} years."
+    "fits": "On every acre, fits your water ({{w}} AF/acre) in {{k}} of {{n}} years.",
+    "seqTitle": "Four years on one field",
+    "seq": {
+      "year": "Year {{n}}",
+      "stand": "Alfalfa, stand year {{n}}",
+      "cotton_barley": "Cotton, then barley",
+      "durum_sorghum": "Durum, then sorghum",
+      "barley_fallow": "Barley, then fallow",
+      "fallow": "Fallow",
+      "aria": "{{name}} over four years: {{list}}.",
+      "carry": "Nitrogen carryover:",
+      "carryTodo": "TODO: how much nitrogen this rotation leaves for the next crop, from the science teammate."
+    }
   },
   "why": {
     "lead": "Water here is getting scarcer from both ends: less underground, and more needed by every crop in the heat.",

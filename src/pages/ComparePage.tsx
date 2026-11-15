@@ -2,6 +2,7 @@ import { BookOpen, CircleHelp, Lightbulb, MapPin, Snowflake, Sun, ThumbsUp } fro
 import { useTranslation } from 'react-i18next';
 import type { PlanResponse, RotationCard, RotationId } from '../api/types';
 import { CalendarStrip } from '../components/charts/CalendarStrip';
+import { SequenceStrip } from '../components/charts/SequenceStrip';
 import { DataTable } from '../components/charts/ChartCard';
 import { ROT_BG } from '../components/charts/rotation';
 import { SoilBreakdown } from '../components/charts/SoilBreakdown';
@@ -155,6 +156,11 @@ function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: Rot
             {t('compare.fits', { k: yearsFit(card.yearlyWaterAf, controls.water), n: card.yearlyWaterAf.length, w: af(controls.water, lang) })}
           </p>
         )}
+      </section>
+
+      <section aria-label={t('compare.seqTitle')}>
+        <h3 className="mb-2 text-sm font-semibold text-text-muted">{t('compare.seqTitle')}</h3>
+        <SequenceStrip card={card} />
       </section>
 
       <section aria-label={t('compare.statement', yrs)}>
