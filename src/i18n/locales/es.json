@@ -331,6 +331,16 @@
       "was": "actual: {{v}}",
       "how1": "Los meses desnudos salen del calendario de cada rotación (página Comparar), ponderados por sus acres. Los acres que fijan nitrógeno son acres en una leguminosa, como la alfalfa.",
       "how2": "Las familias de cultivos cuentan las familias de plantas que siembra (pastos, leguminosas, malváceas): más familias rompen los ciclos de plagas y enfermedades. El residuo es la parte de residuos del puntaje de suelo, de 20."
+    },
+    "soilGoals": {
+      "title": "¿Qué metas de suelo le importan?",
+      "help": "Su puntaje de suelo cuenta solo las metas que elija, ajustado a 0 a 100. El mínimo de suelo, las métricas y las vistas de suelo lo usan.",
+      "legume": "Nitrógeno",
+      "livingRoots": "Raíces vivas",
+      "residue": "Cobertura del suelo",
+      "lowTillage": "Menos labranza",
+      "diversity": "Diversidad de cultivos",
+      "keepOne": "Deje al menos una meta de suelo"
     }
   },
   "strip": {
@@ -407,7 +417,9 @@
       "lowTillage": "Poca labranza",
       "diversity": "Variedad de cultivos",
       "total": "Puntaje de suelo",
-      "of20": "de 20"
+      "of20": "de 20",
+      "notCounted": "no es una de sus metas de suelo",
+      "totalGoals": "Puntaje de suelo (sus metas)"
     },
     "blocks": {
       "why": "Por qué se sugiere",

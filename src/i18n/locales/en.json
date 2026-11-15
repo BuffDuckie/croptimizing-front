@@ -330,6 +330,16 @@
       "was": "current: {{v}}",
       "how1": "Bare months come from each rotation's growing calendar (Compare page), weighted by its acres. Nitrogen-fixing acres are acres in a legume, like alfalfa.",
       "how2": "Crop families count the plant families you grow (grasses, legumes, mallows): more families break pest and disease cycles. Residue is the residue part of the soil score, out of 20."
+    },
+    "soilGoals": {
+      "title": "Which soil goals matter to you?",
+      "help": "Your soil score counts only the goals you pick, rescaled to 0 to 100. The soil minimum, metrics, and soil views all use it.",
+      "legume": "Nitrogen",
+      "livingRoots": "Living roots",
+      "residue": "Ground cover",
+      "lowTillage": "Less tillage",
+      "diversity": "Crop diversity",
+      "keepOne": "Keep at least one soil goal"
     }
   },
   "strip": {
@@ -406,7 +416,9 @@
       "lowTillage": "Low tillage",
       "diversity": "Crop diversity",
       "total": "Soil score",
-      "of20": "out of 20"
+      "of20": "out of 20",
+      "notCounted": "not one of your soil goals",
+      "totalGoals": "Soil score (your goals)"
     },
     "blocks": {
       "why": "Why suggested",

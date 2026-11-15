@@ -73,6 +73,7 @@ function RotationCardView({ card, recShare, curShare }: { card: RotationCard; re
   const { t, i18n } = useTranslation();
   const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
+  const { controls } = usePlanContext();
   const blocks = [
     { key: 'why', icon: Lightbulb, text: card.why },
     { key: 'evidence', icon: BookOpen, text: card.evidence },
@@ -139,7 +140,7 @@ function RotationCardView({ card, recShare, curShare }: { card: RotationCard; re
           {t('compare.soilTitle')}
           <InfoTip term="soilScore" />
         </h3>
-        <SoilBreakdown soil={card.soil} />
+        <SoilBreakdown soil={card.soil} selected={controls.soilParts} />
       </section>
 
       <div className="space-y-4 border-t border-border-soft pt-5">

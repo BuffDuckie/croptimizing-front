@@ -74,6 +74,27 @@ export function getBaseMatrices(): Base {
   return base;
 }
 
+const soilVecCache = new Map<string, Float64Array>();
+
+/** Soil score of every mix, from one score per rotation (share-weighted). Memoized. */
+export function mixSoilVector(rotSoil: Record<RotationId, number>): Float64Array {
+  const S = ROTATION_IDS.map((id) => rotSoil[id]);
+  const key = `${datasetVersion()}|${S.join(',')}`;
+  const hit = soilVecCache.get(key);
+  if (hit) return hit;
+  const u = enumerateMixes();
+  const n = u.length / R;
+  const out = new Float64Array(n);
+  for (let k = 0; k < n; k++) {
+    let s = 0;
+    for (let i = 0; i < R; i++) s += (u[k * R + i] / UNITS) * S[i];
+    out[k] = s;
+  }
+  if (soilVecCache.size > 16) soilVecCache.clear();
+  soilVecCache.set(key, out);
+  return out;
+}
+
 /** Mean of the worst 20% of values (the lowest 4 of 20 years). Equals -CVaR at 80%. */
 export function worstShareMean(values: ArrayLike<number>): number {
   const k = Math.max(1, Math.round(values.length * 0.2));

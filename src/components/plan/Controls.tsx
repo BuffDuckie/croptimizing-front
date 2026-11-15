@@ -1,7 +1,7 @@
-import { RotateCcw, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Check, RotateCcw, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ROTATION_IDS } from '../../api/types';
+import { ROTATION_IDS, SOIL_PART_IDS } from '../../api/types';
 import { af, money, whole } from '../../lib/format';
 import { usePlanContext } from '../../state/PlanContext';
 import { Disclosure } from '../ui/Disclosure';
@@ -80,6 +80,46 @@ export function SoilSlider() {
   );
 }
 
+/** Which soil goals count toward the soil score. At least one stays on. */
+function SoilGoals() {
+  const { t } = useTranslation();
+  const { controls, setControl } = usePlanContext();
+  const on = controls.soilParts;
+  return (
+    <fieldset>
+      <legend className="mb-1 text-base font-semibold text-text">{t('plan.soilGoals.title')}</legend>
+      <p id="soil-goals-help" className="mb-3 text-sm text-text-muted">
+        {t('plan.soilGoals.help')}
+      </p>
+      <div className="flex flex-wrap gap-2" aria-describedby="soil-goals-help">
+        {SOIL_PART_IDS.map((p) => {
+          const pressed = on.includes(p);
+          const last = pressed && on.length === 1;
+          return (
+            <button
+              key={p}
+              type="button"
+              aria-pressed={pressed}
+              aria-disabled={last || undefined}
+              title={last ? t('plan.soilGoals.keepOne') : undefined}
+              onClick={() => {
+                if (last) return;
+                setControl('soilParts', pressed ? on.filter((x) => x !== p) : SOIL_PART_IDS.filter((x) => x === p || on.includes(x)));
+              }}
+              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3.5 text-base font-medium ring-1 ring-inset transition-colors duration-fast ${
+                pressed ? 'bg-secondary-tint text-secondary ring-secondary/40' : 'bg-surface text-text-muted ring-border'
+              } ${last ? 'cursor-not-allowed' : ''}`}
+            >
+              {pressed ? <Check aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} /> : <span aria-hidden="true" className="h-4 w-4 rounded-full ring-1 ring-inset ring-border" />}
+              {t(`plan.soilGoals.${p}`)}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
 function MoreOptions() {
   const { t } = useTranslation();
   const lang = useLang();
@@ -87,6 +127,7 @@ function MoreOptions() {
   return (
     <Disclosure title={t('plan.more')} icon="none">
       <div className="space-y-6">
+        <SoilGoals />
         <fieldset>
           <legend className="mb-3 text-base font-semibold text-text">{t('plan.maxShare')}</legend>
           <div className="space-y-3">

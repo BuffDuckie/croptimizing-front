@@ -110,6 +110,8 @@ export async function getPlan(req: PlanRequest): Promise<PlanResponse> {
   const m = mode();
   // Sample mode validates request and response inside the worker, so zod stays off the main thread.
   if (m === 'sample') return runSample(req);
+  // Static files cover the default soil goals only; other goals run in the browser engine.
+  if (m === 'static' && req.soilParts) return runSample(req);
   const { planRequestSchema, planResponseSchema } = await import('./schemas');
   const valid = planRequestSchema.parse(req) as PlanRequest;
   try {

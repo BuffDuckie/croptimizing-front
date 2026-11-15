@@ -1,8 +1,8 @@
 // In-browser mirror of the backend's math. Same output shape as the API.
 
 import { InfeasibleError } from '../api/errors';
-import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RiskStats, RotationCard, RotationId, SensitivityRow } from '../api/types';
-import { ROTATION_IDS } from '../api/types';
+import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RiskStats, RotationCard, RotationId, SensitivityRow, SoilPartId } from '../api/types';
+import { ROTATION_IDS, SOIL_PART_IDS } from '../api/types';
 import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_FAMILIES, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
 import {
   correlation,
@@ -11,6 +11,7 @@ import {
   mean,
   mixAt,
   mixCount,
+  mixSoilVector,
   seriesForMix,
   soilForMix,
   UNITS,
@@ -205,7 +206,24 @@ function cleanMix(mix: Mix): Mix {
   return out;
 }
 
-function metricsFor(mix: Mix, adjust: Adjust, waterValuePerAf: number, years?: number[]): Metrics {
+/**
+ * Soil score of each rotation from the selected soil parts, rescaled to 0 to 100.
+ * With all five parts it is simply their sum.
+ */
+export function rotationSoil(selected: readonly SoilPartId[] = SOIL_PART_IDS): Record<RotationId, number> {
+  const parts = getDataset().soilParts;
+  const pick = selected.length > 0 ? selected : SOIL_PART_IDS;
+  const out = {} as Record<RotationId, number>;
+  for (const id of ROTATION_IDS) out[id] = (pick.reduce((s, p) => s + parts[id][p], 0) * 100) / (20 * pick.length);
+  return out;
+}
+
+/** Per-mix stats with the soil score for the selected soil goals. */
+function statsWith(adjust: Adjust, soilVec: Float64Array, yearIdx?: number[]): MixStats {
+  return { ...getMixStats(adjust, yearIdx), soil: soilVec };
+}
+
+function metricsFor(mix: Mix, adjust: Adjust, waterValuePerAf: number, rotSoil: Record<RotationId, number>, years?: number[]): Metrics {
   const s = seriesForMix(mix, adjust);
   const use = years ? s.filter((x) => years.includes(x.year)) : s;
   const profits = use.map((x) => x.profit);
@@ -213,9 +231,10 @@ function metricsFor(mix: Mix, adjust: Adjust, waterValuePerAf: number, years?: n
     avgProfitPerAcre: round(mean(profits)),
     worst1in5PerAcre: round(worstShareMean(profits)),
     maxWaterAfPerAcre: round(Math.max(...use.map((x) => x.water)), 3),
-    soilScore: round(soilForMix(mix), 2),
+    soilScore: round(soilForMix(mix, rotSoil), 2),
     waterValuePerAf: round(waterValuePerAf),
     yearlyProfit: use.map((x) => ({ year: x.year, profit: round(x.profit) })),
+    yearlyWater: use.map((x) => ({ year: x.year, water: round(x.water, 3) })),
   };
 }
 
@@ -271,7 +290,7 @@ export function fitToBudget(mix: Mix, scenario: WaterYear[], waterCap: number): 
   return { mix: out, trimmed: true, needAfPerAcre: need };
 }
 
-function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust: Adjust): RotationCard[] {
+function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust: Adjust, rotSoil: Record<RotationId, number>): RotationCard[] {
   const ds = getDataset();
   const data = ds.scenario;
   const scale = BASE_EFFICIENCY / adjust.efficiency;
@@ -288,7 +307,8 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
       seasons: txt.seasons,
       calendar: CALENDARS[id],
       heatRiskMonths: id === 'fallow' ? [] : HEAT_RISK_MONTHS,
-      soil: { ...parts, total: data.soil[id] },
+      // total follows the selected soil goals; the five parts are always shown as they are.
+      soil: { ...parts, total: round(rotSoil[id], 1) },
       stats: {
         avgProfit: round(avgProfit),
         profitPerAf: avgWater > 0 ? round(avgProfit / avgWater) : 0,
@@ -324,7 +344,9 @@ export function runPlan(req: PlanRequest): PlanResponse {
   };
   const c: Constraints = { cap: req.waterCapAfPerAcre, minSoil: req.minSoilScore, maxShare: req.maxShare };
   const risk = Math.min(1, Math.max(0, req.riskLevel));
-  const stats = getMixStats(adjust);
+  const rotSoil = rotationSoil(req.soilParts);
+  const soilVec = mixSoilVector(rotSoil);
+  const stats = statsWith(adjust, soilVec);
 
   const feasible = feasibleIndices(stats, c);
   const best = bestIndex(stats, feasible, risk);
@@ -336,9 +358,9 @@ export function runPlan(req: PlanRequest): PlanResponse {
   const fit = fitToBudget(asFarmedMix, waterScenario(adjust), c.cap);
   const currentMix = fit.mix;
   const wv = waterValue(stats, c, risk);
-  const recommended = { mix: cleanMix(recMix), metrics: metricsFor(recMix, adjust, wv) };
-  const current = { mix: cleanMix(currentMix), metrics: metricsFor(currentMix, adjust, 0) };
-  const currentAsFarmed = { mix: cleanMix(asFarmedMix), metrics: metricsFor(asFarmedMix, adjust, 0) };
+  const recommended = { mix: cleanMix(recMix), metrics: metricsFor(recMix, adjust, wv, rotSoil) };
+  const current = { mix: cleanMix(currentMix), metrics: metricsFor(currentMix, adjust, 0, rotSoil) };
+  const currentAsFarmed = { mix: cleanMix(asFarmedMix), metrics: metricsFor(asFarmedMix, adjust, 0, rotSoil) };
 
   const frontier = paretoFrontier(stats, feasible).map((k) => ({
     worst1in5: round(stats.worst[k]),
@@ -359,8 +381,8 @@ export function runPlan(req: PlanRequest): PlanResponse {
     recommendedWater: round(recSeries[t].water, 3),
   }));
 
-  const backtest = runBacktest(req, adjust, c, risk, asFarmedMix);
-  const sensitivity = runSensitivity(adjust, c, risk, best);
+  const backtest = runBacktest(req, adjust, c, risk, asFarmedMix, soilVec);
+  const sensitivity = runSensitivity(adjust, c, risk, best, soilVec);
   const classic = classicComparison(stats, feasible, stats.avg[best]);
   const recRisk = riskStats(recMix, adjust);
   const curRisk = riskStats(currentMix, adjust);
@@ -379,7 +401,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     current,
     currentAsFarmed,
     frontier,
-    rotations: rotationCards(lang, recMix, asFarmedMix, adjust),
+    rotations: rotationCards(lang, recMix, asFarmedMix, adjust, rotSoil),
     stressTests,
     backtest,
     correlations,
@@ -408,7 +430,7 @@ export function yearRange(years: number[]) {
 }
 
 /** The suggested plan re-run with profits, water cost, and irrigation efficiency changed. */
-export function runSensitivity(adjust: Adjust, c: Constraints, risk: number, baseIndex: number): SensitivityRow[] {
+export function runSensitivity(adjust: Adjust, c: Constraints, risk: number, baseIndex: number, soilVec: Float64Array = mixSoilVector(rotationSoil())): SensitivityRow[] {
   const cases: { case: SensitivityRow['case']; value: number; adjust: Adjust }[] = [
     { case: 'profitDown', value: -0.2, adjust: { ...adjust, profitShock: -0.2 } },
     { case: 'profitUp', value: 0.2, adjust: { ...adjust, profitShock: 0.2 } },
@@ -420,7 +442,7 @@ export function runSensitivity(adjust: Adjust, c: Constraints, risk: number, bas
   cases.push({ case: 'efficiencyLow', value: 0.65, adjust: { ...adjust, efficiency: 0.65 } });
   cases.push({ case: 'efficiencyHigh', value: 0.85, adjust: { ...adjust, efficiency: 0.85 } });
   return cases.map((x) => {
-    const stats = getMixStats(x.adjust);
+    const stats = statsWith(x.adjust, soilVec);
     const k = bestIndex(stats, feasibleIndices(stats, c), risk);
     if (k < 0) return { case: x.case, value: x.value, avgProfit: null, worst1in5: null, mix: null, mixChanged: true };
     return {
@@ -435,12 +457,12 @@ export function runSensitivity(adjust: Adjust, c: Constraints, risk: number, bas
 }
 
 /** Pick a plan using the first half of the years only (2005 to 2014), then score it on the second half. */
-function runBacktest(req: PlanRequest, adjust: Adjust, c: Constraints, risk: number, currentMix: Mix): PlanResponse['backtest'] {
+function runBacktest(req: PlanRequest, adjust: Adjust, c: Constraints, risk: number, currentMix: Mix, soilVec: Float64Array): PlanResponse['backtest'] {
   const data = getDataset().scenario;
   const half = Math.floor(data.years.length / 2);
   const trainIdx = data.years.slice(0, half).map((_, i) => i);
   const TEST_YEARS = data.years.slice(half);
-  const train = getMixStats(adjust, trainIdx);
+  const train = statsWith(adjust, soilVec, trainIdx);
   const feasible = feasibleIndices(train, c);
   const L = BACKTEST_LABELS[req.lang](yearRange(data.years));
 

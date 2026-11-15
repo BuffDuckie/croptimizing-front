@@ -263,3 +263,21 @@ describe('risk ratios', () => {
     expect(r.diversification === null || r.diversification >= 0).toBe(true);
   });
 });
+
+describe('soil goals', () => {
+  it('with all five goals, gives the same plan as no goals at all', () => {
+    const all = runPlan({ ...base, soilParts: ['legume', 'livingRoots', 'residue', 'lowTillage', 'diversity'] });
+    const none = runPlan(base);
+    expect(all.recommended.mix).toEqual(none.recommended.mix);
+    expect(all.recommended.metrics.soilScore).toBeCloseTo(none.recommended.metrics.soilScore, 6);
+  });
+
+  it('rescales the selected parts to 0-100 and holds the minimum on that score', () => {
+    const res = runPlan({ ...base, soilParts: ['legume'] });
+    // Only alfalfa scores on nitrogen in the sample (20 of 20 -> 100), so a 30 minimum needs 30% alfalfa.
+    expect(res.rotations.find((r) => r.id === 'alfalfa')?.soil.total).toBe(100);
+    expect(res.rotations.find((r) => r.id === 'durum_sorghum')?.soil.total).toBe(0);
+    expect(res.recommended.mix.alfalfa ?? 0).toBeGreaterThanOrEqual(0.3 - 1e-9);
+    expect(res.recommended.metrics.soilScore).toBeGreaterThanOrEqual(30 - 1e-9);
+  });
+});

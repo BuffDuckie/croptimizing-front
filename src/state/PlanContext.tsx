@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { isInfeasible, type InfeasibleDetail } from '../api/errors';
-import type { Mix, PlanRequest, PlanResponse, RotationId } from '../api/types';
+import type { Mix, PlanRequest, PlanResponse, RotationId, SoilPartId } from '../api/types';
+import { SOIL_PART_IDS } from '../api/types';
 import { DEMO_DEFAULTS, YEARS_BEFORE_DATA } from '../config/demo';
 import { usePlan } from '../hooks/usePlan';
 import { isSample, PLAN_DATASETS } from '../lib/sources';
@@ -25,6 +26,7 @@ export type Controls = {
   waterCost: number; // extra $/AF
   efficiency: number; // 0.5 to 0.95
   lease: number | null; // what one more acre-foot would cost to lease or pump, $/AF (blank = not set)
+  soilParts: SoilPartId[]; // soil goals that count toward the soil score (all five by default)
 };
 
 export const DEMO_FARM: Farm = {
@@ -42,7 +44,10 @@ export const DEFAULT_CONTROLS: Controls = {
   waterCost: 0,
   efficiency: 0.75,
   lease: null,
+  soilParts: [...SOIL_PART_IDS],
 };
+
+const allSoil = (parts: SoilPartId[]) => SOIL_PART_IDS.every((p) => parts.includes(p));
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 
@@ -58,6 +63,11 @@ function readUrl(): Partial<Controls> {
   if (q.has('s') && Number.isFinite(s)) out.soil = clamp(Math.round(s), 0, 100);
   const lease = Number(q.get('lease'));
   if (q.get('lease') && Number.isFinite(lease)) out.lease = clamp(Math.round(lease), 0, 5000);
+  const soilw = q.get('soilw');
+  if (soilw) {
+    const parts = SOIL_PART_IDS.filter((p) => soilw.split(',').includes(p));
+    if (parts.length > 0) out.soilParts = parts;
+  }
   return out;
 }
 
@@ -107,6 +117,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
       ...(controls.efficiency !== DEFAULT_CONTROLS.efficiency ? { irrigationEfficiency: controls.efficiency } : {}),
       currentMix: farm.currentMix,
       lang,
+      ...(allSoil(controls.soilParts) ? {} : { soilParts: SOIL_PART_IDS.filter((p) => controls.soilParts.includes(p)) }),
     };
   }, [farm, controls, lang]);
 
@@ -136,11 +147,13 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     q.set('lang', lang);
     if (controls.lease === null) q.delete('lease');
     else q.set('lease', String(controls.lease));
+    if (allSoil(controls.soilParts)) q.delete('soilw');
+    else q.set('soilw', SOIL_PART_IDS.filter((p) => controls.soilParts.includes(p)).join(','));
     const url = `${window.location.pathname}?${q.toString()}${window.location.hash}`;
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, '', url);
     }
-  }, [controls.water, controls.risk, controls.soil, controls.lease, lang, location.pathname]);
+  }, [controls.water, controls.risk, controls.soil, controls.lease, controls.soilParts, lang, location.pathname]);
 
   const value: Ctx = {
     farm,
