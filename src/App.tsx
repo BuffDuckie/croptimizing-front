@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { Footer } from './components/layout/Footer';
 import { Header } from './components/layout/Header';
+import { FallbackBanner } from './components/layout/FallbackBanner';
 import StartPage from './pages/StartPage';
+import { PlanProvider, usePlanContext } from './state/PlanContext';
 
 const PlanPage = lazy(() => import('./pages/PlanPage'));
 const TradeoffsPage = lazy(() => import('./pages/TradeoffsPage'));
@@ -29,8 +31,18 @@ function RouteEffects() {
   return null;
 }
 
-export function AppShell({ showSample = true }: { showSample?: boolean }) {
+export function AppShell() {
+  return (
+    <PlanProvider>
+      <Shell />
+    </PlanProvider>
+  );
+}
+
+function Shell() {
   const { t } = useTranslation();
+  const { data, fellBack } = usePlanContext();
+  const showSample = !data || data.dataSource === 'sample' || fellBack;
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -41,6 +53,7 @@ export function AppShell({ showSample = true }: { showSample?: boolean }) {
       </a>
       <RouteEffects />
       <Header showSample={showSample} />
+      <FallbackBanner />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         <Suspense fallback={<div className="container-content min-h-[60vh] py-16" aria-busy="true" />}>
           <Routes>

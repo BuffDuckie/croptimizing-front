@@ -202,7 +202,8 @@ Use short sentences and second person ("your water"). Tooltip glossary, one sent
 ## Decisions made with the team after the brief (these override the brief where they differ)
 
 - Product name stays **Croptimizing**.
-- **Default soil-health minimum is 40, not 50.** With the placeholder numbers, water 2.4 plus soil 50 has no feasible mix (soil 50 needs at least 50% alfalfa, about 2.6 AF/acre in an average year). Water default stays 2.4.
+- **Default soil-health minimum is 30, not 50.** With the placeholder numbers, water 2.4 plus soil 50 has no feasible mix, and soil 40 pins the plan to one corner. Water default stays 2.4.
+- **Placeholder profits retuned** (water and soil unchanged) so the frontier and risk slider show a real trade-off: alfalfa $450 sd $150; cotton_barley $500 sd $320 (high return, high risk); durum_sorghum $300 sd $110; barley_fallow $140 sd $60; fallow as briefed. Winter crops carry little heat exposure; cotton is less tied to the shared price factor.
 - **Motion has two tiers.** Feedback (press, hover, slider, toggles) stays under 200 ms. Entrances, number changes, panels, and the landing hero may run 250 to 500 ms. Everything collapses to short fades under prefers-reduced-motion.
 - Landing page: deep navy hero with the "Fields re-plan" animation (field parcels re-plan as the water gauge drains from 5.2 to 2.4 AF/acre), handing off to light app pages.
 - Inter only. No em dashes anywhere in UI copy or locale files (a test enforces this). Avoid generic "AI-made site" tells: emoji, gradient text, purple, sparkle icons, buzzword copy.

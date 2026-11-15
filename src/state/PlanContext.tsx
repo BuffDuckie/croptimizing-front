@@ -1,0 +1,145 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+import { isInfeasible, type InfeasibleDetail } from '../api/errors';
+import type { Mix, PlanRequest, PlanResponse, RotationId } from '../api/types';
+import { usePlan } from '../hooks/usePlan';
+
+export type Region = PlanRequest['region'];
+
+export type Farm = {
+  name: string;
+  acres: number;
+  region: Region;
+  /** Current crop shares, 0 to 1. */
+  currentMix: Mix;
+};
+
+export type Controls = {
+  water: number; // AF/acre, 0.5 to 6.0
+  risk: number; // slider 0 to 100
+  soil: number; // 0 to 100
+  maxSharePct: Partial<Record<RotationId, number>>; // 0 to 100, missing = 100
+  waterCost: number; // extra $/AF
+  efficiency: number; // 0.5 to 0.95
+};
+
+export const DEMO_FARM: Farm = {
+  name: 'Pinal County demo farm',
+  acres: 640,
+  region: 'pinal',
+  currentMix: { alfalfa: 0.7, cotton_barley: 0.3 },
+};
+
+export const DEFAULT_CONTROLS: Controls = {
+  water: 2.4,
+  risk: 40,
+  soil: 30,
+  maxSharePct: {},
+  waterCost: 0,
+  efficiency: 0.75,
+};
+
+const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
+
+function readUrl(): Partial<Controls> {
+  if (typeof window === 'undefined') return {};
+  const q = new URLSearchParams(window.location.search);
+  const out: Partial<Controls> = {};
+  const w = Number(q.get('w'));
+  const r = Number(q.get('r'));
+  const s = Number(q.get('s'));
+  if (q.has('w') && Number.isFinite(w)) out.water = clamp(Math.round(w * 10) / 10, 0.5, 6);
+  if (q.has('r') && Number.isFinite(r)) out.risk = clamp(Math.round(r), 0, 100);
+  if (q.has('s') && Number.isFinite(s)) out.soil = clamp(Math.round(s), 0, 100);
+  return out;
+}
+
+type Ctx = {
+  farm: Farm;
+  setFarm: (f: Farm) => void;
+  controls: Controls;
+  setControl: <K extends keyof Controls>(k: K, v: Controls[K]) => void;
+  resetControls: () => void;
+  request: PlanRequest;
+  /** Latest successful response (kept while new results load or when the latest is infeasible). */
+  data: PlanResponse | null;
+  isLoading: boolean;
+  infeasible: InfeasibleDetail | null;
+  error: unknown;
+  fellBack: boolean;
+  dismissFallback: () => void;
+};
+
+const PlanCtx = createContext<Ctx | null>(null);
+
+export function PlanProvider({ children }: { children: ReactNode }) {
+  const { i18n } = useTranslation();
+  const location = useLocation();
+  const [farm, setFarm] = useState<Farm>(DEMO_FARM);
+  const [controls, setControls] = useState<Controls>(() => ({ ...DEFAULT_CONTROLS, ...readUrl() }));
+  const lang = i18n.language === 'es' ? 'es' : 'en';
+
+  const setControl = useCallback(<K extends keyof Controls>(k: K, v: Controls[K]) => {
+    setControls((c) => ({ ...c, [k]: v }));
+  }, []);
+  const resetControls = useCallback(() => setControls(DEFAULT_CONTROLS), []);
+
+  const request = useMemo<PlanRequest>(() => {
+    const maxShare: Mix = {};
+    for (const [id, p] of Object.entries(controls.maxSharePct)) if (p !== undefined && p < 100) maxShare[id as RotationId] = p / 100;
+    return {
+      region: farm.region,
+      acres: farm.acres,
+      waterCapAfPerAcre: controls.water,
+      riskLevel: controls.risk / 100,
+      minSoilScore: controls.soil,
+      ...(Object.keys(maxShare).length ? { maxShare } : {}),
+      ...(controls.waterCost > 0 ? { waterCostPerAf: controls.waterCost } : {}),
+      ...(controls.efficiency !== DEFAULT_CONTROLS.efficiency ? { irrigationEfficiency: controls.efficiency } : {}),
+      currentMix: farm.currentMix,
+      lang,
+    };
+  }, [farm, controls, lang]);
+
+  const plan = usePlan(request);
+
+  // Keep the last good response so other pages still work when a setting has no plan.
+  const lastGood = useRef<PlanResponse | null>(null);
+  if (plan.data && !plan.error) lastGood.current = plan.data;
+
+  // Mirror the three main settings and language into the URL so links and reports are shareable.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    q.set('w', controls.water.toFixed(1));
+    q.set('r', String(controls.risk));
+    q.set('s', String(controls.soil));
+    q.set('lang', lang);
+    const url = `${window.location.pathname}?${q.toString()}${window.location.hash}`;
+    if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(window.history.state, '', url);
+    }
+  }, [controls.water, controls.risk, controls.soil, lang, location.pathname]);
+
+  const value: Ctx = {
+    farm,
+    setFarm,
+    controls,
+    setControl,
+    resetControls,
+    request,
+    data: plan.data ?? lastGood.current,
+    isLoading: plan.isLoading,
+    infeasible: isInfeasible(plan.error) ? plan.error.detail : null,
+    error: isInfeasible(plan.error) ? null : plan.error,
+    fellBack: plan.fellBack,
+    dismissFallback: plan.dismissFallback,
+  };
+  return <PlanCtx.Provider value={value}>{children}</PlanCtx.Provider>;
+}
+
+export function usePlanContext(): Ctx {
+  const ctx = useContext(PlanCtx);
+  if (!ctx) throw new Error('usePlanContext must be used inside PlanProvider');
+  return ctx;
+}
