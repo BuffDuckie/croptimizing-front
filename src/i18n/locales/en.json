@@ -340,6 +340,21 @@
       "lowTillage": "Less tillage",
       "diversity": "Crop diversity",
       "keepOne": "Keep at least one soil goal"
+    },
+    "goal": {
+      "label": "What matters most this year?",
+      "suggested": "Suggested (your risk setting)",
+      "income": "Most income",
+      "water": "Least water",
+      "soil": "Best for soil",
+      "suggestedLine": "Suggested weighs your worst 1-in-5 years against your average year, using your risk comfort ({{r}}/100). Pick another goal to see what it changes.",
+      "same": "{{name}} lands on the same mix as Suggested at these settings.",
+      "down": "{{name}} gives up about {{x}} per acre in an average year and {{y}} in the worst 1-in-5 years, compared with Suggested.",
+      "mixed": "Compared with Suggested, {{name}} changes average-year profit by {{x}} per acre and worst 1-in-5 years profit by {{y}}.",
+      "waterExtra": "It needs {{w}} AF/acre less water in its highest year.",
+      "alsoSame": "Same mix as: {{list}}.",
+      "soilExtra_one": "Its soil score is {{s}} point higher.",
+      "soilExtra_other": "Its soil score is {{s}} points higher."
     }
   },
   "strip": {

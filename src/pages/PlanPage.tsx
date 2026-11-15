@@ -1,6 +1,8 @@
 import { AlertTriangle, ArrowRight, Droplets, Info } from 'lucide-react';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import type { GoalId, Mix, PlanResponse } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { DataTable } from '../components/charts/ChartCard';
 import { MetricCard } from '../components/charts/MetricCard';
@@ -15,6 +17,8 @@ import { SoilPanel } from '../components/plan/SoilPanel';
 import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
+import { Segmented } from '../components/ui/Segmented';
+import { useUrlParam } from '../hooks/useUrlParam';
 import { acresSplit, af, afDelta, money, moneyDelta, pct, whole, wholeDelta } from '../lib/format';
 import { currentTrim, useCurrentLabel, usePlanContext, useYears } from '../state/PlanContext';
 
@@ -47,16 +51,20 @@ function Results() {
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, infeasible, softened, controls, farm, isLoading } = usePlanContext();
   const curLabel = useCurrentLabel();
+  const [goal, setGoal] = useUrlParam<GoalId>('goal', GOALS, 'suggested');
 
   if (infeasible && !softened) return <Infeasible />;
   if (!data) return <ResultsSkeleton />;
   const soilMin = softened ? softened.soil : controls.soil;
 
-  const rec = data.recommended.metrics;
+  // The plan on screen: the suggested plan, or the best plan for the chosen goal.
+  const plan = goal === 'suggested' || !data.goals ? data.recommended : data.goals[goal];
+  const planLabel = goal === 'suggested' || !data.goals ? t('common.recommended') : t(`plan.goal.${goal}`);
+  const rec = plan.metrics;
   const cur = data.current.metrics;
   const budget = controls.water;
   const trim = currentTrim(data);
-  const split = acresSplit(data.recommended.mix, farm.acres);
+  const split = acresSplit(plan.mix, farm.acres);
   const curSplit = acresSplit(data.current.mix, farm.acres);
   const wv = rec.waterValuePerAf;
 
@@ -71,13 +79,29 @@ function Results() {
           </p>
         </>
       )}
+      {data.goals && (
+        <section aria-labelledby="goal-title" className="space-y-3">
+          <h2 id="goal-title" className="text-base font-semibold text-text">
+            {t('plan.goal.label')}
+          </h2>
+          <Segmented
+            label={t('plan.goal.label')}
+            value={goal}
+            onChange={setGoal}
+            options={GOALS.map((g) => ({ value: g, label: t(`plan.goal.${g}`) }))}
+          />
+          <p role="status" className="text-base text-text">
+            {goalLine(t, lang, goal, data, controls.risk)}
+          </p>
+        </section>
+      )}
       <section className="card" aria-labelledby="mix-title">
         <p className="eyebrow">{t('plan.mixSub', { acres: whole(farm.acres, lang) })}</p>
         <h2 id="mix-title" className="mt-2 text-2xl font-semibold leading-tight">
           {t('plan.mixTitle', { ...yrs, water: af(budget, lang) })}
         </h2>
         <div className="mt-6 space-y-6">
-          <MixBar mix={data.recommended.mix} acres={farm.acres} label={t('plan.suggestedRow')} />
+          <MixBar mix={plan.mix} acres={farm.acres} label={goal === 'suggested' ? t('plan.suggestedRow') : planLabel} />
           <div>
             <MixBar mix={data.current.mix} acres={farm.acres} label={trim ? curLabel : t('plan.currentRow')} size="sm" />
             {trim && <p className="mt-2 text-sm text-text-muted">{t('plan.trimNote', { need: af(trim.needAfPerAcre, lang) })}</p>}
@@ -148,8 +172,9 @@ function Results() {
         </MetricCard>
       </div>
 
-      <SoilPanel data={data} mix={data.recommended.mix} acres={farm.acres} planLabel={t('common.recommended')} />
+      <SoilPanel data={data} mix={plan.mix} acres={farm.acres} planLabel={planLabel} />
 
+      {goal === 'suggested' && (
       <section className="relative overflow-hidden rounded-card bg-primary p-6 text-white shadow-card md:p-8" aria-labelledby="wv-title">
         <div aria-hidden="true" className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/15 blur-2xl" />
         <div className="relative flex flex-col gap-5 md:flex-row md:items-center">
@@ -170,8 +195,9 @@ function Results() {
           </div>
         </div>
       </section>
+      )}
 
-      <YearsDotStrip current={cur.yearlyProfit} recommended={rec.yearlyProfit} />
+      <YearsDotStrip current={cur.yearlyProfit} recommended={rec.yearlyProfit} label={planLabel} />
       <p className="-mt-2">
         <Link to="/method#sensitivity" className="inline-flex min-h-[44px] items-center gap-1 text-base font-semibold">
           {t('plan.sensitive')} <ArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -208,7 +234,7 @@ function Results() {
                 head={[t('plan.colRotation'), t('plan.colShare'), t('plan.colAcres'), t('plan.colCurrent')]}
                 rows={ROTATION_IDS.map((id) => [
                   t(`rotations.${id}`),
-                  pct(data.recommended.mix[id] ?? 0, lang),
+                  pct(plan.mix[id] ?? 0, lang),
                   whole(split[id], lang),
                   whole(curSplit[id], lang),
                 ])}
@@ -230,6 +256,36 @@ function Results() {
       </section>
     </div>
   );
+}
+
+const GOALS: readonly GoalId[] = ['suggested', 'income', 'water', 'soil'];
+
+const sameMix = (a: Mix, b: Mix) => ROTATION_IDS.every((id) => Math.abs((a[id] ?? 0) - (b[id] ?? 0)) < 0.001);
+
+/** One computed line comparing the chosen goal with the suggested plan. */
+function goalLine(t: TFunction, lang: 'en' | 'es', goal: GoalId, data: PlanResponse, risk: number): string {
+  if (goal === 'suggested' || !data.goals) return t('plan.goal.suggestedLine', { r: risk });
+  const g = data.goals[goal];
+  const s = data.recommended;
+  const name = t(`plan.goal.${goal}`);
+  const others = (['income', 'water', 'soil'] as const).filter((o) => o !== goal && sameMix(data.goals![o].mix, g.mix)).map((o) => t(`plan.goal.${o}`));
+  const also = others.length ? ` ${t('plan.goal.alsoSame', { list: others.join(', ') })}` : '';
+  if (sameMix(g.mix, s.mix)) return t('plan.goal.same', { name }) + also;
+  const dAvg = g.metrics.avgProfitPerAcre - s.metrics.avgProfitPerAcre;
+  const dWorst = g.metrics.worst1in5PerAcre - s.metrics.worst1in5PerAcre;
+  const base =
+    dAvg <= 0 && dWorst <= 0
+      ? t('plan.goal.down', { name, x: money(-dAvg, lang), y: money(-dWorst, lang) })
+      : t('plan.goal.mixed', { name, x: moneyDelta(dAvg, lang), y: moneyDelta(dWorst, lang) });
+  const dWater = s.metrics.maxWaterAfPerAcre - g.metrics.maxWaterAfPerAcre;
+  const dSoil = g.metrics.soilScore - s.metrics.soilScore;
+  const extra =
+    goal === 'water' && dWater >= 0.05
+      ? ` ${t('plan.goal.waterExtra', { w: af(dWater, lang) })}`
+      : goal === 'soil' && dSoil >= 0.5
+        ? ` ${t('plan.goal.soilExtra', { count: Math.round(dSoil), s: whole(dSoil, lang) })}`
+        : '';
+  return base + extra + also;
 }
 
 function Infeasible() {

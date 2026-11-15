@@ -281,3 +281,27 @@ describe('soil goals', () => {
     expect(res.recommended.metrics.soilScore).toBeGreaterThanOrEqual(30 - 1e-9);
   });
 });
+
+describe('goal plans', () => {
+  it('each is the best feasible mix for its goal, under the same limits', () => {
+    const res = runPlan(base);
+    const g = res.goals!;
+    const stats = getMixStats();
+    const feasible = feasibleIndices(stats, { cap: base.waterCapAfPerAcre, minSoil: base.minSoilScore });
+    const maxAvg = Math.max(...feasible.map((k) => stats.avg[k]));
+    const minWater = Math.min(...feasible.map((k) => stats.maxWater[k]));
+    const maxSoil = Math.max(...feasible.map((k) => stats.soil[k]));
+    expect(g.income.metrics.avgProfitPerAcre).toBeCloseTo(maxAvg, 1);
+    expect(g.water.metrics.maxWaterAfPerAcre).toBeCloseTo(minWater, 2);
+    expect(g.soil.metrics.soilScore).toBeCloseTo(maxSoil, 1);
+    for (const p of [g.income, g.water, g.soil]) {
+      expect(p.metrics.maxWaterAfPerAcre).toBeLessThanOrEqual(base.waterCapAfPerAcre + 1e-3);
+      expect(p.metrics.soilScore).toBeGreaterThanOrEqual(base.minSoilScore - 1e-6);
+      expect(sum(p.mix)).toBeCloseTo(1, 6);
+    }
+  });
+
+  it('most income equals the risk-1 suggested plan', () => {
+    expect(runPlan(base).goals!.income.mix).toEqual(runPlan({ ...base, riskLevel: 1 }).recommended.mix);
+  });
+});

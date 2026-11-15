@@ -341,6 +341,21 @@
       "lowTillage": "Menos labranza",
       "diversity": "Diversidad de cultivos",
       "keepOne": "Deje al menos una meta de suelo"
+    },
+    "goal": {
+      "label": "¿Qué importa más este año?",
+      "suggested": "Sugerido (su nivel de riesgo)",
+      "income": "Más ingreso",
+      "water": "Menos agua",
+      "soil": "Mejor para el suelo",
+      "suggestedLine": "El sugerido compara sus peores años, 1 de cada 5, con su año promedio, según su comodidad con el riesgo ({{r}}/100). Elija otra meta para ver qué cambia.",
+      "same": "{{name}} llega a la misma mezcla que el sugerido con estos ajustes.",
+      "down": "{{name}} cede unos {{x}} por acre en un año promedio y {{y}} en los peores años, 1 de cada 5, comparado con el sugerido.",
+      "mixed": "Comparado con el sugerido, {{name}} cambia la ganancia de un año promedio en {{x}} por acre y la de los peores años, 1 de cada 5, en {{y}}.",
+      "waterExtra": "Necesita {{w}} AF/acre menos de agua en su año más alto.",
+      "alsoSame": "Misma mezcla que: {{list}}.",
+      "soilExtra_one": "Su puntaje de suelo es {{s}} punto más alto.",
+      "soilExtra_other": "Su puntaje de suelo es {{s}} puntos más alto."
     }
   },
   "strip": {

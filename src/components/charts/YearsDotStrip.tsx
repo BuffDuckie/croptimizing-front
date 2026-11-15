@@ -29,8 +29,9 @@ function worst4(ys: Year[]) {
  * One dot per past year for each plan. The worst 4 years are shaded and their
  * average marked, which explains the "worst 1-in-5 years" number without jargon.
  */
-export function YearsDotStrip({ current, recommended }: { current: Year[]; recommended: Year[] }) {
+export function YearsDotStrip({ current, recommended, label }: { current: Year[]; recommended: Year[]; /** Name of the filled plan (default: Suggested plan). */ label?: string }) {
   const { t, i18n } = useTranslation();
+  const recLabel = label ?? t('common.recommended');
   const planSample = usePlanSample();
   const yrs = useYears();
   const curLabel = useCurrentLabel();
@@ -51,7 +52,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
   const top = 34;
   const H = top + rowH * 2 + 44;
   const rows = [
-    { key: 'rec', label: t('common.recommended'), data: recommended, filled: true },
+    { key: 'rec', label: recLabel, data: recommended, filled: true },
     { key: 'cur', label: curLabel, data: current, filled: false },
   ];
   const rw = worst4(recommended);
@@ -75,7 +76,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
       table={
         <DataTable
           caption={t('strip.tableCaption')}
-          head={[t('strip.year'), t('common.recommended'), curLabel]}
+          head={[t('strip.year'), recLabel, curLabel]}
           rows={recommended.map((r, i) => [r.year, money(r.profit, lang), money(current[i]?.profit ?? 0, lang)])}
         />
       }
@@ -147,7 +148,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
         <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-text-muted" aria-hidden="true">
           <li className="flex items-center gap-2">
             <svg width="14" height="14"><circle cx="7" cy="7" r="6" fill={colors.primary} /></svg>
-            {t('common.recommended')}
+            {recLabel}
           </li>
           <li className="flex items-center gap-2">
             <svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill={colors.surface} stroke={colors.text} strokeWidth="1.75" /></svg>

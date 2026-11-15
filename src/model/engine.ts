@@ -90,6 +90,23 @@ export function paretoFrontier(stats: MixStats, feasible: number[]): number[] {
   return out.reverse();
 }
 
+/**
+ * The best feasible mix for each goal, from the same grid and limits as the
+ * suggested plan. Ties: income goes to higher soil; water to higher average;
+ * soil to the better risk-weighted objective.
+ */
+export function goalIndices(stats: MixStats, feasible: number[], risk: number): { income: number; water: number; soil: number } {
+  let income = -1;
+  let water = -1;
+  let soil = -1;
+  for (const k of feasible) {
+    if (income < 0 || stats.avg[k] > stats.avg[income] + EPS || (Math.abs(stats.avg[k] - stats.avg[income]) <= EPS && stats.soil[k] > stats.soil[income] + EPS)) income = k;
+    if (water < 0 || stats.maxWater[k] < stats.maxWater[water] - EPS || (Math.abs(stats.maxWater[k] - stats.maxWater[water]) <= EPS && stats.avg[k] > stats.avg[water] + EPS)) water = k;
+    if (soil < 0 || stats.soil[k] > stats.soil[soil] + EPS || (Math.abs(stats.soil[k] - stats.soil[soil]) <= EPS && objective(stats, k, risk) > objective(stats, soil, risk) + EPS)) soil = k;
+  }
+  return { income, water, soil };
+}
+
 /** Feasible mixes no other feasible mix beats on both soil score and average profit, sorted by soil. */
 export function soilFrontier(stats: MixStats, feasible: number[]): number[] {
   const sorted = [...feasible].sort((a, b) => stats.soil[b] - stats.soil[a] || stats.avg[b] - stats.avg[a]);
@@ -384,6 +401,13 @@ export function runPlan(req: PlanRequest): PlanResponse {
     mix: cleanMix(mixAt(k)),
   }));
 
+  const g = goalIndices(stats, feasible, risk);
+  const goalPlan = (k: number) => {
+    const mix = mixAt(k);
+    return { mix: cleanMix(mix), metrics: metricsFor(mix, adjust, 0, rotSoil) };
+  };
+  const goals = { income: goalPlan(g.income), water: goalPlan(g.water), soil: goalPlan(g.soil) };
+
   const soilPareto = soilFrontier(stats, feasible).map((k) => ({
     soilScore: round(stats.soil[k], 2),
     avgProfit: round(stats.avg[k]),
@@ -432,6 +456,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     sensitivity,
     classic,
     soilFrontier: soilPareto,
+    goals,
     riskMetrics,
     sources: { ...ds.sources },
     ...(ds.validation ? { validation: ds.validation } : {}),
