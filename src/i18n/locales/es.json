@@ -443,7 +443,21 @@
       "sorghum": "Sorgo",
       "barley": "Cebada"
     },
-    "footnote": "Los cuatro paneles usan series de muestra con la forma de los registros reales para poder construir y probar la herramienta. El backend las reemplaza con los datos de la NASA que se nombran bajo cada gráfica."
+    "footnote": "Los paneles marcados como Datos de muestra usan series de muestra con la forma de los registros reales para poder construir y probar la herramienta. El backend las reemplaza con los datos de la NASA que se nombran bajo cada gráfica.",
+    "other": {
+      "titleAll": "{{n}} otras regiones agrícolas muestran la misma baja",
+      "titleSome": "{{n}} de {{total}} otras regiones agrícolas muestran una baja",
+      "titleNeutral": "Agua subterránea en {{total}} otras regiones agrícolas",
+      "sub": "Los mismos satélites, el mismo método, otras regiones agrícolas. Mensual, cuadrícula de unos 300 km.",
+      "how": "Cada gráfica pequeña es el agua guardada en la tierra y bajo tierra de una región, comparada con su propio promedio, en centímetros. Una línea que baja significa que la región usa más agua de la que regresa.",
+      "caption": "Baja del agua subterránea, del primer al último año",
+      "colRegion": "Región",
+      "colDrop": "Baja",
+      "dropped": "Bajó unos {{v}} cm desde {{from}}",
+      "flat": "Sin una baja clara desde {{from}}",
+      "noData": "Aún no hay datos suficientes",
+      "aria": "Gráfica de línea del agua subterránea en {{name}} de {{from}} a {{to}}, que baja unos {{v}} centímetros."
+    }
   },
   "stress": {
     "pick": "Elija un año difícil",

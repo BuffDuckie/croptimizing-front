@@ -88,6 +88,16 @@ export const planResponseSchema = z.object({
     heatDaysPerYear: z.array(z.object({ year: z.number().int(), days: finite })),
     et0MonthlyMm: z.array(z.object({ month, mm: finite })),
     etCheck: z.array(z.object({ crop: z.string(), modeledMm: finite, satelliteMm: finite })),
+    otherRegions: z
+      .array(
+        z.object({
+          id: z.string(),
+          label: z.string(),
+          series: z.array(z.object({ date: z.string(), value: finite })),
+          source: z.enum(['sample', 'real']),
+        }),
+      )
+      .optional(),
   }),
   assumptions: z.array(z.string()),
   sources: z.record(z.enum(['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', 'otherRegions']), z.enum(['sample', 'real'])).optional(),

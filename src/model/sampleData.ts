@@ -134,5 +134,22 @@ export function getSampleContext() {
     { crop: 'sorghum', modeledMm: 565, satelliteMm: 611 },
     { crop: 'barley', modeledMm: 515, satelliteMm: 478 },
   ];
-  return { graceTwsCm, heatDaysPerYear, et0MonthlyMm, etCheck };
+  // Three other farm regions, sample only. Labels are placeholders for the team to confirm.
+  const other = mulberry32(SEED + 2);
+  const otherRegions = [
+    { id: 'region_a', label: 'TODO: region A', slope: -0.6 },
+    { id: 'region_b', label: 'TODO: region B', slope: -0.45 },
+    { id: 'region_c', label: 'TODO: region C', slope: -0.7 },
+  ].map((r) => {
+    const series: { date: string; value: number }[] = [];
+    for (let y = 2005; y <= 2024; y++) {
+      for (let m = 1; m <= 12; m++) {
+        const t = y - 2005 + (m - 1) / 12;
+        const v = 3 + r.slope * t + 1.8 * Math.sin((2 * Math.PI * (m - 3)) / 12) + (other() - 0.5) * 1.2;
+        series.push({ date: `${y}-${String(m).padStart(2, '0')}`, value: Math.round(v * 10) / 10 });
+      }
+    }
+    return { id: r.id, label: r.label, series, source: 'sample' as const };
+  });
+  return { graceTwsCm, heatDaysPerYear, et0MonthlyMm, etCheck, otherRegions };
 }

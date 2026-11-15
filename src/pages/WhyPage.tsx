@@ -3,12 +3,16 @@ import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageIntro } from '../components/layout/PageIntro';
 import { PanelsSkeleton } from '../components/lazy/Skeletons';
+import { isSample } from '../lib/sources';
+import { usePlanContext } from '../state/PlanContext';
 
 // Charts load after the page text so the page paints fast.
 const WhyPanels = lazy(() => import('../components/lazy/WhyPanels'));
 
 export default function WhyPage() {
   const { t } = useTranslation();
+  const { data } = usePlanContext();
+  const anySample = isSample(data, ['grace', 'weather', 'etCheck']) || data?.context.otherRegions?.some((r) => r.source !== 'real');
   return (
     <div className="container-content page-enter">
       <PageIntro title={t('pages.why.title')} intro={t('pages.why.intro')} />
@@ -30,10 +34,12 @@ export default function WhyPage() {
         <WhyPanels />
       </Suspense>
 
-      <section className="card mt-6 flex items-start gap-3">
-        <Thermometer aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
-        <p className="text-base text-text">{t('why.footnote')}</p>
-      </section>
+      {anySample && (
+        <section className="card mt-6 flex items-start gap-3">
+          <Thermometer aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+          <p className="text-base text-text">{t('why.footnote')}</p>
+        </section>
+      )}
     </div>
   );
 }

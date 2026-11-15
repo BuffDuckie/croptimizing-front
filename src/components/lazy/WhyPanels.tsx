@@ -5,6 +5,8 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart,
 import { ChartCard, DataTable } from '../charts/ChartCard';
 import { axisLine, axisTick, gridStroke, tooltipStyle } from '../charts/rechartsTheme';
 import { InfoTip } from '../ui/InfoTip';
+import type { PlanResponse } from '../../api/types';
+import { graceDropCm } from '../../lib/context';
 import { isSample } from '../../lib/sources';
 import { usePlanContext } from '../../state/PlanContext';
 import { colors } from '../../theme/tokens';
@@ -177,7 +179,81 @@ export default function WhyPanels() {
         </ChartCard>
       </div>
 
+      {ctx.otherRegions && ctx.otherRegions.length > 0 && <OtherRegions regions={ctx.otherRegions} />}
     </>
+  );
+}
+
+/** Below this drop (cm, first to last year), we do not call it a decline. */
+const DECLINE_CM = 2;
+
+type Region = NonNullable<PlanResponse['context']['otherRegions']>[number];
+
+/** Small multiples: groundwater storage in other farm regions, same style as the GRACE panel. */
+function OtherRegions({ regions }: { regions: Region[] }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language === 'es' ? 'es' : 'en';
+  const nf = (n: number, d = 0) => new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d }).format(n);
+  const rows = regions.map((r) => ({ r, drop: graceDropCm(r.series) }));
+  const declining = rows.filter((x) => x.drop !== null && x.drop.cm >= DECLINE_CM).length;
+  const total = regions.length;
+  const title =
+    declining === total
+      ? t('why.other.titleAll', { n: total })
+      : declining > 0
+        ? t('why.other.titleSome', { n: declining, total })
+        : t('why.other.titleNeutral', { total });
+  return (
+    <div className="mt-6">
+      <ChartCard
+        title={title}
+        subtitle={<Source mission="NASA GRACE / GRACE-FO" detail={t('why.other.sub')} />}
+        howTo={<p>{t('why.other.how')}</p>}
+        sample={regions.some((r) => r.source !== 'real')}
+        id="other-regions"
+        className="scroll-mt-36"
+        table={
+          <DataTable
+            caption={t('why.other.caption')}
+            head={[t('why.other.colRegion'), t('why.other.colDrop')]}
+            rows={rows.map((x) => [x.r.label, x.drop === null ? '-' : `${nf(x.drop.cm, 1)} cm`])}
+          />
+        }
+      >
+        <div className="grid gap-4 md:grid-cols-3">
+          {rows.map(({ r, drop }, i) => {
+            const pts = r.series.map((p) => ({ ...p, t: Number(p.date.slice(0, 4)) + (Number(p.date.slice(5, 7)) - 1) / 12 }));
+            const first = drop?.from ?? Number(r.series[0]?.date.slice(0, 4));
+            const last = drop?.to ?? Number(r.series[r.series.length - 1]?.date.slice(0, 4));
+            return (
+              <figure key={r.id} className="m-0 rounded-ctl bg-bg p-3 ring-1 ring-inset ring-border-soft">
+                <figcaption className="text-base font-semibold text-text">{r.label}</figcaption>
+                <p className="tnum text-sm text-text-muted">
+                  {drop === null ? t('why.other.noData') : drop.cm >= DECLINE_CM ? t('why.other.dropped', { v: nf(drop.cm, 0), from: first }) : t('why.other.flat', { from: first })}
+                </p>
+                <div className="mt-2 h-36" role="img" aria-label={t('why.other.aria', { name: r.label, from: first, to: last, v: drop === null ? '-' : nf(drop.cm, 0) })}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={pts} margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
+                      <defs>
+                        <linearGradient id={`otherFill${i}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0" stopColor={colors.accent} stopOpacity={0.35} />
+                          <stop offset="1" stopColor={colors.accent} stopOpacity={0.05} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid stroke={gridStroke} vertical={false} />
+                      <XAxis dataKey="t" type="number" domain={['dataMin', 'dataMax']} ticks={[first, last]} tickFormatter={(v: number) => String(Math.floor(v))} tick={axisTick} axisLine={axisLine} tickLine={false} />
+                      <YAxis tick={axisTick} axisLine={false} tickLine={false} width={36} />
+                      <ReferenceLine y={0} stroke={colors.border} />
+                      <Area type="monotone" dataKey="value" stroke={colors['accent-strong']} strokeWidth={2} fill={`url(#otherFill${i})`} isAnimationActive={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </figure>
+            );
+          })}
+        </div>
+      </ChartCard>
+    </div>
   );
 }
 

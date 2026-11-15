@@ -442,7 +442,21 @@
       "sorghum": "Sorghum",
       "barley": "Barley"
     },
-    "footnote": "All four panels use sample series shaped like the real records so the tool can be built and tested. The backend replaces them with the NASA data named under each chart."
+    "footnote": "Panels marked Sample data use sample series shaped like the real records so the tool can be built and tested. The backend replaces them with the NASA data named under each chart.",
+    "other": {
+      "titleAll": "{{n}} other farm regions show the same decline",
+      "titleSome": "{{n}} of {{total}} other farm regions show a decline",
+      "titleNeutral": "Groundwater in {{total}} other farm regions",
+      "sub": "Same satellites, same method, other farm regions. Monthly, about 300 km grid.",
+      "how": "Each small chart is one region's water stored on land and underground, compared with its own average, in centimeters. A line that slopes down means the region is using more water than comes back.",
+      "caption": "Drop in groundwater storage, first to last year",
+      "colRegion": "Region",
+      "colDrop": "Drop",
+      "dropped": "Down about {{v}} cm since {{from}}",
+      "flat": "No clear decline since {{from}}",
+      "noData": "Not enough data yet",
+      "aria": "Line chart of groundwater storage in {{name}} from {{from}} to {{to}}, dropping about {{v}} centimeters."
+    }
   },
   "stress": {
     "pick": "Pick a hard year",

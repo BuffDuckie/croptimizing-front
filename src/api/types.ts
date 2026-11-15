@@ -52,6 +52,7 @@ export type PlanResponse = {
     heatDaysPerYear: { year: number; days: number }[];
     et0MonthlyMm: { month: number; mm: number }[];
     etCheck: { crop: string; modeledMm: number; satelliteMm: number }[];
+    otherRegions?: { id: string; label: string; series: { date: string; value: number }[]; source: SourceFlag }[]; // GRACE storage, cm
   };
   assumptions: string[];
   // Optional additions (judging upgrades). The UI works without them.

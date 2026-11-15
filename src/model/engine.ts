@@ -389,7 +389,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     sensitivity,
     classic,
     riskMetrics,
-    sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample' },
+    sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample', otherRegions: 'sample' },
   };
 }
 
