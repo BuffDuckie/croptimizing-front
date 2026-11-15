@@ -1,3 +1,4 @@
+import { DEMO_DEFAULTS } from '../config/demo';
 import { isInfeasible } from '../api/errors';
 import { planResponseSchema } from '../api/schemas';
 import type { PlanRequest } from '../api/types';
@@ -180,5 +181,21 @@ describe('fitToBudget', () => {
     expect(fit.trimmed).toBe(true);
     expect(fit.mix.fallow!).toBeGreaterThan(0);
     expect(fit.mix.alfalfa! / fit.mix.cotton_barley!).toBeCloseTo(0.7 / 0.3, 9);
+  });
+});
+
+describe('demo defaults', () => {
+  it('give a feasible plan with at least 2 rotations', () => {
+    const res = runPlan({
+      region: DEMO_DEFAULTS.region,
+      acres: DEMO_DEFAULTS.acres,
+      waterCapAfPerAcre: DEMO_DEFAULTS.water,
+      riskLevel: DEMO_DEFAULTS.risk / 100,
+      minSoilScore: DEMO_DEFAULTS.soil,
+      currentMix: DEMO_DEFAULTS.currentMix,
+      lang: 'en',
+    });
+    const rotations = Object.entries(res.recommended.mix).filter(([, v]) => (v ?? 0) > 0);
+    expect(rotations.length).toBeGreaterThanOrEqual(2);
   });
 });

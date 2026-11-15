@@ -10,7 +10,7 @@ import { currentTrim, useCurrentLabel, usePlanContext } from '../state/PlanConte
 export default function ReportPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
-  const { data, farm, controls, infeasible } = usePlanContext();
+  const { data, farm, controls, infeasible, softened } = usePlanContext();
   const curLabel = useCurrentLabel(true);
   if (!data) return <div className="container-content min-h-[110vh]" />;
 
@@ -41,7 +41,7 @@ export default function ReportPage() {
             </button>
           }
         />
-        {infeasible && <p className="mb-4 rounded-ctl bg-warning-tint p-3 text-base text-warning">{t('report.stale')}</p>}
+        {infeasible && <p className="mb-4 rounded-ctl bg-warning-tint p-3 text-base text-warning">{softened ? t('plan.softened', { y: softened.soil }) : t('report.stale')}</p>}
       </div>
 
       <article className="report-sheet mx-auto max-w-[880px] rounded-card bg-surface p-8 shadow-lift ring-1 ring-border-soft md:p-12 print:max-w-none print:rounded-none print:p-0 print:shadow-none print:ring-0">

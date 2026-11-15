@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { isInfeasible, type InfeasibleDetail } from '../api/errors';
 import type { Mix, PlanRequest, PlanResponse, RotationId } from '../api/types';
+import { DEMO_DEFAULTS } from '../config/demo';
 import { usePlan } from '../hooks/usePlan';
 
 export type Region = PlanRequest['region'];
@@ -25,16 +26,16 @@ export type Controls = {
 };
 
 export const DEMO_FARM: Farm = {
-  name: 'Pinal County demo farm',
-  acres: 640,
-  region: 'pinal',
-  currentMix: { alfalfa: 0.7, cotton_barley: 0.3 },
+  name: DEMO_DEFAULTS.name,
+  acres: DEMO_DEFAULTS.acres,
+  region: DEMO_DEFAULTS.region,
+  currentMix: DEMO_DEFAULTS.currentMix,
 };
 
 export const DEFAULT_CONTROLS: Controls = {
-  water: 2.4,
-  risk: 40,
-  soil: 30,
+  water: DEMO_DEFAULTS.water,
+  risk: DEMO_DEFAULTS.risk,
+  soil: DEMO_DEFAULTS.soil,
   maxSharePct: {},
   waterCost: 0,
   efficiency: 0.75,
@@ -66,6 +67,8 @@ type Ctx = {
   data: PlanResponse | null;
   isLoading: boolean;
   infeasible: InfeasibleDetail | null;
+  /** Set when the settings have no plan and we show the nearest one that fits (soil minimum lowered). */
+  softened: { soil: number } | null;
   error: unknown;
   fellBack: boolean;
   dismissFallback: () => void;
@@ -103,6 +106,17 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   }, [farm, controls, lang]);
 
   const plan = usePlan(request);
+  const infeasible = isInfeasible(plan.error) ? plan.error.detail : null;
+
+  // No dead ends: when the soil minimum is out of reach, also fetch the nearest plan
+  // that fits (soil minimum lowered to the highest score this water can reach).
+  const softSoil =
+    infeasible?.relax === 'soil' && infeasible.maxSoilAtThisWater !== undefined && infeasible.maxSoilAtThisWater < controls.soil
+      ? infeasible.maxSoilAtThisWater
+      : null;
+  const softRequest = useMemo(() => (softSoil === null ? null : { ...request, minSoilScore: softSoil }), [request, softSoil]);
+  const soft = usePlan(softRequest);
+  const softened = softSoil !== null && soft.data && !soft.error ? { soil: softSoil } : null;
 
   // Keep the last good response so other pages still work when a setting has no plan.
   const lastGood = useRef<PlanResponse | null>(null);
@@ -128,9 +142,10 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     setControl,
     resetControls,
     request,
-    data: plan.data ?? lastGood.current,
-    isLoading: plan.isLoading,
-    infeasible: isInfeasible(plan.error) ? plan.error.detail : null,
+    data: softened ? soft.data : plan.data ?? lastGood.current,
+    isLoading: plan.isLoading || (softSoil !== null && soft.isLoading),
+    infeasible,
+    softened,
     error: isInfeasible(plan.error) ? null : plan.error,
     fellBack: plan.fellBack,
     dismissFallback: plan.dismissFallback,

@@ -13,7 +13,7 @@ export default function TradeoffsPage() {
   const { t, i18n } = useTranslation();
   const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
-  const { data, controls, infeasible } = usePlanContext();
+  const { data, controls, infeasible, softened } = usePlanContext();
 
   const frontier = data?.frontier ?? [];
   const sorted = [...frontier].sort((a, b) => a.worst1in5 - b.worst1in5);
@@ -133,7 +133,7 @@ export default function TradeoffsPage() {
             <h2 className="text-lg font-semibold">{t('trade.sliderTitle')}</h2>
             <p className="mb-5 mt-1 text-base text-text-muted">{t('trade.sliderHelp')}</p>
             <WaterSlider />
-            {infeasible && <p className="mt-4 rounded-ctl bg-warning-tint p-3 text-sm text-warning">{t('plan.infeasibleTitle')}</p>}
+            {infeasible && <p className="mt-4 rounded-ctl bg-warning-tint p-3 text-sm text-warning">{softened ? t('plan.softened', { y: softened.soil }) : t('plan.infeasibleTitle')}</p>}
           </div>
         </aside>
       </div>

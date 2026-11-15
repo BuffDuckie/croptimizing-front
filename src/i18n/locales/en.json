@@ -282,7 +282,8 @@
     "colAcres": "Acres",
     "colCurrent": "Current acres",
     "assumptions": "Assumptions",
-    "trimNote": "As you farm today, this plan needs {{need}} AF per acre in its highest year; we left the acres your water can't cover fallow."
+    "trimNote": "As you farm today, this plan needs {{need}} AF per acre in its highest year; we left the acres your water can't cover fallow.",
+    "softened": "We lowered your soil minimum to {{y}} so a plan fits. Change it anytime."
   },
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",

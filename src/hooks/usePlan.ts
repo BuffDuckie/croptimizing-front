@@ -17,17 +17,25 @@ export const DEBOUNCE_MS = 150;
  * Fetches a plan for the request. Slider changes are debounced (150 ms). Keeps
  * the last good result on screen while a new one loads, and ignores stale replies.
  */
-export function usePlan(request: PlanRequest): UsePlan {
+export function usePlan(request: PlanRequest | null): UsePlan {
   const [data, setData] = useState<PlanResponse | null>(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(request !== null);
   const [error, setError] = useState<unknown>(null);
   const [fellBack, setFellBack] = useState(false);
   const seq = useRef(0);
   const first = useRef(true);
-  const key = JSON.stringify(request);
+  const key = request === null ? null : JSON.stringify(request);
 
   useEffect(() => {
     const id = ++seq.current;
+    if (key === null) {
+      // Nothing to fetch (an optional second request that is not needed right now).
+      setData(null);
+      setError(null);
+      setLoading(false);
+      first.current = true;
+      return;
+    }
     setLoading(true);
     const delay = first.current ? 0 : DEBOUNCE_MS;
     first.current = false;

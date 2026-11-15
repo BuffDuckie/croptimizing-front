@@ -283,7 +283,8 @@
     "colAcres": "Acres",
     "colCurrent": "Acres actuales",
     "assumptions": "Supuestos",
-    "trimNote": "Como cultiva hoy, este plan necesita {{need}} AF por acre en su año más alto; dejamos en descanso los acres que su agua no cubre."
+    "trimNote": "Como cultiva hoy, este plan necesita {{need}} AF por acre en su año más alto; dejamos en descanso los acres que su agua no cubre.",
+    "softened": "Bajamos su mínimo de suelo a {{y}} para que un plan quepa. Cámbielo cuando quiera."
   },
   "strip": {
     "titleBetter": "Su plan sugerido aguanta mejor los años malos",

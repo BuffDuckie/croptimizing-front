@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Droplets } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Droplets, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ROTATION_IDS } from '../api/types';
@@ -41,11 +41,12 @@ export default function PlanPage() {
 function Results() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
-  const { data, infeasible, controls, farm, isLoading } = usePlanContext();
+  const { data, infeasible, softened, controls, farm, isLoading } = usePlanContext();
   const curLabel = useCurrentLabel();
 
-  if (infeasible) return <Infeasible />;
+  if (infeasible && !softened) return <Infeasible />;
   if (!data) return <ResultsSkeleton />;
+  const soilMin = softened ? softened.soil : controls.soil;
 
   const rec = data.recommended.metrics;
   const cur = data.current.metrics;
@@ -57,6 +58,15 @@ function Results() {
 
   return (
     <div className={`min-w-0 space-y-6 transition-opacity duration-base ${isLoading ? 'opacity-90' : ''}`} aria-busy={isLoading}>
+      {softened && (
+        <>
+          <Infeasible />
+          <p role="status" className="flex items-start gap-2 rounded-ctl bg-primary-tint p-4 text-base text-primary">
+            <Info aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0" />
+            {t('plan.softened', { y: softened.soil })}
+          </p>
+        </>
+      )}
       <section className="card" aria-labelledby="mix-title">
         <p className="eyebrow">{t('plan.mixSub', { acres: whole(farm.acres, lang) })}</p>
         <h2 id="mix-title" className="mt-2 text-2xl font-semibold leading-tight">
@@ -129,7 +139,7 @@ function Results() {
         >
           <div className="relative h-3 w-full rounded-full bg-secondary-tint" aria-hidden="true">
             <div className="meter-fill absolute inset-y-0 left-0 rounded-full bg-secondary" style={{ width: `${rec.soilScore}%` }} />
-            <div className="absolute -top-1.5 h-6 w-[3px] -translate-x-1/2 rounded-full bg-text" style={{ left: `${controls.soil}%` }} />
+            <div className="absolute -top-1.5 h-6 w-[3px] -translate-x-1/2 rounded-full bg-text" style={{ left: `${soilMin}%` }} />
           </div>
         </MetricCard>
       </div>
@@ -175,7 +185,7 @@ function Results() {
             <div>
               <h3 className="text-lg font-semibold">{t('plan.mathTitle')}</h3>
               <p className="mt-2 text-text">
-                {t('plan.mathSteps', { water: af(budget, lang), soil: controls.soil, risk: controls.risk })}
+                {t('plan.mathSteps', { water: af(budget, lang), soil: soilMin, risk: controls.risk })}
               </p>
             </div>
             <div className="overflow-x-auto" tabIndex={0}>

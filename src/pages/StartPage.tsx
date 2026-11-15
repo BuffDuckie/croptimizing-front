@@ -24,9 +24,10 @@ export default function StartPage() {
 function Hero() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data, controls, setFarm, farm } = usePlanContext();
+  const { data, controls, setFarm, farm, resetControls } = usePlanContext();
   const startDemo = () => {
     setFarm(DEMO_FARM);
+    resetControls();
     navigate('/plan');
   };
   return (
@@ -58,7 +59,7 @@ function Hero() {
           <FieldsReplan
             currentMix={farm.currentMix}
             suggestedMix={data?.recommended.mix ?? null}
-            need={data?.current.metrics.maxWaterAfPerAcre ?? 5.5}
+            need={(data?.currentAsFarmed ?? data?.current)?.metrics.maxWaterAfPerAcre ?? 5.5}
             budget={controls.water}
             avg={data?.recommended.metrics.avgProfitPerAcre ?? null}
             worst={data?.recommended.metrics.worst1in5PerAcre ?? null}
@@ -168,7 +169,7 @@ function SetupForm() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const navigate = useNavigate();
-  const { setFarm, setControl, controls } = usePlanContext();
+  const { setFarm, setControl, controls, resetControls } = usePlanContext();
   const [name, setName] = useState('');
   const [acres, setAcres] = useState('640');
   const [water, setWater] = useState(String(controls.water));
@@ -211,7 +212,10 @@ function SetupForm() {
             {t('start.form.title')}
           </h2>
           <p className="mt-3 text-lg text-text-muted">{t('start.form.intro')}</p>
-          <Link to="/plan" className="mt-6 inline-flex min-h-[44px] items-center gap-1 font-semibold" onClick={() => setFarm(DEMO_FARM)}>
+          <Link to="/plan" className="mt-6 inline-flex min-h-[44px] items-center gap-1 font-semibold" onClick={() => {
+            setFarm(DEMO_FARM);
+            resetControls();
+          }}>
             {t('start.cta')} <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
         </div>
