@@ -365,6 +365,18 @@
       "sets": "Sets your water budget to {{v}} acre-feet per acre.",
       "source": "Where this number comes from",
       "noSource": "Placeholder number, not yet from a source (TODO)."
+    },
+    "fits": {
+      "plan": "Fits your water in {{k}} of {{n}} years.",
+      "asFarmed": "Your current plan as farmed today: {{k}} of {{n}}."
+    },
+    "saved": {
+      "saves": "{{plan}} saves about {{v}} acre-feet per acre in an average year",
+      "uses": "{{plan}} uses about {{v}} more acre-feet per acre in an average year",
+      "same": "{{plan}} uses about the same water as your current plan in an average year",
+      "savesFarm": "That is {{farm}} acre-feet on your {{acres}} acres ({{gal}} gallons).",
+      "usesFarm": "That is {{farm}} more acre-feet on your {{acres}} acres ({{gal}} gallons).",
+      "note": "Compared with your current plan as farmed today, before any cut. 1 acre-foot is {{g}} gallons."
     }
   },
   "strip": {
@@ -485,7 +497,8 @@
     },
     "pests": "Pest cycles:",
     "infiltration": "Water soaking in (infiltration):",
-    "todoLine": "TODO: one plain sentence from the science teammate."
+    "todoLine": "TODO: one plain sentence from the science teammate.",
+    "fits": "On every acre, fits your water ({{w}} AF/acre) in {{k}} of {{n}} years."
   },
   "why": {
     "lead": "Water here is getting scarcer from both ends: less underground, and more needed by every crop in the heat.",

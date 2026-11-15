@@ -14,6 +14,8 @@ import { ControlsPanel } from '../components/plan/Controls';
 import { LeaseLine } from '../components/plan/LeaseLine';
 import { NasaDataStrip } from '../components/plan/NasaDataStrip';
 import { SoilPanel } from '../components/plan/SoilPanel';
+import { WaterSaved } from '../components/plan/WaterSaved';
+import { yearsFit } from '../lib/water';
 import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
@@ -150,6 +152,12 @@ function Results() {
           sub={t('plan.currentWas', { v: `${af(cur.maxWaterAfPerAcre, lang)} AF` })}
         >
           <WaterMeter used={rec.maxWaterAfPerAcre} budget={budget} compareUsed={cur.maxWaterAfPerAcre} />
+          {rec.yearlyWater && data.currentAsFarmed?.metrics.yearlyWater && (
+            <p className="tnum mt-3 rounded-ctl bg-bg px-3 py-2 text-sm text-text">
+              <span className="font-semibold">{t('plan.fits.plan', { k: yearsFit(rec.yearlyWater.map((y) => y.water), budget), n: rec.yearlyWater.length })}</span>{' '}
+              {t('plan.fits.asFarmed', { k: yearsFit(data.currentAsFarmed.metrics.yearlyWater.map((y) => y.water), budget), n: data.currentAsFarmed.metrics.yearlyWater.length })}
+            </p>
+          )}
         </MetricCard>
         <MetricCard
           label={t('plan.soilCard')}
@@ -173,6 +181,8 @@ function Results() {
       </div>
 
       <SoilPanel data={data} mix={plan.mix} acres={farm.acres} planLabel={planLabel} />
+
+      {data.currentAsFarmed && <WaterSaved plan={rec} asFarmed={data.currentAsFarmed.metrics} acres={farm.acres} planLabel={planLabel} />}
 
       {goal === 'suggested' && (
       <section className="relative overflow-hidden rounded-card bg-primary p-6 text-white shadow-card md:p-8" aria-labelledby="wv-title">

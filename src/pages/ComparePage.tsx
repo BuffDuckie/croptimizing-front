@@ -12,6 +12,7 @@ import { InfoTip } from '../components/ui/InfoTip';
 import { af, money, pct, whole } from '../lib/format';
 import { FROST_DAYS_MIN, HEAT_DAYS_MIN, riskMonths } from '../lib/risk';
 import { isSample } from '../lib/sources';
+import { yearsFit } from '../lib/water';
 import { usePlanContext, useYears } from '../state/PlanContext';
 
 function order(data: PlanResponse): RotationCard[] {
@@ -148,6 +149,11 @@ function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: Rot
       <section aria-label={t('compare.calendar')}>
         <h3 className="mb-2 text-sm font-semibold text-text-muted">{t('compare.calendar')}</h3>
         <CalendarStrip card={card} risk={riskMonths(card, monthlyRisk)} />
+        {card.yearlyWaterAf && card.id !== 'fallow' && (
+          <p className="tnum mt-3 text-sm text-text">
+            {t('compare.fits', { k: yearsFit(card.yearlyWaterAf, controls.water), n: card.yearlyWaterAf.length, w: af(controls.water, lang) })}
+          </p>
+        )}
       </section>
 
       <section aria-label={t('compare.statement', yrs)}>

@@ -366,6 +366,18 @@
       "sets": "Fija su presupuesto de agua en {{v}} acre-pies por acre.",
       "source": "De dónde sale este número",
       "noSource": "Número de prueba, todavía sin fuente (TODO)."
+    },
+    "fits": {
+      "plan": "Cabe en su agua en {{k}} de {{n}} años.",
+      "asFarmed": "Su plan actual como lo siembra hoy: {{k}} de {{n}}."
+    },
+    "saved": {
+      "saves": "{{plan}} ahorra unos {{v}} acre-pies por acre en un año promedio",
+      "uses": "{{plan}} usa unos {{v}} acre-pies más por acre en un año promedio",
+      "same": "{{plan}} usa más o menos la misma agua que su plan actual en un año promedio",
+      "savesFarm": "Son {{farm}} acre-pies en sus {{acres}} acres ({{gal}} galones).",
+      "usesFarm": "Son {{farm}} acre-pies más en sus {{acres}} acres ({{gal}} galones).",
+      "note": "Comparado con su plan actual como lo siembra hoy, antes de cualquier recorte. 1 acre-pie son {{g}} galones."
     }
   },
   "strip": {
@@ -486,7 +498,8 @@
     },
     "pests": "Ciclos de plagas:",
     "infiltration": "Agua que entra al suelo (infiltración):",
-    "todoLine": "TODO: una oración sencilla del equipo de ciencia."
+    "todoLine": "TODO: una oración sencilla del equipo de ciencia.",
+    "fits": "En todos sus acres, cabe en su agua ({{w}} AF/acre) en {{k}} de {{n}} años."
   },
   "why": {
     "lead": "El agua aquí escasea por ambos lados: hay menos bajo tierra y cada cultivo necesita más con el calor.",
