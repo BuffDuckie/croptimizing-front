@@ -11,6 +11,7 @@ import { PageIntro } from '../components/layout/PageIntro';
 import { ControlsPanel } from '../components/plan/Controls';
 import { LeaseLine } from '../components/plan/LeaseLine';
 import { NasaDataStrip } from '../components/plan/NasaDataStrip';
+import { SoilPanel } from '../components/plan/SoilPanel';
 import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
@@ -146,6 +147,8 @@ function Results() {
           </div>
         </MetricCard>
       </div>
+
+      <SoilPanel data={data} mix={data.recommended.mix} acres={farm.acres} planLabel={t('common.recommended')} />
 
       <section className="relative overflow-hidden rounded-card bg-primary p-6 text-white shadow-card md:p-8" aria-labelledby="wv-title">
         <div aria-hidden="true" className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-accent/15 blur-2xl" />

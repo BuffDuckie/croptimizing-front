@@ -308,6 +308,28 @@
       "openet": "Satellite-measured crop water use is within {{v}}% of what our water model predicts.",
       "openetNone": "Satellite-measured crop water use, used to check our water model.",
       "see": "See the data"
+    },
+    "soilPanel": {
+      "title": {
+        "cover": "Your plan keeps fields covered {{n}} more months a year",
+        "nitrogen": "Your plan grows a nitrogen-fixing crop on {{n}} more acres",
+        "families_one": "Your plan grows {{n}} more crop family",
+        "families_other": "Your plan grows {{n}} more crop families",
+        "residue": "Your plan returns more crop residue to your soil",
+        "neutral": "What this plan does for your soil, next to your current plan"
+      },
+      "sub": "Acre-weighted across your farm. Compared with: {{current}}.",
+      "bare": "Bare ground",
+      "bareUnit": "months a year",
+      "nitrogen": "In a nitrogen-fixing crop",
+      "families": "Crop families",
+      "familiesUnit_one": "family",
+      "familiesUnit_other": "families",
+      "residue": "Residue returned",
+      "residueUnit": "of 20 points",
+      "was": "current: {{v}}",
+      "how1": "Bare months come from each rotation's growing calendar (Compare page), weighted by its acres. Nitrogen-fixing acres are acres in a legume, like alfalfa.",
+      "how2": "Crop families count the plant families you grow (grasses, legumes, mallows): more families break pest and disease cycles. Residue is the residue part of the soil score, out of 20."
     }
   },
   "strip": {

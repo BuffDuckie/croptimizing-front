@@ -3,7 +3,7 @@
 import { InfeasibleError } from '../api/errors';
 import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RiskStats, RotationCard, RotationId, SensitivityRow } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
-import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
+import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_FAMILIES, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
 import {
   correlation,
   enumerateMixes,
@@ -300,6 +300,8 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
       benefits: txt.benefits,
       gaps: txt.gaps,
       checkLocally: txt.checkLocally,
+      yearlyWaterAf: water.map((w) => round(w, 3)),
+      families: ROTATION_FAMILIES[id],
     };
   });
 }

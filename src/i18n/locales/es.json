@@ -309,6 +309,28 @@
       "openet": "El uso de agua de los cultivos medido por satélite está a menos de {{v}}% de lo que predice nuestro modelo de agua.",
       "openetNone": "Uso de agua de los cultivos medido por satélite, para verificar nuestro modelo de agua.",
       "see": "Ver los datos"
+    },
+    "soilPanel": {
+      "title": {
+        "cover": "Su plan mantiene los campos cubiertos {{n}} meses más al año",
+        "nitrogen": "Su plan siembra un cultivo que fija nitrógeno en {{n}} acres más",
+        "families_one": "Su plan siembra {{n}} familia de cultivos más",
+        "families_other": "Su plan siembra {{n}} familias de cultivos más",
+        "residue": "Su plan devuelve más residuo de cultivo a su suelo",
+        "neutral": "Lo que este plan hace por su suelo, junto a su plan actual"
+      },
+      "sub": "Ponderado por acres en toda su granja. Comparado con: {{current}}.",
+      "bare": "Suelo desnudo",
+      "bareUnit": "meses al año",
+      "nitrogen": "En un cultivo que fija nitrógeno",
+      "families": "Familias de cultivos",
+      "familiesUnit_one": "familia",
+      "familiesUnit_other": "familias",
+      "residue": "Residuo devuelto",
+      "residueUnit": "de 20 puntos",
+      "was": "actual: {{v}}",
+      "how1": "Los meses desnudos salen del calendario de cada rotación (página Comparar), ponderados por sus acres. Los acres que fijan nitrógeno son acres en una leguminosa, como la alfalfa.",
+      "how2": "Las familias de cultivos cuentan las familias de plantas que siembra (pastos, leguminosas, malváceas): más familias rompen los ciclos de plagas y enfermedades. El residuo es la parte de residuos del puntaje de suelo, de 20."
     }
   },
   "strip": {

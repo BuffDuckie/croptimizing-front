@@ -123,6 +123,15 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
   },
 };
 
+/** Botanical families grown in each rotation (for counting crop families). */
+export const ROTATION_FAMILIES: Record<RotationId, string[]> = {
+  alfalfa: ['Fabaceae'], // legume family
+  cotton_barley: ['Malvaceae', 'Poaceae'], // mallow family (cotton), grass family (barley)
+  durum_sorghum: ['Poaceae'], // grass family (durum wheat and sorghum)
+  barley_fallow: ['Poaceae'],
+  fallow: [],
+};
+
 export function whyText(lang: Lang, id: RotationId, share: number, isCurrent: boolean): string {
   const t = ROTATION_TEXT[lang][id];
   const pct = Math.round(share * 100);
