@@ -5,6 +5,7 @@ import { useElementWidth } from '../../hooks/useElementWidth';
 import { mixEntries, money, pct } from '../../lib/format';
 import { colors } from '../../theme/tokens';
 import { ROT_BG } from './rotation';
+import { useCurrentLabel } from '../../state/PlanContext';
 
 type Point = { worst1in5: number; avgProfit: number; mix: Mix };
 type Marker = { worst1in5: number; avgProfit: number; mix: Mix };
@@ -49,6 +50,7 @@ export function FrontierChart({
   waterKey: number;
 }) {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const [wrapRef, width] = useElementWidth<HTMLDivElement>(720);
   const [active, setActive] = useState<number | 'cur' | 'rec' | null>(null);
@@ -118,7 +120,7 @@ export function FrontierChart({
     active === null
       ? null
       : active === 'cur'
-        ? { p: current, label: t('common.current') }
+        ? { p: current, label: curLabel }
         : active === 'rec'
           ? { p: recommended, label: t('common.recommended') }
           : sorted[active]
@@ -193,7 +195,7 @@ export function FrontierChart({
           {/* current plan: hollow charcoal circle */}
           <circle cx={X(current.worst1in5)} cy={Y(current.avgProfit)} r={active === 'cur' ? 11 : 9} fill={colors.surface} stroke={colors.text} strokeWidth={2.5} />
           <text x={X(current.worst1in5) - 14} y={Y(current.avgProfit) + 5} textAnchor="end" className="fill-text text-[14px] font-semibold">
-            {t('common.current')}
+            {curLabel}
           </text>
 
           {/* recommended: cyan star, navy outline */}

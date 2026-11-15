@@ -68,6 +68,7 @@ export const planResponseSchema = z.object({
   dataSource: z.enum(['sample', 'static', 'live']),
   recommended: z.object({ mix: mixSchema, metrics: metricsSchema }),
   current: z.object({ mix: mixSchema, metrics: metricsSchema }),
+  currentAsFarmed: z.object({ mix: mixSchema, metrics: metricsSchema }).optional(),
   frontier: z.array(z.object({ worst1in5: finite, avgProfit: finite, mix: mixSchema })),
   rotations: z.array(rotationCardSchema),
   stressTests: z.array(

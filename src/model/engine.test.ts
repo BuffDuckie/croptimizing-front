@@ -2,8 +2,8 @@ import { isInfeasible } from '../api/errors';
 import { planResponseSchema } from '../api/schemas';
 import type { PlanRequest } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
-import { bestIndex, feasibleIndices, objective, paretoFrontier, runPlan } from './engine';
-import { getMixStats, mixCount, seriesForMix } from './metrics';
+import { bestIndex, feasibleIndices, fitToBudget, objective, paretoFrontier, runPlan, waterScenario } from './engine';
+import { DEFAULT_ADJUST, getMixStats, mixCount, seriesForMix } from './metrics';
 import { getScenarioData } from './sampleData';
 
 const base: PlanRequest = {
@@ -143,10 +143,42 @@ describe('sample engine', () => {
     }
   });
 
-  it('fallows the shortfall when the current plan needs more water than the budget', () => {
+  it('compares against the current plan cut back to fit the budget', () => {
     const res = runPlan(base);
-    const y2020 = res.stressTests.find((s) => s.year === 2020)!;
-    expect(y2020.currentWater).toBeGreaterThan(2.4);
-    expect(y2020.recommendedWater).toBeLessThanOrEqual(2.4 + 1e-3);
+    for (const s of res.stressTests) {
+      expect(s.currentWater).toBeLessThanOrEqual(2.4 + 1e-3);
+      expect(s.recommendedWater).toBeLessThanOrEqual(2.4 + 1e-3);
+    }
+    expect(res.current.metrics.maxWaterAfPerAcre).toBeLessThanOrEqual(2.4 + 1e-3);
+    expect(res.currentAsFarmed!.metrics.maxWaterAfPerAcre).toBeGreaterThan(2.4);
+    expect(sum(res.current.mix)).toBeCloseTo(1, 3);
+  });
+});
+
+describe('fitToBudget', () => {
+  const scenario = waterScenario(DEFAULT_ADJUST);
+
+  it('never exceeds the cap in any year', () => {
+    for (const cap of [0.5, 1.2, 2.4, 3.7]) {
+      for (const mix of [{ alfalfa: 1 }, { alfalfa: 0.7, cotton_barley: 0.3 }, { cotton_barley: 0.5, durum_sorghum: 0.3, fallow: 0.2 }]) {
+        const fit = fitToBudget(mix, scenario, cap);
+        expect(sum(fit.mix)).toBeCloseTo(1, 9);
+        for (const y of seriesForMix(fit.mix)) expect(y.water).toBeLessThanOrEqual(cap + 1e-9);
+      }
+    }
+  });
+
+  it('leaves a plan that already fits unchanged', () => {
+    const mix = { durum_sorghum: 0.3, barley_fallow: 0.3, fallow: 0.4 };
+    const fit = fitToBudget(mix, scenario, 4);
+    expect(fit.trimmed).toBe(false);
+    expect(fit.mix).toEqual(mix);
+  });
+
+  it('only adds fallow acres', () => {
+    const fit = fitToBudget({ alfalfa: 0.7, cotton_barley: 0.3 }, scenario, 2.4);
+    expect(fit.trimmed).toBe(true);
+    expect(fit.mix.fallow!).toBeGreaterThan(0);
+    expect(fit.mix.alfalfa! / fit.mix.cotton_barley!).toBeCloseTo(0.7 / 0.3, 9);
   });
 });

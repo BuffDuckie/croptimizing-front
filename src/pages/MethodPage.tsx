@@ -4,16 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { DataTable } from '../components/charts/ChartCard';
 import { CorrelationHeatmap } from '../components/charts/CorrelationHeatmap';
 import { PageIntro } from '../components/layout/PageIntro';
-import { af, money } from '../lib/format';
-import { usePlanContext } from '../state/PlanContext';
+import { af, money, whole } from '../lib/format';
+import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 
-const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'scenarios', 'assumptions'] as const;
+const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'current', 'scenarios', 'assumptions'] as const;
 
 // Formulas (KaTeX) load after the page text so the page paints fast.
 const MathFormulas = lazy(() => import('../components/lazy/MathFormulas'));
 
 export default function MethodPage() {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel(true);
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls } = usePlanContext();
 
@@ -23,11 +24,10 @@ export default function MethodPage() {
 
   const downloadCsv = () => {
     if (!data) return;
-    const head = ['year', 'suggested_profit_usd_per_acre', 'current_profit_usd_per_acre', 'current_profit_if_short_acres_fallowed', 'suggested_water_af_per_acre', 'current_water_af_per_acre', 'water_budget_af_per_acre', 'data_source'];
+    const head = ['year', 'suggested_profit_usd_per_acre', 'current_cut_to_fit_profit_usd_per_acre', 'current_as_farmed_profit_usd_per_acre', 'suggested_water_af_per_acre', 'current_cut_to_fit_water_af_per_acre', 'water_budget_af_per_acre', 'data_source'];
     const rows = data.stressTests.map((s) => {
-      const rec = data.recommended.metrics.yearlyProfit.find((y) => y.year === s.year)?.profit ?? '';
-      const cur = data.current.metrics.yearlyProfit.find((y) => y.year === s.year)?.profit ?? '';
-      return [s.year, rec, cur, s.currentProfit, s.recommendedWater, s.currentWater, controls.water, data.dataSource];
+      const asFarmed = data.currentAsFarmed?.metrics.yearlyProfit.find((y) => y.year === s.year)?.profit ?? '';
+      return [s.year, s.recommendedProfit, s.currentProfit, asFarmed, s.recommendedWater, s.currentWater, controls.water, data.dataSource];
     });
     const csv = [head, ...rows].map((r) => r.join(',')).join('\n');
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -107,6 +107,27 @@ export default function MethodPage() {
             </div>
           </section>
 
+          {data.currentAsFarmed && (
+            <section id="current" className="scroll-mt-36">
+              <h2 className="text-3xl font-semibold">{t('method.asFarmedTitle')}</h2>
+              <p className="mt-3 max-w-3xl text-base text-text">{t('method.asFarmedIntro')}</p>
+              <div className="card mt-5 overflow-x-auto" tabIndex={0}>
+                <DataTable
+                  caption={t('method.asFarmedCaption')}
+                  head={[t('trade.colPlan'), t('compare.stat.avg'), t('compare.stat.worst'), t('method.colHighWater'), t('method.colSoil')]}
+                  rows={(
+                    [
+                      [t('common.recommended'), data.recommended.metrics],
+                      [t('common.currentFitted'), data.current.metrics],
+                      [t('method.asFarmedRow'), data.currentAsFarmed.metrics],
+                    ] as const
+                  ).map(([label, m]) => [label, money(m.avgProfitPerAcre, lang), money(m.worst1in5PerAcre, lang), `${af(m.maxWaterAfPerAcre, lang)} AF`, `${whole(m.soilScore, lang)}/100`])}
+                  className="min-w-[640px]"
+                />
+              </div>
+            </section>
+          )}
+
           <section id="scenarios" className="scroll-mt-36">
             <h2 className="text-3xl font-semibold">{t('method.sec.scenarios')}</h2>
             <p className="mt-3 max-w-3xl text-base text-text">{t('method.scenariosIntro')}</p>
@@ -117,7 +138,7 @@ export default function MethodPage() {
             <div className="card mt-5 max-h-[480px] overflow-auto" tabIndex={0} role="region" aria-label={t('method.scenarioCaption')}>
               <DataTable
                 caption={t('method.scenarioCaption')}
-                head={[t('why.year'), `${t('common.recommended')} $/acre`, `${t('common.current')} $/acre`, `${t('common.recommended')} AF`, `${t('common.current')} AF`]}
+                head={[t('why.year'), `${t('common.recommended')} $/acre`, `${curLabel} $/acre`, `${t('common.recommended')} AF`, `${curLabel} AF`]}
                 rows={data.stressTests.map((s) => [
                   s.year,
                   money(data.recommended.metrics.yearlyProfit.find((y) => y.year === s.year)?.profit ?? 0, lang),

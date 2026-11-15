@@ -5,7 +5,7 @@ import { PanelsSkeleton } from '../components/lazy/Skeletons';
 import { PageIntro } from '../components/layout/PageIntro';
 import { Disclosure } from '../components/ui/Disclosure';
 import { af, money } from '../lib/format';
-import { usePlanContext } from '../state/PlanContext';
+import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 
 const FEATURED = [2020, 2022, 2023, 2024];
 
@@ -14,6 +14,7 @@ const StressCharts = lazy(() => import('../components/lazy/StressCharts'));
 
 export default function StressPage() {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel(true);
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls } = usePlanContext();
   const [year, setYear] = useState(2020);
@@ -72,7 +73,7 @@ export default function StressPage() {
             <div className="overflow-x-auto" tabIndex={0}>
               <DataTable
                 caption={t('stress.allCaption')}
-                head={[t('why.year'), `${t('common.current')} $`, `${t('common.recommended')} $`, `${t('common.current')} AF`, `${t('common.recommended')} AF`]}
+                head={[t('why.year'), `${curLabel} $`, `${t('common.recommended')} $`, `${curLabel} AF`, `${t('common.recommended')} AF`]}
                 rows={data.stressTests.map((x) => [x.year, money(x.currentProfit, lang), money(x.recommendedProfit, lang), af(x.currentWater, lang), af(x.recommendedWater, lang)])}
               />
             </div>

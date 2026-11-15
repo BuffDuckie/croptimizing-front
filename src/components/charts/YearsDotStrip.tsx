@@ -3,6 +3,7 @@ import { useElementWidth } from '../../hooks/useElementWidth';
 import { money } from '../../lib/format';
 import { colors } from '../../theme/tokens';
 import { ChartCard, DataTable } from './ChartCard';
+import { useCurrentLabel } from '../../state/PlanContext';
 
 type Year = { year: number; profit: number };
 
@@ -30,6 +31,7 @@ function worst4(ys: Year[]) {
  */
 export function YearsDotStrip({ current, recommended }: { current: Year[]; recommended: Year[] }) {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const [ref, width] = useElementWidth<HTMLDivElement>();
   const all = [...current, ...recommended].map((y) => y.profit);
@@ -48,7 +50,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
   const H = top + rowH * 2 + 44;
   const rows = [
     { key: 'rec', label: t('common.recommended'), data: recommended, filled: true },
-    { key: 'cur', label: t('common.current'), data: current, filled: false },
+    { key: 'cur', label: curLabel, data: current, filled: false },
   ];
   const rw = worst4(recommended);
   const cw = worst4(current);
@@ -70,7 +72,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
       table={
         <DataTable
           caption={t('strip.tableCaption')}
-          head={[t('strip.year'), t('common.recommended'), t('common.current')]}
+          head={[t('strip.year'), t('common.recommended'), curLabel]}
           rows={recommended.map((r, i) => [r.year, money(r.profit, lang), money(current[i]?.profit ?? 0, lang)])}
         />
       }
@@ -146,7 +148,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
           </li>
           <li className="flex items-center gap-2">
             <svg width="14" height="14"><circle cx="7" cy="7" r="5.5" fill={colors.surface} stroke={colors.text} strokeWidth="1.75" /></svg>
-            {t('common.current')}
+            {curLabel}
           </li>
           <li className="flex items-center gap-2">
             <span className="inline-block h-3.5 w-5 rounded bg-danger-tint" />

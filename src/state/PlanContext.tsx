@@ -143,3 +143,22 @@ export function usePlanContext(): Ctx {
   if (!ctx) throw new Error('usePlanContext must be used inside PlanProvider');
   return ctx;
 }
+
+/**
+ * When the current plan needs more water than the budget, every comparison uses
+ * it cut back to fit. Returns what the plan needs as farmed today, or null.
+ */
+export function currentTrim(data: PlanResponse | null): { needAfPerAcre: number } | null {
+  const asFarmed = data?.currentAsFarmed;
+  if (!data || !asFarmed) return null;
+  const need = asFarmed.metrics.maxWaterAfPerAcre;
+  return need > data.current.metrics.maxWaterAfPerAcre + 0.005 ? { needAfPerAcre: need } : null;
+}
+
+/** Label for the current plan: says so when it was cut back to fit the water budget. */
+export function useCurrentLabel(short = false): string {
+  const { t } = useTranslation();
+  const { data } = usePlanContext();
+  if (!currentTrim(data)) return t('common.current');
+  return short ? t('common.currentFittedShort') : t('common.currentFitted');
+}

@@ -75,7 +75,9 @@
     "recommended": "Suggested plan",
     "close": "Close",
     "more": "Learn more",
-    "comingSoon": "coming soon"
+    "comingSoon": "coming soon",
+    "currentFitted": "Your current plan, cut back to fit your water",
+    "currentFittedShort": "Current plan, cut back"
   },
   "glossary": {
     "acreFoot": {
@@ -279,7 +281,8 @@
     "colShare": "Share",
     "colAcres": "Acres",
     "colCurrent": "Current acres",
-    "assumptions": "Assumptions"
+    "assumptions": "Assumptions",
+    "trimNote": "As you farm today, this plan needs {{need}} AF per acre in its highest year; we left the acres your water can't cover fallow."
   },
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",
@@ -413,7 +416,7 @@
     "profitBetter": "In {{year}}, your suggested plan would have earned {{rec}} per acre, more than the {{cur}} your current plan earns on your water",
     "profitWorse": "In {{year}}, your suggested plan would have earned {{rec}} per acre vs. {{cur}} for your current plan",
     "profitSub": "Profit per acre in that year, after fitting each plan to your water budget.",
-    "how1": "Each bar is one plan's profit per acre in the year you picked. If a plan needs more water than your budget, the fields it cannot water are left fallow for that year.",
+    "how1": "Each bar is one plan's profit per acre in the year you picked. Your current plan is cut back to fit your water: the acres your budget can't cover in its highest-need year sit fallow.",
     "how2": "Each bar is the water a plan needs per acre in that year. The black line is your budget.",
     "profit": "Profit ($/acre)",
     "profitCaption": "Profit per acre in {{year}}",
@@ -425,9 +428,9 @@
     "waterCaption": "Water needed per acre in {{year}}",
     "waterAria": "Bar chart for {{year}}: current plan needs {{cur}} AF per acre, suggested plan {{rec}}, budget {{budget}}.",
     "budget": "Budget {{v}}",
-    "fallowNote": "Your current plan did not fit, so its profit above assumes the fields it could not water sat fallow that year.",
+    "fallowNote": "Your current plan needs more water than your budget, so we compare it cut back to fit: the acres your water can't cover in its highest-need year sit fallow.",
     "math1": "For each past year we replay both plans with that year's weather and prices. The suggested plan always fits your budget, because the model checks every year.",
-    "math2": "When the current plan needs more water than the budget, we keep the share of each crop that the water covers and leave the rest fallow at the fallow cost. This is how a water cut usually plays out on a farm.",
+    "math2": "When the current plan needs more water than the budget, we keep the share of each crop that the water covers in the plan's highest-need year and leave the rest fallow at the fallow cost. Every page uses this same rule, so the comparison is fair: both plans fit your water in every year.",
     "allCaption": "Every past year, both plans"
   },
   "report": {
@@ -456,7 +459,8 @@
       "correlations": "How rotations move together",
       "backtest": "Tested on years it never saw",
       "scenarios": "Every past year",
-      "assumptions": "Assumptions and limits"
+      "assumptions": "Assumptions and limits",
+      "current": "Your current plan"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -557,6 +561,12 @@
       "It does not model pests, diseases, labor, or the cost of switching equipment.",
       "Shares move in 5% steps, so the best plan between steps can differ slightly.",
       "Every number in this build is sample data until the team's real data loads."
-    ]
+    ],
+    "asFarmedTitle": "Your current plan, before and after the cut",
+    "asFarmedIntro": "Every comparison in this tool uses your current plan cut back to fit your water. This is the only place the plan as you farm it today appears.",
+    "asFarmedCaption": "Current plan as farmed vs. cut back to fit",
+    "asFarmedRow": "As you farm today (does not fit your water)",
+    "colHighWater": "Highest-year water",
+    "colSoil": "Soil score"
   }
 }

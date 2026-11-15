@@ -6,22 +6,25 @@ import { af, money } from '../../lib/format';
 import { colors } from '../../theme/tokens';
 import { ChartCard, DataTable } from '../charts/ChartCard';
 import { axisLine, axisTick, gridStroke, tooltipStyle } from '../charts/rechartsTheme';
+import { currentTrim, useCurrentLabel, usePlanContext } from '../../state/PlanContext';
 
 type Stress = PlanResponse['stressTests'][number];
 
 export default function StressCharts({ s, budget }: { s: Stress; budget: number }) {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel(true);
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const year = s.year;
   const controls = { water: budget };
   const curOver = s.currentWater > budget + 0.005;
+  const trimmed = currentTrim(usePlanContext().data) !== null;
   const better = s.recommendedProfit >= s.currentProfit;
   const profitData = [
-    { name: t('common.current'), v: s.currentProfit, fill: colors['text-muted'] },
+    { name: curLabel, v: s.currentProfit, fill: colors['text-muted'] },
     { name: t('common.recommended'), v: s.recommendedProfit, fill: colors.primary },
   ];
   const waterData = [
-    { name: t('common.current'), v: s.currentWater, fill: curOver ? colors.danger : colors['text-muted'] },
+    { name: curLabel, v: s.currentWater, fill: curOver ? colors.danger : colors['text-muted'] },
     { name: t('common.recommended'), v: s.recommendedWater, fill: colors['accent-strong'] },
   ];
   return (
@@ -59,6 +62,8 @@ export default function StressCharts({ s, budget }: { s: Stress; budget: number 
               <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
               {t('stress.fallowNote')}
             </p>
+          ) : trimmed ? (
+            <p className="text-sm text-text-muted">{t('stress.fallowNote')}</p>
           ) : undefined
         }
       >

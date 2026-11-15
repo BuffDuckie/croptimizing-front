@@ -7,10 +7,11 @@ import { WaterSlider } from '../components/plan/Controls';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { af, mixEntries, money, pct } from '../lib/format';
-import { usePlanContext } from '../state/PlanContext';
+import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 
 export default function TradeoffsPage() {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls, infeasible } = usePlanContext();
 
@@ -80,7 +81,7 @@ export default function TradeoffsPage() {
                     <svg width="16" height="16">
                       <circle cx="8" cy="8" r="6" fill={colors.surface} stroke={colors.text} strokeWidth="2" />
                     </svg>
-                    {t('common.current')}
+                    {curLabel}
                   </li>
                   <li className="flex items-center gap-2">
                     <svg width="28" height="10">

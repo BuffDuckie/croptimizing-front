@@ -152,14 +152,14 @@ export const STRESS_LABELS: Record<Lang, Record<number, string>> = {
 export const BACKTEST_LABELS: Record<Lang, { suggested: string; current: string; currentFits: string; maxProfit: string; safest: string }> = {
   en: {
     suggested: 'Suggested plan, picked using 2005 to 2014',
-    current: 'Your current plan (needs more water than your budget)',
+    current: 'Your current plan, cut back to fit your water',
     currentFits: 'Your current plan',
     maxProfit: 'Highest average, picked using 2005 to 2014',
     safest: 'Safest, picked using 2005 to 2014',
   },
   es: {
     suggested: 'Plan sugerido, elegido con 2005 a 2014',
-    current: 'Su plan actual (necesita más agua que su presupuesto)',
+    current: 'Su plan actual, recortado para caber en su agua',
     currentFits: 'Su plan actual',
     maxProfit: 'Mayor promedio, elegido con 2005 a 2014',
     safest: 'El más seguro, elegido con 2005 a 2014',

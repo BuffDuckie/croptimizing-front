@@ -161,32 +161,56 @@ function metricsFor(mix: Mix, adjust: Adjust, waterValuePerAf: number, years?: n
   };
 }
 
-/**
- * If a plan needs more water than the budget in a year, the shortfall share of
- * each irrigated rotation goes fallow that year.
- */
-export function curtailedYear(mix: Mix, yearIndex: number, cap: number, adjust: Adjust) {
+/** Applied water per acre for each rotation in one scenario year. */
+export type WaterYear = Record<RotationId, number>;
+
+/** Water need of every rotation in each scenario year (optionally a subset of years). */
+export function waterScenario(adjust: Adjust, yearIdx?: number[]): WaterYear[] {
   const data = getScenarioData();
   const scale = BASE_EFFICIENCY / adjust.efficiency;
+  const idx = yearIdx ?? data.years.map((_, t) => t);
+  return idx.map((t) => {
+    const w = {} as WaterYear;
+    for (const id of ROTATION_IDS) w[id] = data.water[id][t] * scale;
+    return w;
+  });
+}
+
+export type FitResult = {
+  /** The cut-back mix (shares still sum to 1). */
+  mix: Mix;
+  /** True when acres had to be left fallow. */
+  trimmed: boolean;
+  /** What the original mix needs in its highest-need year, AF per acre. */
+  needAfPerAcre: number;
+};
+
+/**
+ * Cut a plan back to fit the water budget. The plan's highest-need year sets the
+ * cut: the irrigated acres the budget cannot cover in that year sit fallow, so the
+ * cut-back plan fits the budget in every scenario year, the same standard the
+ * suggested plan must meet. A plan that already fits is returned unchanged.
+ */
+export function fitToBudget(mix: Mix, scenario: WaterYear[], waterCap: number): FitResult {
   let need = 0;
-  let profit = 0;
-  for (const id of ROTATION_IDS) {
-    const sh = mix[id] ?? 0;
-    const w = data.water[id][yearIndex] * scale;
-    need += sh * w;
-    profit += sh * (data.profit[id][yearIndex] - adjust.waterCostPerAf * w);
+  for (const year of scenario) {
+    let n = 0;
+    for (const id of ROTATION_IDS) n += (mix[id] ?? 0) * year[id];
+    need = Math.max(need, n);
   }
-  if (need <= cap + EPS || need === 0) return { need, profit };
-  const f = cap / need; // fraction of irrigated land that still gets water
-  const fallowProfit = data.profit.fallow[yearIndex];
-  let curtailed = (mix.fallow ?? 0) * fallowProfit;
+  if (need <= waterCap + EPS || need === 0) return { mix: { ...mix }, trimmed: false, needAfPerAcre: need };
+  const f = Math.max(0, waterCap) / need; // share of irrigated acres that still gets water
+  const out: Mix = {};
+  let fallow = mix.fallow ?? 0;
   for (const id of ROTATION_IDS) {
     if (id === 'fallow') continue;
     const sh = mix[id] ?? 0;
-    const w = data.water[id][yearIndex] * scale;
-    curtailed += sh * f * (data.profit[id][yearIndex] - adjust.waterCostPerAf * w) + sh * (1 - f) * fallowProfit;
+    if (sh <= 0) continue;
+    out[id] = sh * f;
+    fallow += sh * (1 - f);
   }
-  return { need, profit: curtailed };
+  if (fallow > 0) out.fallow = fallow;
+  return { mix: out, trimmed: true, needAfPerAcre: need };
 }
 
 function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust: Adjust): RotationCard[] {
@@ -245,10 +269,14 @@ export function runPlan(req: PlanRequest): PlanResponse {
   if (best < 0) throw explainInfeasible(stats, c);
 
   const recMix = mixAt(best);
-  const currentMix = normalizeMix(req.currentMix);
+  const asFarmedMix = normalizeMix(req.currentMix);
+  // Compare against the current plan cut back to fit the same water budget (fair comparison).
+  const fit = fitToBudget(asFarmedMix, waterScenario(adjust), c.cap);
+  const currentMix = fit.mix;
   const wv = waterValue(stats, c, risk);
   const recommended = { mix: cleanMix(recMix), metrics: metricsFor(recMix, adjust, wv) };
   const current = { mix: cleanMix(currentMix), metrics: metricsFor(currentMix, adjust, 0) };
+  const currentAsFarmed = { mix: cleanMix(asFarmedMix), metrics: metricsFor(asFarmedMix, adjust, 0) };
 
   const frontier = paretoFrontier(stats, feasible).map((k) => ({
     worst1in5: round(stats.worst[k]),
@@ -259,19 +287,17 @@ export function runPlan(req: PlanRequest): PlanResponse {
   const lang = req.lang;
   const labels = STRESS_LABELS[lang];
   const recSeries = seriesForMix(recMix, adjust);
-  const stressTests = data.years.map((year, t) => {
-    const cur = curtailedYear(currentMix, t, c.cap, adjust);
-    return {
-      year,
-      label: labels[year] ?? String(year),
-      currentProfit: round(cur.profit),
-      recommendedProfit: round(recSeries[t].profit),
-      currentWater: round(cur.need, 3),
-      recommendedWater: round(recSeries[t].water, 3),
-    };
-  });
+  const curSeries = seriesForMix(currentMix, adjust);
+  const stressTests = data.years.map((year, t) => ({
+    year,
+    label: labels[year] ?? String(year),
+    currentProfit: round(curSeries[t].profit),
+    recommendedProfit: round(recSeries[t].profit),
+    currentWater: round(curSeries[t].water, 3),
+    recommendedWater: round(recSeries[t].water, 3),
+  }));
 
-  const backtest = runBacktest(req, adjust, c, risk, currentMix);
+  const backtest = runBacktest(req, adjust, c, risk, asFarmedMix);
 
   const correlations: PlanResponse['correlations'] = [];
   for (const a of ROTATION_IDS)
@@ -282,8 +308,9 @@ export function runPlan(req: PlanRequest): PlanResponse {
     dataSource: 'sample',
     recommended,
     current,
+    currentAsFarmed,
     frontier,
-    rotations: rotationCards(lang, recMix, currentMix, adjust),
+    rotations: rotationCards(lang, recMix, asFarmedMix, adjust),
     stressTests,
     backtest,
     correlations,
@@ -321,9 +348,9 @@ function runBacktest(req: PlanRequest, adjust: Adjust, c: Constraints, risk: num
   if (kSafe >= 0) rows.push({ strategy: L.safest, ...score(mixAt(kSafe)) });
   const kMax = pick(1);
   if (kMax >= 0) rows.push({ strategy: L.maxProfit, ...score(mixAt(kMax)) });
-  const cur = score(currentMix);
-  const curFits = seriesForMix(currentMix, adjust).every((x) => x.water <= c.cap + EPS);
-  rows.push({ strategy: curFits ? L.currentFits : L.current, ...cur });
+  // The current plan is cut back with the same rule, using only the years the suggested plan saw.
+  const fit = fitToBudget(currentMix, waterScenario(adjust, trainIdx), c.cap);
+  rows.push({ strategy: fit.trimmed ? L.current : L.currentFits, ...score(fit.mix) });
   return rows;
 }
 

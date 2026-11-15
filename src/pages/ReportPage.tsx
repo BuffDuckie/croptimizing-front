@@ -5,12 +5,13 @@ import { MixBar } from '../components/charts/MixBar';
 import { PageIntro } from '../components/layout/PageIntro';
 import { LogoMark } from '../components/layout/Logo';
 import { acresSplit, af, money, pct, whole } from '../lib/format';
-import { usePlanContext } from '../state/PlanContext';
+import { currentTrim, useCurrentLabel, usePlanContext } from '../state/PlanContext';
 
 export default function ReportPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, farm, controls, infeasible } = usePlanContext();
+  const curLabel = useCurrentLabel(true);
   if (!data) return <div className="container-content min-h-[110vh]" />;
 
   const rec = data.recommended.metrics;
@@ -95,7 +96,7 @@ export default function ReportPage() {
                 <tr className="border-b border-border">
                   <th scope="col" className="py-1.5 font-semibold text-text-muted" />
                   <th scope="col" className="py-1.5 text-right font-semibold text-text-muted">{t('plan.suggestedRow')}</th>
-                  <th scope="col" className="py-1.5 text-right font-semibold text-text-muted">{t('report.today')}</th>
+                  <th scope="col" className="py-1.5 text-right font-semibold text-text-muted">{currentTrim(data) ? curLabel : t('report.today')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -108,6 +109,7 @@ export default function ReportPage() {
                 ))}
               </tbody>
             </table>
+            {currentTrim(data) && <p className="mt-2 text-sm text-text-muted">{t('plan.trimNote', { need: af(currentTrim(data)!.needAfPerAcre, lang) })}</p>}
             <p className="mt-3 text-sm text-text">
               {rec.waterValuePerAf > 0 ? t('plan.waterValueTitle', { v: money(rec.waterValuePerAf, lang) }) : t('plan.waterValueZero')}.
             </p>

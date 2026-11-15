@@ -40,7 +40,8 @@ export type PlanResponse = {
   schemaVersion: "1.0";
   dataSource: "sample" | "static" | "live";
   recommended: { mix: Mix; metrics: Metrics };
-  current: { mix: Mix; metrics: Metrics };
+  current: { mix: Mix; metrics: Metrics };   // current plan cut back to fit the water budget (fair comparison)
+  currentAsFarmed?: { mix: Mix; metrics: Metrics }; // current plan as farmed today, before the cut (Show the math only)
   frontier: { worst1in5: number; avgProfit: number; mix: Mix }[];
   rotations: RotationCard[];
   stressTests: { year: number; label: string; currentProfit: number; recommendedProfit: number; currentWater: number; recommendedWater: number }[];

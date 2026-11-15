@@ -13,7 +13,7 @@ import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { acresSplit, af, afDelta, money, moneyDelta, pct, whole, wholeDelta } from '../lib/format';
-import { usePlanContext } from '../state/PlanContext';
+import { currentTrim, useCurrentLabel, usePlanContext } from '../state/PlanContext';
 
 export default function PlanPage() {
   const { t, i18n } = useTranslation();
@@ -42,6 +42,7 @@ function Results() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, infeasible, controls, farm, isLoading } = usePlanContext();
+  const curLabel = useCurrentLabel();
 
   if (infeasible) return <Infeasible />;
   if (!data) return <ResultsSkeleton />;
@@ -49,7 +50,7 @@ function Results() {
   const rec = data.recommended.metrics;
   const cur = data.current.metrics;
   const budget = controls.water;
-  const curOver = cur.maxWaterAfPerAcre > budget + 0.005;
+  const trim = currentTrim(data);
   const split = acresSplit(data.recommended.mix, farm.acres);
   const curSplit = acresSplit(data.current.mix, farm.acres);
   const wv = rec.waterValuePerAf;
@@ -63,7 +64,10 @@ function Results() {
         </h2>
         <div className="mt-6 space-y-6">
           <MixBar mix={data.recommended.mix} acres={farm.acres} label={t('plan.suggestedRow')} />
-          <MixBar mix={data.current.mix} acres={farm.acres} label={t('plan.currentRow')} size="sm" />
+          <div>
+            <MixBar mix={data.current.mix} acres={farm.acres} label={trim ? curLabel : t('plan.currentRow')} size="sm" />
+            {trim && <p className="mt-2 text-sm text-text-muted">{t('plan.trimNote', { need: af(trim.needAfPerAcre, lang) })}</p>}
+          </div>
         </div>
       </section>
 
@@ -105,15 +109,9 @@ function Results() {
               <span>{t('plan.vsCurrent')}</span>
             </>
           }
-          sub={curOver ? undefined : t('plan.currentWas', { v: `${af(cur.maxWaterAfPerAcre, lang)} AF` })}
+          sub={t('plan.currentWas', { v: `${af(cur.maxWaterAfPerAcre, lang)} AF` })}
         >
           <WaterMeter used={rec.maxWaterAfPerAcre} budget={budget} compareUsed={cur.maxWaterAfPerAcre} />
-          {curOver && (
-            <p className="mt-3 flex gap-2 rounded-ctl bg-danger-tint p-3 text-sm text-danger">
-              <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>{t('plan.overBudget', { need: af(cur.maxWaterAfPerAcre, lang), budget: af(budget, lang) })}</span>
-            </p>
-          )}
         </MetricCard>
         <MetricCard
           label={t('plan.soilCard')}

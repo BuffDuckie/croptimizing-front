@@ -76,7 +76,9 @@
     "recommended": "Plan sugerido",
     "close": "Cerrar",
     "more": "Más información",
-    "comingSoon": "próximamente"
+    "comingSoon": "próximamente",
+    "currentFitted": "Su plan actual, recortado para caber en su agua",
+    "currentFittedShort": "Plan actual, recortado"
   },
   "glossary": {
     "acreFoot": {
@@ -280,7 +282,8 @@
     "colShare": "Proporción",
     "colAcres": "Acres",
     "colCurrent": "Acres actuales",
-    "assumptions": "Supuestos"
+    "assumptions": "Supuestos",
+    "trimNote": "Como cultiva hoy, este plan necesita {{need}} AF por acre en su año más alto; dejamos en descanso los acres que su agua no cubre."
   },
   "strip": {
     "titleBetter": "Su plan sugerido aguanta mejor los años malos",
@@ -414,7 +417,7 @@
     "profitBetter": "En {{year}}, su plan sugerido habría ganado {{rec}} por acre, más que los {{cur}} que gana su plan actual con su agua",
     "profitWorse": "En {{year}}, su plan sugerido habría ganado {{rec}} por acre frente a {{cur}} de su plan actual",
     "profitSub": "Ganancia por acre en ese año, después de ajustar cada plan a su presupuesto de agua.",
-    "how1": "Cada barra es la ganancia por acre de un plan en el año elegido. Si un plan necesita más agua que su presupuesto, los campos que no puede regar quedan en barbecho ese año.",
+    "how1": "Cada barra es la ganancia por acre de un plan en el año que eligió. Su plan actual se recorta para caber en su agua: los acres que su presupuesto no cubre en su año de mayor necesidad quedan en descanso.",
     "how2": "Cada barra es el agua por acre que necesita un plan en ese año. La línea negra es su presupuesto.",
     "profit": "Ganancia ($/acre)",
     "profitCaption": "Ganancia por acre en {{year}}",
@@ -426,9 +429,9 @@
     "waterCaption": "Agua necesaria por acre en {{year}}",
     "waterAria": "Gráfica de barras para {{year}}: el plan actual necesita {{cur}} AF por acre, el plan sugerido {{rec}}, presupuesto {{budget}}.",
     "budget": "Presupuesto {{v}}",
-    "fallowNote": "Su plan actual no cabía, así que su ganancia arriba supone que los campos que no pudo regar quedaron en barbecho ese año.",
+    "fallowNote": "Su plan actual necesita más agua que su presupuesto, así que lo comparamos recortado: los acres que su agua no cubre en su año de mayor necesidad quedan en descanso.",
     "math1": "Para cada año pasado repetimos ambos planes con el clima y los precios de ese año. El plan sugerido siempre cabe en su presupuesto, porque el modelo revisa cada año.",
-    "math2": "Cuando el plan actual necesita más agua que el presupuesto, mantenemos la parte de cada cultivo que el agua alcanza y dejamos el resto en barbecho al costo del barbecho. Así suele pasar un recorte de agua en una granja.",
+    "math2": "Cuando el plan actual necesita más agua que el presupuesto, mantenemos la parte de cada cultivo que el agua cubre en el año de mayor necesidad del plan y dejamos el resto en descanso al costo del descanso. Todas las páginas usan esta misma regla, así la comparación es justa: ambos planes caben en su agua cada año.",
     "allCaption": "Cada año pasado, ambos planes"
   },
   "report": {
@@ -457,7 +460,8 @@
       "correlations": "Cómo se mueven juntas las rotaciones",
       "backtest": "Probado en años que no vio",
       "scenarios": "Cada año pasado",
-      "assumptions": "Supuestos y límites"
+      "assumptions": "Supuestos y límites",
+      "current": "Su plan actual"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -558,6 +562,13 @@
       "No modela plagas, enfermedades, mano de obra ni el costo de cambiar de equipo.",
       "Las proporciones cambian en pasos de 5%, así que el mejor plan entre pasos puede variar un poco.",
       "Cada número en esta versión son datos de muestra hasta que carguen los datos reales del equipo."
-    ]
-  }
+    ],
+    "asFarmedTitle": "Su plan actual, antes y después del recorte",
+    "asFarmedIntro": "Cada comparación en esta herramienta usa su plan actual recortado para caber en su agua. Este es el único lugar donde aparece el plan tal como cultiva hoy.",
+    "asFarmedCaption": "Plan actual como se cultiva vs. recortado para caber",
+    "asFarmedRow": "Como cultiva hoy (no cabe en su agua)",
+    "colHighWater": "Agua del año más alto",
+    "colSoil": "Puntaje de suelo"
+  },
+  "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."
 }

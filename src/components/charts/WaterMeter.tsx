@@ -1,10 +1,12 @@
 import { AlertTriangle, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { af } from '../../lib/format';
+import { useCurrentLabel } from '../../state/PlanContext';
 
 /** Highest-year water use vs. the budget, with a marker line at the budget. Turns danger if over. */
 export function WaterMeter({ used, budget, compareUsed, scaleMax = 6 }: { used: number; budget: number; compareUsed?: number; scaleMax?: number }) {
   const { t, i18n } = useTranslation();
+  const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const max = Math.max(scaleMax, used, compareUsed ?? 0, budget) * 1.02;
   const over = used > budget + 0.005;
@@ -20,7 +22,7 @@ export function WaterMeter({ used, budget, compareUsed, scaleMax = 6 }: { used: 
           <div
             className="absolute -top-1 h-5 w-[3px] -translate-x-1/2 rounded-full bg-text-muted/60"
             style={{ left: x(compareUsed) }}
-            title={t('common.current')}
+            title={curLabel}
           />
         )}
         <div className="absolute -top-1.5 h-6 w-[3px] -translate-x-1/2 rounded-full bg-text" style={{ left: x(budget) }} />
