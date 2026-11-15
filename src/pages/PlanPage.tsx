@@ -10,6 +10,7 @@ import { YearsDotStrip } from '../components/charts/YearsDotStrip';
 import { PageIntro } from '../components/layout/PageIntro';
 import { ControlsPanel } from '../components/plan/Controls';
 import { LeaseLine } from '../components/plan/LeaseLine';
+import { NasaDataStrip } from '../components/plan/NasaDataStrip';
 import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
@@ -173,6 +174,8 @@ function Results() {
           {t('plan.sensitive')} <ArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>
       </p>
+
+      <NasaDataStrip data={data} />
 
       <nav aria-label={t('plan.next')} className="grid gap-3 sm:grid-cols-3">
         {[

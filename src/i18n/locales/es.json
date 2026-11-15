@@ -291,7 +291,19 @@
     "leasePays": "Rentar conviene: un acre-pie más gana unos {{v}} y cuesta {{p}}.",
     "leaseNo": "Rentar no conviene a {{p}}: un acre-pie más gana solo unos {{v}}.",
     "leaseNotBinding": "Más agua no cambiaría su plan por ahora.",
-    "sensitive": "¿Qué tan sensible es esto?"
+    "sensitive": "¿Qué tan sensible es esto?",
+    "nasa": {
+      "title": "Datos de la NASA detrás de este plan",
+      "drives": "Fija su necesidad de agua",
+      "context": "Contexto regional",
+      "check": "Verifica nuestro modelo",
+      "power": "{{years}} años ({{days}} días) de clima diario fijan cuánta agua necesita cada cultivo en cada año que probamos.",
+      "grace": "El agua subterránea aquí bajó unos {{v}} cm desde {{from}}. Es contexto de la región; no cambia el plan.",
+      "graceNone": "Tendencia regional del agua subterránea, como contexto de la región.",
+      "openet": "El uso de agua de los cultivos medido por satélite está a menos de {{v}}% de lo que predice nuestro modelo de agua.",
+      "openetNone": "Uso de agua de los cultivos medido por satélite, para verificar nuestro modelo de agua.",
+      "see": "Ver los datos"
+    }
   },
   "strip": {
     "titleBetter": "Su plan sugerido aguanta mejor los años malos",
@@ -481,7 +493,8 @@
       "current": "Su plan actual",
       "sensitivity": "¿Y si cambian los precios o costos?",
       "why": "Por qué peores años y no varianza",
-      "risk": "Medidas de riesgo de finanzas"
+      "risk": "Medidas de riesgo de finanzas",
+      "flow": "Cómo fluyen los datos"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -628,6 +641,24 @@
       "sortino": "Razón de Sortino",
       "diversification": "Beneficio de diversificación",
       "noDownside": "Ningún año quedó debajo del descanso"
+    },
+    "flowIntro": "El clima fija la necesidad de agua de cada año, los presupuestos y precios fijan la ganancia de cada año, y juntos forman los años pasados que prueba el optimizador. El agua subterránea es contexto; el uso de agua medido por satélite verifica nuestro modelo de agua.",
+    "flow": {
+      "title": "Cómo fluyen los datos hacia su plan",
+      "desc": "El clima de NASA POWER fija la necesidad de agua por año. Los precios de USDA NASS y los presupuestos de la Universidad de Arizona fijan la ganancia por año. Ambos forman los escenarios de años pasados que usa el optimizador para elegir su plan. El agua subterránea de NASA GRACE da contexto regional. El uso de agua por satélite de OpenET y NASA ECOSTRESS verifica nuestro modelo de agua.",
+      "box": {
+        "power": "NASA POWER|clima",
+        "budgets": "USDA NASS + UA|presupuestos",
+        "grace": "NASA GRACE /|GRACE-FO subterránea",
+        "openet": "OpenET /|NASA ECOSTRESS",
+        "need": "Agua que necesita|el cultivo por año",
+        "profit": "Ganancia|por año",
+        "context": "Contexto|regional",
+        "check": "Verificación del|modelo de agua",
+        "scenarios": "Años pasados|como escenarios",
+        "optimizer": "Optimizador",
+        "plan": "Su plan"
+      }
     }
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."

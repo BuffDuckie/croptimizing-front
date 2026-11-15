@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DataTable } from '../components/charts/ChartCard';
 import { CorrelationHeatmap } from '../components/charts/CorrelationHeatmap';
 import { SensitivityChart } from '../components/charts/SensitivityChart';
+import { DataFlowDiagram } from '../components/charts/DataFlowDiagram';
 import { classicCaption } from '../components/charts/classicCaption';
 import { PageIntro } from '../components/layout/PageIntro';
 import type { DatasetId } from '../api/types';
@@ -14,7 +15,7 @@ import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 /** Dataset behind each row of the sources table (null: used in text only). */
 const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', null];
 
-const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'sensitivity', 'why', 'risk', 'current', 'scenarios', 'assumptions'] as const;
+const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'flow', 'correlations', 'backtest', 'sensitivity', 'why', 'risk', 'current', 'scenarios', 'assumptions'] as const;
 
 // Formulas (KaTeX) load after the page text so the page paints fast.
 const MathFormulas = lazy(() => import('../components/lazy/MathFormulas'));
@@ -97,6 +98,14 @@ export default function MethodPage() {
             <h2 className="text-3xl font-semibold">{t('method.sec.sources')}</h2>
             <div className="card mt-5 overflow-x-auto" tabIndex={0}>
               <DataTable caption={t('method.sourcesCaption')} head={t('method.sourceHead', { returnObjects: true }) as string[]} rows={sources} className="min-w-[640px] [&_td]:text-left [&_th]:text-left" />
+            </div>
+          </section>
+
+          <section id="flow" className="scroll-mt-36">
+            <h2 className="text-3xl font-semibold">{t('method.sec.flow')}</h2>
+            <p className="mt-3 max-w-3xl text-base text-text">{t('method.flowIntro')}</p>
+            <div className="mt-5">
+              <DataFlowDiagram />
             </div>
           </section>
 

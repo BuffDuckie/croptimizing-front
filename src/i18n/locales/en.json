@@ -290,7 +290,19 @@
     "leasePays": "Leasing pays: one more acre-foot earns about {{v}} and costs {{p}}.",
     "leaseNo": "Leasing does not pay at {{p}}: one more acre-foot earns only about {{v}}.",
     "leaseNotBinding": "More water would not change your plan right now.",
-    "sensitive": "How sensitive is this?"
+    "sensitive": "How sensitive is this?",
+    "nasa": {
+      "title": "NASA data behind this plan",
+      "drives": "Sets your water need",
+      "context": "Regional context",
+      "check": "Checks our model",
+      "power": "{{years}} years ({{days}} days) of daily weather set how much water each crop needs in every year we test.",
+      "grace": "Groundwater here dropped about {{v}} cm since {{from}}. This is context for the region; it does not change the plan.",
+      "graceNone": "Regional groundwater trend, shown as context for the region.",
+      "openet": "Satellite-measured crop water use is within {{v}}% of what our water model predicts.",
+      "openetNone": "Satellite-measured crop water use, used to check our water model.",
+      "see": "See the data"
+    }
   },
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",
@@ -480,7 +492,8 @@
       "current": "Your current plan",
       "sensitivity": "What if prices or costs change?",
       "why": "Why worst years, not variance",
-      "risk": "Risk measures from finance"
+      "risk": "Risk measures from finance",
+      "flow": "How the data flows"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -627,6 +640,24 @@
       "sortino": "Sortino ratio",
       "diversification": "Diversification benefit",
       "noDownside": "No year fell below fallow"
+    },
+    "flowIntro": "Weather sets each year's crop water need, budgets and prices set each year's profit, and together they make the past years the optimizer tests. Groundwater is context; satellite crop water use checks our water model.",
+    "flow": {
+      "title": "How data flows into your plan",
+      "desc": "NASA POWER weather sets crop water need per year. USDA NASS prices and University of Arizona crop budgets set profit per year. Both make the past-year scenarios, which the optimizer uses to pick your plan. NASA GRACE groundwater gives regional context. OpenET and NASA ECOSTRESS satellite crop water use check our water model.",
+      "box": {
+        "power": "NASA POWER|weather",
+        "budgets": "USDA NASS + UA|crop budgets",
+        "grace": "NASA GRACE /|GRACE-FO groundwater",
+        "openet": "OpenET /|NASA ECOSTRESS",
+        "need": "Crop water need|per year",
+        "profit": "Profit|per year",
+        "context": "Regional|context",
+        "check": "Check on our|water model",
+        "scenarios": "Past years as|scenarios",
+        "optimizer": "Optimizer",
+        "plan": "Your plan"
+      }
     }
   }
 }
