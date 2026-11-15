@@ -103,6 +103,13 @@ export const planResponseSchema = z.object({
       }),
     )
     .optional(),
+  classic: z
+    .object({
+      points: z.array(z.object({ worst1in5: finite, avgProfit: finite, sd: finite.min(0), mix: mixSchema })),
+      atSuggested: z.object({ avgProfit: finite, classicWorst1in5: finite, ourWorst1in5: finite }).nullable(),
+      largestGap: z.object({ avgProfit: finite, classicWorst1in5: finite, ourWorst1in5: finite }).nullable(),
+    })
+    .optional(),
   validation: z
     .object({
       lpCrossCheck: z.object({ method: z.string(), maxShareDifference: finite.min(0).max(1), note: z.string() }).optional(),

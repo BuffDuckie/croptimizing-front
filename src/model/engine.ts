@@ -1,7 +1,7 @@
 // In-browser mirror of the backend's math. Same output shape as the API.
 
 import { InfeasibleError } from '../api/errors';
-import type { Metrics, Mix, PlanRequest, PlanResponse, RotationCard, RotationId, SensitivityRow } from '../api/types';
+import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RotationCard, RotationId, SensitivityRow } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
 import {
@@ -93,6 +93,41 @@ export function paretoFrontier(stats: MixStats, feasible: number[]): number[] {
     }
   }
   return out.reverse();
+}
+
+/**
+ * Classic mean-variance efficient set: feasible mixes that no other feasible mix
+ * beats on both higher average and lower standard deviation of yearly profit.
+ * Sorted by average profit.
+ */
+export function meanVarianceSet(stats: MixStats, feasible: number[]): number[] {
+  const sorted = [...feasible].sort((a, b) => stats.sd[a] - stats.sd[b] || stats.avg[b] - stats.avg[a]);
+  const out: number[] = [];
+  let bestAvg = -Infinity;
+  for (const k of sorted) {
+    if (stats.avg[k] > bestAvg + EPS) {
+      out.push(k);
+      bestAvg = stats.avg[k];
+    }
+  }
+  return out;
+}
+
+/** Classic points plus how they compare with ours near the suggested plan's average. */
+export function classicComparison(stats: MixStats, feasible: number[], recommendedAvg: number): Classic {
+  const set = meanVarianceSet(stats, feasible);
+  const points = set.map((k) => ({ worst1in5: round(stats.worst[k]), avgProfit: round(stats.avg[k]), sd: round(stats.sd[k]), mix: cleanMix(mixAt(k)) }));
+  if (set.length === 0) return { points, atSuggested: null, largestGap: null };
+  // Best worst-years result among feasible mixes earning at least this average.
+  const gapAt = (c: number) => {
+    let ours = -Infinity;
+    for (const k of feasible) if (stats.avg[k] >= stats.avg[c] - EPS && stats.worst[k] > ours) ours = stats.worst[k];
+    return { avgProfit: round(stats.avg[c]), classicWorst1in5: round(stats.worst[c]), ourWorst1in5: round(ours) };
+  };
+  const near = set.reduce((a, b) => (Math.abs(stats.avg[b] - recommendedAvg) < Math.abs(stats.avg[a] - recommendedAvg) ? b : a));
+  const gaps = set.map(gapAt);
+  const largestGap = gaps.reduce((a, b) => (b.ourWorst1in5 - b.classicWorst1in5 > a.ourWorst1in5 - a.classicWorst1in5 ? b : a));
+  return { points, atSuggested: gapAt(near), largestGap };
 }
 
 function bestObjectiveAt(stats: MixStats, c: Constraints, risk: number): number | null {
@@ -299,6 +334,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
 
   const backtest = runBacktest(req, adjust, c, risk, asFarmedMix);
   const sensitivity = runSensitivity(adjust, c, risk, best);
+  const classic = classicComparison(stats, feasible, stats.avg[best]);
 
   const correlations: PlanResponse['correlations'] = [];
   for (const a of ROTATION_IDS)
@@ -318,6 +354,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     context: getSampleContext(),
     assumptions: ASSUMPTIONS[lang],
     sensitivity,
+    classic,
     sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample' },
   };
 }

@@ -42,15 +42,19 @@ export function FrontierChart({
   current,
   recommended,
   waterKey,
+  classic,
 }: {
   frontier: Point[];
   current: Marker;
   recommended: Marker;
   /** Changes when the water budget changes. */
   waterKey: number;
+  /** Classic mean-variance plans, drawn as a dashed muted line when given. */
+  classic?: Point[];
 }) {
   const { t, i18n } = useTranslation();
   const curLabel = useCurrentLabel();
+  const curShort = useCurrentLabel(true);
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const [wrapRef, width] = useElementWidth<HTMLDivElement>(720);
   const [active, setActive] = useState<number | 'cur' | 'rec' | null>(null);
@@ -74,7 +78,7 @@ export function FrontierChart({
 
   const H = Math.max(320, Math.min(460, width * 0.62));
   const m = { l: 64, r: 24, t: 24, b: 56 };
-  const all = [...frontier, current, recommended, ...(ghost?.pts ?? [])];
+  const all = [...frontier, current, recommended, ...(ghost?.pts ?? []), ...(classic ?? [])];
   const xs = all.map((p) => p.worst1in5);
   const ys = all.map((p) => p.avgProfit);
   const padX = (Math.max(...xs) - Math.min(...xs)) * 0.08 || 20;
@@ -186,6 +190,18 @@ export function FrontierChart({
             <path key={ghost.id} d={line([...ghost.pts].sort((a, b) => a.worst1in5 - b.worst1in5))} fill="none" stroke={colors.primary} strokeWidth={2} strokeDasharray="6 6" className="frontier-ghost" />
           )}
 
+          {/* classic mean-variance plans: dashed muted line, hollow points */}
+          {classic && classic.length > 0 && (
+            <g aria-hidden="true">
+              {classic.length > 1 && (
+                <path d={line([...classic].sort((a, b) => a.avgProfit - b.avgProfit))} fill="none" stroke={colors['text-muted']} strokeWidth={2} strokeDasharray="7 5" strokeLinejoin="round" />
+              )}
+              {classic.map((p, i) => (
+                <circle key={`c${i}`} cx={X(p.worst1in5)} cy={Y(p.avgProfit)} r={3.5} fill={colors.surface} stroke={colors['text-muted']} strokeWidth={1.5} />
+              ))}
+            </g>
+          )}
+
           {/* frontier */}
           {sorted.length > 1 && <path d={line(sorted)} fill="none" stroke={colors.primary} strokeWidth={3} strokeLinejoin="round" className="frontier-line" />}
           {sorted.map((p, i) => (
@@ -195,7 +211,7 @@ export function FrontierChart({
           {/* current plan: hollow charcoal circle */}
           <circle cx={X(current.worst1in5)} cy={Y(current.avgProfit)} r={active === 'cur' ? 11 : 9} fill={colors.surface} stroke={colors.text} strokeWidth={2.5} />
           <text x={X(current.worst1in5) - 14} y={Y(current.avgProfit) + 5} textAnchor="end" className="fill-text text-[14px] font-semibold">
-            {curLabel}
+            {curShort}
           </text>
 
           {/* recommended: cyan star, navy outline */}

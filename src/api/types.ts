@@ -58,7 +58,18 @@ export type PlanResponse = {
   sources?: Partial<Record<DatasetId, SourceFlag>>; // per-dataset flag; a missing dataset counts as sample
   validation?: Validation;
   sensitivity?: SensitivityRow[];   // suggested plan re-run under price and cost changes
+  classic?: Classic;                // classic mean-variance efficient set, for comparison
 };
+
+export type Classic = {
+  // Feasible mixes no other feasible mix beats on both higher average and lower standard deviation.
+  points: { worst1in5: number; avgProfit: number; sd: number; mix: Mix }[];
+  // The classic plan nearest the suggested plan's average, vs the best worst-years result at that average or higher.
+  atSuggested: ClassicGap | null;
+  // The classic plan that does worst against ours on worst years, at the same or higher average.
+  largestGap: ClassicGap | null;
+};
+export type ClassicGap = { avgProfit: number; classicWorst1in5: number; ourWorst1in5: number };
 
 export type SensitivityCase = "profitDown" | "profitUp" | "waterCostDown" | "waterCostUp" | "efficiencyLow" | "efficiencyHigh";
 export type SensitivityRow = {

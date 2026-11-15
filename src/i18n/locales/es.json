@@ -329,7 +329,16 @@
     "math1": "Para cada una de las 10,626 mezclas que caben en sus límites de agua y suelo, calculamos dos números de 2005 a 2024: la ganancia promedio y el promedio de los 4 peores años.",
     "math2": "Una mezcla está en la frontera si ninguna otra la supera en ambos números. Su ajuste de riesgo elige un punto: maximiza (1 menos riesgo) por la ganancia de los peores años más riesgo por la ganancia promedio.",
     "sliderTitle": "Pruebe con menos o más agua",
-    "sliderHelp": "Vea cómo se mueve la línea. Es el mismo presupuesto de agua que en Mi plan."
+    "sliderHelp": "Vea cómo se mueve la línea. Es el mismo presupuesto de agua que en Mi plan.",
+    "classic": {
+      "toggle": "Comparar con la teoría clásica de portafolios",
+      "toggleHelp": "La teoría clásica mide el riesgo por cuánto cambia la ganancia de un año a otro (varianza), incluyendo los años buenos.",
+      "legend": "Planes de la teoría clásica",
+      "point": "Plan de la teoría clásica",
+      "worseAtSame": "Con la misma ganancia promedio, el plan del método clásico gana {{x}} menos en sus peores años.",
+      "sameHereWorseElsewhere": "Con la ganancia promedio de su plan, ambos métodos eligen la misma mezcla. En otros puntos difieren: el plan del método clásico con promedio de {{avg}} gana {{cw}} en sus peores años, mientras que un plan con al menos ese promedio gana {{ow}}.",
+      "negligible": "Aquí el método clásico encuentra casi los mismos planes que el nuestro: la diferencia en sus peores años es menor de {{x}} por acre."
+    }
   },
   "compare": {
     "finding": "{{name}} gana más por cada acre-pie de agua: {{v}}",
@@ -470,7 +479,8 @@
       "scenarios": "Cada año pasado",
       "assumptions": "Supuestos y límites",
       "current": "Su plan actual",
-      "sensitivity": "¿Y si cambian los precios o costos?"
+      "sensitivity": "¿Y si cambian los precios o costos?",
+      "why": "Por qué peores años y no varianza"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -604,7 +614,8 @@
         "efficiencyLow": "Eficiencia de riego {{v}}%",
         "efficiencyHigh": "Eficiencia de riego {{v}}%"
       }
-    }
+    },
+    "whyRisk": "La teoría clásica de portafolios mide el riesgo con la varianza: qué tan lejos del promedio cae la ganancia de cada año. Eso trata un año excelente como riesgo, igual que uno malo, y favorece planes que casi no se mueven, como dejar en descanso la mayoría de los campos. A un agricultor le dañan los años malos, no los buenos, así que medimos el riesgo con sus peores años, 1 de cada 5."
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."
 }

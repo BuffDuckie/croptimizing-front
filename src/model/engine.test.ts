@@ -3,7 +3,7 @@ import { isInfeasible } from '../api/errors';
 import { planResponseSchema } from '../api/schemas';
 import type { PlanRequest } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
-import { bestIndex, feasibleIndices, fitToBudget, objective, paretoFrontier, runPlan, waterScenario } from './engine';
+import { bestIndex, feasibleIndices, fitToBudget, meanVarianceSet, objective, paretoFrontier, runPlan, waterScenario } from './engine';
 import { DEFAULT_ADJUST, getMixStats, mixCount, seriesForMix } from './metrics';
 import { getScenarioData } from './sampleData';
 
@@ -222,5 +222,22 @@ describe('sensitivity', () => {
     const up = seriesForMix({ alfalfa: 0.5, fallow: 0.5 }, { ...DEFAULT_ADJUST, profitShock: 0.2 });
     const data = getScenarioData();
     plain.forEach((p, t) => expect(up[t].profit).toBeCloseTo(p.profit + 0.2 * 0.5 * data.profit.alfalfa[t], 6));
+  });
+});
+
+describe('classic portfolio theory', () => {
+  it('keeps only mixes no other feasible mix beats on both average and spread', () => {
+    const stats = getMixStats();
+    const feasible = feasibleIndices(stats, { cap: 2.4, minSoil: 30 });
+    const set = meanVarianceSet(stats, feasible);
+    expect(set.length).toBeGreaterThan(1);
+    for (const k of set)
+      for (const j of feasible) expect(stats.avg[j] > stats.avg[k] + 1e-9 && stats.sd[j] < stats.sd[k] - 1e-9).toBe(false);
+  });
+
+  it('never beats our frontier on worst years at the same or higher average', () => {
+    const res = runPlan(base);
+    const a = res.classic!.atSuggested!;
+    expect(a.ourWorst1in5).toBeGreaterThanOrEqual(a.classicWorst1in5 - 1e-6);
   });
 });

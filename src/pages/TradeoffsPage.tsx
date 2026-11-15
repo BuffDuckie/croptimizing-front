@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { classicCaption } from '../components/charts/classicCaption';
 import { ChartCard, DataTable } from '../components/charts/ChartCard';
 import { FrontierChart } from '../components/charts/FrontierChart';
 import { colors } from '../theme/tokens';
@@ -15,6 +17,8 @@ export default function TradeoffsPage() {
   const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls, infeasible, softened } = usePlanContext();
+  const [showClassic, setShowClassic] = useState(false);
+  const classic = showClassic && data?.classic ? data.classic : null;
 
   const frontier = data?.frontier ?? [];
   const sorted = [...frontier].sort((a, b) => a.worst1in5 - b.worst1in5);
@@ -91,6 +95,15 @@ export default function TradeoffsPage() {
                     </svg>
                     {t('trade.legendGhost')}
                   </li>
+                  {classic && (
+                    <li className="flex items-center gap-2">
+                      <svg width="28" height="10">
+                        <line x1="0" x2="28" y1="5" y2="5" stroke={colors['text-muted']} strokeWidth="2" strokeDasharray="7 5" />
+                        <circle cx="14" cy="5" r="3.5" fill={colors.surface} stroke={colors['text-muted']} strokeWidth="1.5" />
+                      </svg>
+                      {t('trade.classic.legend')}
+                    </li>
+                  )}
                 </ul>
               }
             >
@@ -99,7 +112,31 @@ export default function TradeoffsPage() {
                 current={{ worst1in5: data.current.metrics.worst1in5PerAcre, avgProfit: data.current.metrics.avgProfitPerAcre, mix: data.current.mix }}
                 recommended={{ worst1in5: data.recommended.metrics.worst1in5PerAcre, avgProfit: data.recommended.metrics.avgProfitPerAcre, mix: data.recommended.mix }}
                 waterKey={controls.water}
+                classic={classic?.points}
               />
+              {data.classic && (
+                <div className="mt-4 rounded-ctl bg-bg p-4">
+                  <label className="flex min-h-[44px] cursor-pointer items-center gap-3 text-base font-semibold text-text">
+                    <input type="checkbox" className="h-5 w-5 accent-primary" checked={showClassic} onChange={(e) => setShowClassic(e.target.checked)} />
+                    {t('trade.classic.toggle')}
+                  </label>
+                  <p className="mt-1 text-sm text-text-muted">{t('trade.classic.toggleHelp')}</p>
+                  {classic && (
+                    <p role="status" className="mt-3 text-base text-text">
+                      {classicCaption(t, classic, lang)}
+                    </p>
+                  )}
+                  {classic && (
+                    <div className="sr-only">
+                      <DataTable
+                        caption={t('trade.classic.legend')}
+                        head={[t('trade.colPlan'), t('trade.tipWorst'), t('trade.tipAvg')]}
+                        rows={classic.points.map((p) => [mixEntries(p.mix).map((e) => `${t(`rotations.${e.id}`)} ${pct(e.share, lang)}`).join(', '), money(p.worst1in5, lang), money(p.avgProfit, lang)])}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </ChartCard>
           )}
           {data && (

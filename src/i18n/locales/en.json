@@ -328,7 +328,16 @@
     "math1": "For each of the 10,626 mixes that fit your water and soil limits, we compute two numbers over 2005 to 2024: the average profit and the average of the 4 worst years.",
     "math2": "A mix is on the frontier if no other mix beats it on both numbers. Your risk setting picks one point: it maximizes (1 minus risk) times worst-years profit plus risk times average profit.",
     "sliderTitle": "Try less or more water",
-    "sliderHelp": "Watch the line move. This is the same water budget as on My plan."
+    "sliderHelp": "Watch the line move. This is the same water budget as on My plan.",
+    "classic": {
+      "toggle": "Compare with classic portfolio theory",
+      "toggleHelp": "Classic theory measures risk by how much profit swings from year to year (variance), including good years.",
+      "legend": "Classic theory's plans",
+      "point": "Classic theory's plan",
+      "worseAtSame": "At the same average profit, the classic method's plan does {{x}} worse in your worst years.",
+      "sameHereWorseElsewhere": "At your plan's average profit, both methods pick the same mix. Elsewhere they differ: the classic method's plan averaging {{avg}} earns {{cw}} in your worst years, while a plan earning at least as much on average earns {{ow}}.",
+      "negligible": "Here the classic method finds almost the same plans as ours: the difference in your worst years is under {{x}} per acre."
+    }
   },
   "compare": {
     "finding": "{{name}} earns the most for each acre-foot of water: {{v}}",
@@ -469,7 +478,8 @@
       "scenarios": "Every past year",
       "assumptions": "Assumptions and limits",
       "current": "Your current plan",
-      "sensitivity": "What if prices or costs change?"
+      "sensitivity": "What if prices or costs change?",
+      "why": "Why worst years, not variance"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -603,6 +613,7 @@
         "efficiencyLow": "Irrigation efficiency {{v}}%",
         "efficiencyHigh": "Irrigation efficiency {{v}}%"
       }
-    }
+    },
+    "whyRisk": "Classic portfolio theory measures risk by variance: how far each year's profit lands from the average. That treats a great year as risk, the same as a bad one, and it favors plans that barely move, like leaving most fields fallow. A farmer is hurt by bad years, not good ones, so we measure risk by your worst 1-in-5 years instead."
   }
 }
