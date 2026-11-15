@@ -1,25 +1,37 @@
-import { Sun } from 'lucide-react';
+import { Snowflake, Sun } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { RotationCard } from '../../api/types';
+import type { RiskMonths } from '../../lib/risk';
 import { CROP_INITIALS, ROT_BG } from './rotation';
 
-/** 12 months per rotation: growing months filled with the crop initial, bare months hatched, sun on heat-risk months. */
-export function CalendarStrip({ card }: { card: RotationCard }) {
+/**
+ * 12 months per rotation: growing months filled with the crop initial, bare
+ * months hatched, a sun on heat-risk months and a snowflake on frost-risk months.
+ */
+export function CalendarStrip({ card, risk }: { card: RotationCard; risk: RiskMonths }) {
   const { t } = useTranslation();
   const months = t('months', { returnObjects: true }) as string[];
   const initials = CROP_INITIALS[card.id];
   const grow = card.calendar.filter((c) => c === 'grow').length;
-  const label = t('compare.calAria', {
-    name: card.name,
-    grow,
-    list: card.calendar.map((c, i) => `${months[i]} ${c === 'grow' ? t('compare.growing') : t('compare.bare')}`).join(', '),
-  });
+  const names = (ms: number[]) => ms.map((m) => months[m - 1]).join(', ');
+  const label = [
+    t('compare.calAria', {
+      name: card.name,
+      grow,
+      list: card.calendar.map((c, i) => `${months[i]} ${c === 'grow' ? t('compare.growing') : t('compare.bare')}`).join(', '),
+    }),
+    risk.heat.length ? t('compare.risk.heatAria', { list: names(risk.heat) }) : '',
+    risk.frost.length ? t('compare.risk.frostAria', { list: names(risk.frost) }) : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
   return (
     <div role="img" aria-label={label}>
       <div className="grid grid-cols-12 gap-[3px]" aria-hidden="true">
         {card.calendar.map((_c, i) => (
-          <div key={`s${i}`} className="flex h-5 items-end justify-center">
-            {card.heatRiskMonths.includes(i + 1) && <Sun className="h-4 w-4 text-warning" strokeWidth={2.25} />}
+          <div key={`s${i}`} className="flex h-5 items-end justify-center gap-px">
+            {risk.heat.includes(i + 1) && <Sun className="h-4 w-4 text-warning" strokeWidth={2.25} />}
+            {risk.frost.includes(i + 1) && <Snowflake className="h-4 w-4 text-accent-strong" strokeWidth={2.25} />}
           </div>
         ))}
         {card.calendar.map((c, i) => (

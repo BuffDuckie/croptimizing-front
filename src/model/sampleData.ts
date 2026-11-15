@@ -152,5 +152,9 @@ export function getSampleContext() {
     }
     return { id: r.id, label: r.label, series, source: 'sample' as const };
   });
-  return { graceTwsCm, heatDaysPerYear, et0MonthlyMm, etCheck, otherRegions };
+  // Average days per calendar month at or above 110 F (heat) and at or below freezing (frost). Sample only.
+  const heatDays = [0, 0, 0, 0, 1.5, 7.8, 9.4, 6.1, 1.2, 0, 0, 0];
+  const frostDays = [3.2, 1.4, 0.3, 0, 0, 0, 0, 0, 0, 0, 0.6, 2.8];
+  const monthlyRisk = heatDays.map((h, i) => ({ month: i + 1, heatDays: h, frostDays: frostDays[i] }));
+  return { graceTwsCm, heatDaysPerYear, et0MonthlyMm, etCheck, otherRegions, monthlyRisk };
 }

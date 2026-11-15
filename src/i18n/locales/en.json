@@ -448,7 +448,16 @@
       "checkLocally": "Check locally"
     },
     "math": "Each number is a 20-year average for one acre of that rotation alone, using the same sample data as your plan. Per acre-foot divides average profit by average applied water. Worst 1-in-5 is the average of its 4 worst years.",
-    "tableCaption": "Rotations side by side"
+    "tableCaption": "Rotations side by side",
+    "risk": {
+      "heat": "Hot month while the crop is in the field ({{n}} or more days at 110°F or above)",
+      "frost": "Frost month while the crop is in the field ({{n}} or more days at freezing or below)",
+      "source": "From NASA POWER daily weather, {{from}} to {{to}}.",
+      "heatFixed": "Summer heat-risk months (June to August)",
+      "sourceFixed": "Fixed months, not yet from daily weather.",
+      "heatAria": "Heat-risk months: {{list}}.",
+      "frostAria": "Frost-risk months: {{list}}."
+    }
   },
   "why": {
     "lead": "Water here is getting scarcer from both ends: less underground, and more needed by every crop in the heat.",
@@ -511,6 +520,18 @@
       "flat": "No clear decline since {{from}}",
       "noData": "Not enough data yet",
       "aria": "Line chart of groundwater storage in {{name}} from {{from}} to {{to}}, dropping about {{v}} centimeters."
+    },
+    "risk": {
+      "title": "{{m}} brings the most extreme heat, about {{v}} days at 110°F or above",
+      "titleFrost": "{{m}} brings the most extreme heat, about {{v}} days at 110°F or above; frost comes in {{f}}",
+      "titleNone": "No month averages a day at 110°F or above here",
+      "res": "Daily max and min temperature, about 50 km grid, {{from}} to {{to}} average",
+      "how1": "Orange bars: average days a month with a high of 110°F (43.3°C) or more. Blue bars: average days with a low at freezing (0°C) or below.",
+      "how2": "A crop in the field during these months is the most exposed. The Compare page marks them on each rotation's calendar.",
+      "heat": "Days at 110°F or above",
+      "frost": "Days at freezing or below",
+      "caption": "Average days per calendar month with extreme heat and with frost.",
+      "aria": "Monthly bars: {{m}} averages about {{v}} days at 110°F or above. Frost days: {{f}}."
     }
   },
   "stress": {

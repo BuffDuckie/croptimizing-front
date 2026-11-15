@@ -1,4 +1,4 @@
-import { BookOpen, CircleHelp, Lightbulb, MapPin, ThumbsUp } from 'lucide-react';
+import { BookOpen, CircleHelp, Lightbulb, MapPin, Snowflake, Sun, ThumbsUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PlanResponse, RotationCard, RotationId } from '../api/types';
 import { CalendarStrip } from '../components/charts/CalendarStrip';
@@ -6,9 +6,12 @@ import { DataTable } from '../components/charts/ChartCard';
 import { ROT_BG } from '../components/charts/rotation';
 import { SoilBreakdown } from '../components/charts/SoilBreakdown';
 import { PageIntro } from '../components/layout/PageIntro';
+import { SamplePill } from '../components/layout/SampleBadge';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { af, money, pct, whole } from '../lib/format';
+import { FROST_DAYS_MIN, HEAT_DAYS_MIN, riskMonths } from '../lib/risk';
+import { isSample } from '../lib/sources';
 import { usePlanContext, useYears } from '../state/PlanContext';
 
 function order(data: PlanResponse): RotationCard[] {
@@ -37,10 +40,11 @@ export default function ComparePage() {
         {t('compare.finding', { name: best.name, v: money(best.stats.profitPerAf, lang) })}
       </h2>
       <p className="mt-2 max-w-3xl text-base text-text-muted">{t('compare.findingSub', yrs)}</p>
+      <RiskLegend data={data} />
 
       <div className="mt-8 grid gap-6 xl:grid-cols-2">
         {cards.map((c) => (
-          <RotationCardView key={c.id} card={c} recShare={data.recommended.mix[c.id] ?? 0} curShare={data.current.mix[c.id] ?? 0} />
+          <RotationCardView key={c.id} card={c} recShare={data.recommended.mix[c.id] ?? 0} curShare={data.current.mix[c.id] ?? 0} monthlyRisk={data.context.monthlyRisk} />
         ))}
       </div>
 
@@ -69,7 +73,30 @@ export default function ComparePage() {
   );
 }
 
-function RotationCardView({ card, recShare, curShare }: { card: RotationCard; recShare: number; curShare: number }) {
+/** What the sun and snowflake marks mean, and where they come from. */
+function RiskLegend({ data }: { data: PlanResponse }) {
+  const { t } = useTranslation();
+  const yrs = useYears();
+  const fromData = !!data.context.monthlyRisk?.length;
+  return (
+    <div className="mt-4 flex max-w-3xl flex-wrap items-center gap-x-5 gap-y-2 rounded-ctl bg-surface px-4 py-3 text-sm text-text shadow-card">
+      <span className="flex items-center gap-1.5">
+        <Sun aria-hidden="true" className="h-4 w-4 text-warning" strokeWidth={2.25} />
+        {fromData ? t('compare.risk.heat', { n: HEAT_DAYS_MIN }) : t('compare.risk.heatFixed')}
+      </span>
+      {fromData && (
+        <span className="flex items-center gap-1.5">
+          <Snowflake aria-hidden="true" className="h-4 w-4 text-accent-strong" strokeWidth={2.25} />
+          {t('compare.risk.frost', { n: FROST_DAYS_MIN })}
+        </span>
+      )}
+      <span className="text-text-muted">{fromData ? t('compare.risk.source', yrs) : t('compare.risk.sourceFixed')}</span>
+      {(!fromData || isSample(data, ['weather'])) && <SamplePill />}
+    </div>
+  );
+}
+
+function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: RotationCard; recShare: number; curShare: number; monthlyRisk?: PlanResponse['context']['monthlyRisk'] }) {
   const { t, i18n } = useTranslation();
   const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
@@ -120,7 +147,7 @@ function RotationCardView({ card, recShare, curShare }: { card: RotationCard; re
 
       <section aria-label={t('compare.calendar')}>
         <h3 className="mb-2 text-sm font-semibold text-text-muted">{t('compare.calendar')}</h3>
-        <CalendarStrip card={card} />
+        <CalendarStrip card={card} risk={riskMonths(card, monthlyRisk)} />
       </section>
 
       <section aria-label={t('compare.statement', yrs)}>

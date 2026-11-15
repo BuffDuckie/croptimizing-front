@@ -449,7 +449,16 @@
       "checkLocally": "Revise localmente"
     },
     "math": "Cada número es un promedio de 20 años para un acre de esa rotación sola, con los mismos datos de muestra que su plan. Por acre-pie divide la ganancia promedio entre el agua aplicada promedio. Peores 1 de 5 es el promedio de sus 4 peores años.",
-    "tableCaption": "Rotaciones lado a lado"
+    "tableCaption": "Rotaciones lado a lado",
+    "risk": {
+      "heat": "Mes caluroso con el cultivo en el campo ({{n}} o más días a 110°F o más)",
+      "frost": "Mes con heladas con el cultivo en el campo ({{n}} o más días bajo cero)",
+      "source": "Del clima diario de NASA POWER, {{from}} a {{to}}.",
+      "heatFixed": "Meses de riesgo por calor en verano (junio a agosto)",
+      "sourceFixed": "Meses fijos, todavía no salen del clima diario.",
+      "heatAria": "Meses de riesgo por calor: {{list}}.",
+      "frostAria": "Meses de riesgo por heladas: {{list}}."
+    }
   },
   "why": {
     "lead": "El agua aquí escasea por ambos lados: hay menos bajo tierra y cada cultivo necesita más con el calor.",
@@ -512,6 +521,18 @@
       "flat": "Sin una baja clara desde {{from}}",
       "noData": "Aún no hay datos suficientes",
       "aria": "Gráfica de línea del agua subterránea en {{name}} de {{from}} a {{to}}, que baja unos {{v}} centímetros."
+    },
+    "risk": {
+      "title": "{{m}} trae el calor más extremo, unos {{v}} días a 110°F o más",
+      "titleFrost": "{{m}} trae el calor más extremo, unos {{v}} días a 110°F o más; las heladas llegan en {{f}}",
+      "titleNone": "Ningún mes promedia un día a 110°F o más aquí",
+      "res": "Temperatura máxima y mínima diaria, cuadrícula de unos 50 km, promedio de {{from}} a {{to}}",
+      "how1": "Barras naranjas: días promedio al mes con una máxima de 110°F (43.3°C) o más. Barras azules: días promedio con una mínima bajo cero (0°C) o menos.",
+      "how2": "Un cultivo en el campo en estos meses es el más expuesto. La página Comparar los marca en el calendario de cada rotación.",
+      "heat": "Días a 110°F o más",
+      "frost": "Días bajo cero",
+      "caption": "Días promedio por mes con calor extremo y con heladas.",
+      "aria": "Barras mensuales: {{m}} promedia unos {{v}} días a 110°F o más. Días con heladas: {{f}}."
     }
   },
   "stress": {

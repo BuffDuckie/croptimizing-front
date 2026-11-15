@@ -8,7 +8,8 @@ import { InfoTip } from '../ui/InfoTip';
 import type { PlanResponse } from '../../api/types';
 import { graceDropCm } from '../../lib/context';
 import { isSample } from '../../lib/sources';
-import { usePlanContext } from '../../state/PlanContext';
+import { FROST_DAYS_MIN } from '../../lib/risk';
+import { usePlanContext, useYears } from '../../state/PlanContext';
 import { colors } from '../../theme/tokens';
 
 function Source({ mission, detail }: { mission: string; detail: string }) {
@@ -179,6 +180,8 @@ export default function WhyPanels() {
         </ChartCard>
       </div>
 
+      {ctx.monthlyRisk && ctx.monthlyRisk.length > 0 && <MonthlyRisk rows={ctx.monthlyRisk} sample={isSample(data, ['weather'])} />}
+
       {ctx.otherRegions && ctx.otherRegions.length > 0 && <OtherRegions regions={ctx.otherRegions} />}
     </>
   );
@@ -257,3 +260,55 @@ function OtherRegions({ regions }: { regions: Region[] }) {
   );
 }
 
+
+type RiskRow = NonNullable<PlanResponse['context']['monthlyRisk']>[number];
+
+/** Average extreme-heat and frost days per calendar month (NASA POWER daily weather). */
+function MonthlyRisk({ rows, sample }: { rows: RiskRow[]; sample: boolean }) {
+  const { t, i18n } = useTranslation();
+  const yrs = useYears();
+  const lang = i18n.language === 'es' ? 'es' : 'en';
+  const nf = (n: number, d = 0) => new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d }).format(n);
+  const months = t('months', { returnObjects: true }) as string[];
+  const pts = [...rows].sort((a, b) => a.month - b.month).map((r) => ({ ...r, name: months[r.month - 1] }));
+  const peak = pts.reduce((a, b) => (b.heatDays > a.heatDays ? b : a));
+  const frost = pts.filter((r) => r.frostDays >= FROST_DAYS_MIN).map((r) => r.name).join(', ');
+  const title =
+    peak.heatDays < 0.5
+      ? t('why.risk.titleNone')
+      : frost
+        ? t('why.risk.titleFrost', { m: peak.name, v: nf(peak.heatDays), f: frost })
+        : t('why.risk.title', { m: peak.name, v: nf(peak.heatDays) });
+  return (
+    <div className="mt-6">
+      <ChartCard
+        title={title}
+        subtitle={<Source mission="NASA POWER" detail={t('why.risk.res', yrs)} />}
+        howTo={
+          <>
+            <p>{t('why.risk.how1')}</p>
+            <p>{t('why.risk.how2')}</p>
+          </>
+        }
+        table={<DataTable caption={t('why.risk.caption')} head={[t('why.month'), t('why.risk.heat'), t('why.risk.frost')]} rows={pts.map((r) => [r.name, nf(r.heatDays, 1), nf(r.frostDays, 1)])} />}
+        sample={sample}
+        id="monthly-risk"
+        className="scroll-mt-36"
+      >
+        <div className="h-56" role="img" aria-label={t('why.risk.aria', { m: peak.name, v: nf(peak.heatDays), f: frost || '-' })}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={pts} margin={{ top: 8, right: 12, left: 0, bottom: 8 }} barGap={2}>
+              <CartesianGrid stroke={gridStroke} vertical={false} />
+              <XAxis dataKey="name" tick={axisTick} axisLine={axisLine} tickLine={false} interval={0} />
+              <YAxis tick={axisTick} axisLine={false} tickLine={false} width={44} label={{ value: t('why.days'), angle: -90, position: 'insideLeft', fill: colors['text-muted'], fontSize: 14, dy: 30 }} />
+              <Tooltip {...tooltipStyle} formatter={(v: number, name: string) => [nf(v, 1), name]} />
+              <Legend wrapperStyle={{ fontSize: 14, color: colors.text }} iconType="square" />
+              <Bar name={t('why.risk.heat')} dataKey="heatDays" fill={colors.warning} radius={[4, 4, 0, 0]} isAnimationActive={false} />
+              <Bar name={t('why.risk.frost')} dataKey="frostDays" fill={colors['accent-strong']} radius={[4, 4, 0, 0]} isAnimationActive={false} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </ChartCard>
+    </div>
+  );
+}

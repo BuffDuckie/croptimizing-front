@@ -24,11 +24,7 @@ const rotations = Object.fromEntries(
   }),
 );
 
-const monthlyRisk = [0, 0, 0, 0, 1.5, 7.8, 9.4, 6.1, 1.2, 0, 0, 0].map((heatDays, i) => ({
-  month: i + 1,
-  heatDays,
-  frostDays: [3.2, 1.4, 0.3, 0, 0, 0, 0, 0, 0, 0, 0.6, 2.8][i],
-}));
+const monthlyRisk = ds.context.monthlyRisk;
 
 const file = {
   schemaVersion: 'real-1.0',

@@ -87,7 +87,6 @@ export function buildDataset(raw: unknown, log: Logger = defaultLog): Dataset | 
   // Context: each series stands alone.
   const ctxIn = obj(file.context) ?? {};
   const context: PlanResponse['context'] = { ...sample.context };
-  delete context.monthlyRisk;
   const ctxReal = new Set<string>();
   for (const key of CONTEXT_KEYS) {
     if (ctxIn[key] === undefined) continue;
