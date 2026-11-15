@@ -1,9 +1,12 @@
-import { Check, RotateCcw, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, ExternalLink, Info, RotateCcw, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ROTATION_IDS, SOIL_PART_IDS } from '../../api/types';
 import { af, money, whole } from '../../lib/format';
+import { presetBudget, useWaterPresets } from '../../hooks/useWaterPresets';
 import { usePlanContext } from '../../state/PlanContext';
+import { SamplePill } from '../layout/SampleBadge';
+import { Popover } from '../ui/Popover';
 import { Disclosure } from '../ui/Disclosure';
 import { InfoTip } from '../ui/InfoTip';
 import { Slider } from '../ui/Slider';
@@ -13,26 +16,80 @@ function useLang() {
   return i18n.language === 'es' ? 'es' : 'en';
 }
 
+/** Water situation presets: set the budget in one tap. Moving the slider deselects them. */
+function WaterPresets() {
+  const { t } = useTranslation();
+  const lang = useLang();
+  const { controls, setControl } = usePlanContext();
+  const presets = useWaterPresets();
+  const fromData = presets.every((p) => p.fromData);
+  return (
+    <div className="mb-4">
+      <p className="mb-2 flex flex-wrap items-center gap-2 text-sm font-semibold text-text-muted">
+        {t('plan.preset.title')}
+        {!fromData && <SamplePill />}
+      </p>
+      <ul className="flex flex-wrap gap-2">
+        {presets.map((p) => {
+          const budget = presetBudget(p.afPerAcre);
+          const on = Math.abs(controls.water - budget) < 0.05;
+          return (
+            <li key={p.id} className={`flex items-center rounded-full ring-1 ring-inset transition-colors duration-fast ${on ? 'bg-accent-tint ring-accent-strong' : 'bg-surface ring-border'}`}>
+              <button
+                type="button"
+                aria-pressed={on}
+                onClick={() => setControl('water', budget)}
+                className={`min-h-[44px] rounded-l-full py-1.5 pl-3.5 pr-1 text-left text-sm leading-tight ${on ? 'font-semibold text-text' : 'font-medium text-text'}`}
+              >
+                {p.label} <span className="tnum whitespace-nowrap text-text-muted">({af(budget, lang)} AF)</span>
+              </button>
+              <Popover
+                label={t('plan.preset.sourceFor', { name: p.label })}
+                align="end"
+                triggerClassName="inline-flex h-11 w-9 items-center justify-center rounded-r-full text-text-muted hover:text-primary"
+                trigger={<Info aria-hidden="true" className="h-4 w-4" />}
+              >
+                <p className="font-semibold text-primary">{p.label}</p>
+                <p className="mt-1 text-text">{t('plan.preset.sets', { v: af(budget, lang) })}</p>
+                {p.source ? (
+                  <a href={p.source} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-[44px] items-center gap-1 font-semibold">
+                    {t('plan.preset.source')} <ExternalLink aria-hidden="true" className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <p className="mt-2 text-warning">{t('plan.preset.noSource')}</p>
+                )}
+              </Popover>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export function WaterSlider() {
   const { t } = useTranslation();
   const lang = useLang();
   const { controls, setControl } = usePlanContext();
   return (
-    <Slider
-      label={t('plan.water')}
-      info={<InfoTip term="acreFoot" />}
-      tone="water"
-      min={0.5}
-      max={6}
-      step={0.1}
-      value={controls.water}
-      onChange={(v) => setControl('water', Math.round(v * 10) / 10)}
-      display={af(controls.water, lang)}
-      unit={t('plan.waterUnit')}
-      valueText={t('plan.waterText', { n: af(controls.water, lang) })}
-      minLabel={af(0.5, lang)}
-      maxLabel={af(6, lang)}
-    />
+    <div>
+      <WaterPresets />
+      <Slider
+        label={t('plan.water')}
+        info={<InfoTip term="acreFoot" />}
+        tone="water"
+        min={0.5}
+        max={6}
+        step={0.1}
+        value={controls.water}
+        onChange={(v) => setControl('water', Math.round(v * 10) / 10)}
+        display={af(controls.water, lang)}
+        unit={t('plan.waterUnit')}
+        valueText={t('plan.waterText', { n: af(controls.water, lang) })}
+        minLabel={af(0.5, lang)}
+        maxLabel={af(6, lang)}
+      />
+    </div>
   );
 }
 

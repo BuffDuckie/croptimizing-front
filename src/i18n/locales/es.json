@@ -356,6 +356,16 @@
       "alsoSame": "Misma mezcla que: {{list}}.",
       "soilExtra_one": "Su puntaje de suelo es {{s}} punto más alto.",
       "soilExtra_other": "Su puntaje de suelo es {{s}} puntos más alto."
+    },
+    "preset": {
+      "title": "Su situación de agua este año",
+      "full": "Asignación completa del canal",
+      "cut2022": "Recorte como en 2022",
+      "zero2023": "Sin agua del canal (como en 2023)",
+      "sourceFor": "Fuente de {{name}}",
+      "sets": "Fija su presupuesto de agua en {{v}} acre-pies por acre.",
+      "source": "De dónde sale este número",
+      "noSource": "Número de prueba, todavía sin fuente (TODO)."
     }
   },
   "strip": {

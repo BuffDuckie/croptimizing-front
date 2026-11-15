@@ -355,6 +355,16 @@
       "alsoSame": "Same mix as: {{list}}.",
       "soilExtra_one": "Its soil score is {{s}} point higher.",
       "soilExtra_other": "Its soil score is {{s}} points higher."
+    },
+    "preset": {
+      "title": "Your water situation this year",
+      "full": "Full canal allotment",
+      "cut2022": "2022-style cut",
+      "zero2023": "Zero canal water (like 2023)",
+      "sourceFor": "Source for {{name}}",
+      "sets": "Sets your water budget to {{v}} acre-feet per acre.",
+      "source": "Where this number comes from",
+      "noSource": "Placeholder number, not yet from a source (TODO)."
     }
   },
   "strip": {
