@@ -27,7 +27,7 @@
   "footer": {
     "disclaimer": "Esta herramienta apoya su criterio; no lo reemplaza. Revise sus planes con su agente de extensión local.",
     "credits": "Clima: NASA POWER. Agua subterránea: NASA GRACE y GRACE-FO. Uso de agua de cultivos: OpenET y NASA ECOSTRESS.",
-    "built": "Hecho para el NASA Space Apps Challenge 2026, Field Shift.",
+    "built": "Hecho para el NASA Space Apps Challenge 2026, Field Shift: explorar rotaciones que pueden mejorar la salud del suelo y la resiliencia ante cambios de clima y agua.",
     "notAffiliated": "No es un producto oficial de la NASA."
   },
   "pages": {
@@ -158,10 +158,10 @@
   },
   "start": {
     "eyebrow": "Condado de Pinal, Arizona",
-    "headlineA": "Planee sus cultivos como un inversionista: la mayor ganancia para su ",
+    "headlineA": "Encuentre rotaciones de cultivos que protegen su suelo y siguen pagando en sus peores años de ",
     "headlineWater": "agua",
-    "headlineB": ", su suelo y sus peores años.",
-    "sub": "Croptimizing prueba cada mezcla de cultivos con {{n}} años pasados de clima y precios, y le muestra el plan que cabe en su agua en cada uno de ellos.",
+    "headlineB": ".",
+    "sub": "Croptimizing prueba cada mezcla de rotaciones con {{n}} años pasados de clima de la NASA y precios reales, como un inversionista pone a prueba un portafolio, y le muestra el plan que cabe en su agua en cada año.",
     "cta": "Probar la granja de demostración de Pinal",
     "ctaOwn": "Configurar su propia granja",
     "credit": "Clima: NASA POWER. Agua subterránea: NASA GRACE-FO.",
@@ -193,7 +193,7 @@
       "s2t": "Elija cuánto riesgo acepta",
       "s2d": "Mueva el control hacia ir a lo seguro o buscar más ganancia. Verá lo que cuesta cada opción.",
       "s3t": "Vea su plan",
-      "s3d": "Reciba una mezcla de cultivos en acres, lo que habría ganado en años normales y malos, y por qué.",
+      "s3d": "Reciba una mezcla de rotaciones en acres, lo que habría ganado en años normales y malos, lo que hace por su suelo y por qué.",
       "previewWater": "Presupuesto de agua",
       "previewRisk": "Comodidad con el riesgo",
       "safe": "Ir a lo seguro",
@@ -218,7 +218,8 @@
       "errAcres": "Escriba un tamaño entre 1 y 100,000 acres.",
       "errWater": "Escriba entre 0.5 y 6.0 acre-pies por acre.",
       "defaultName": "Mi granja"
-    }
+    },
+    "subSample": "Croptimizing prueba cada mezcla de rotaciones con {{n}} años pasados de clima y precios (por ahora, datos de muestra), como un inversionista pone a prueba un portafolio, y le muestra el plan que cabe en su agua en cada año."
   },
   "plan": {
     "farm": "{{name}}, {{acres}} acres",
@@ -251,7 +252,7 @@
     "mixSub": "Plan sugerido para sus {{acres}} acres",
     "currentRow": "Lo que siembra hoy",
     "suggestedRow": "Sugerido",
-    "mixAria": "Mezcla de cultivos: {{list}}.",
+    "mixAria": "Mezcla de rotaciones: {{list}}.",
     "avg": "Ganancia en un año promedio",
     "avgHelp": "Promedio de los {{n}} años pasados.",
     "worst": "Peores años, 1 de cada 5",
@@ -272,7 +273,7 @@
     "toTradeoffs": "Ver las compensaciones",
     "toCompare": "Comparar rotaciones",
     "toWhy": "Por qué esta región",
-    "infeasibleTitle": "Ninguna mezcla de cultivos cabe en estos límites",
+    "infeasibleTitle": "Ninguna mezcla de rotaciones cabe en estos límites",
     "infeasibleSoil": "Con {{water}} AF por acre, el puntaje de suelo más alto que alcanza una mezcla es {{max}}.",
     "infeasibleWaterNeed": "Para mantener un mínimo de suelo de {{soil}}, necesita al menos {{need}} AF por acre.",
     "infeasibleShare": "Sus límites por rotación no dejan ninguna mezcla que cubra toda su granja.",
@@ -485,7 +486,7 @@
   "report": {
     "print": "Imprimir o guardar como PDF",
     "stale": "Sus ajustes actuales no tienen plan, así que este informe muestra su último plan que funcionó.",
-    "heading": "Plan de cultivos para {{name}}",
+    "heading": "Plan de rotación para {{name}}",
     "meta": "{{acres}} acres · Presupuesto de agua {{water}} AF/acre · Riesgo {{risk}}/100 · Suelo mínimo {{soil}}/100 · {{date}}",
     "mix": "Mezcla sugerida",
     "numbers": "Lo que habría ganado",
@@ -513,7 +514,8 @@
       "sensitivity": "¿Y si cambian los precios o costos?",
       "why": "Por qué peores años y no varianza",
       "risk": "Medidas de riesgo de finanzas",
-      "flow": "Cómo fluyen los datos"
+      "flow": "Cómo fluyen los datos",
+      "soil": "Cómo calificamos el suelo"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -679,7 +681,52 @@
         "plan": "Su plan"
       }
     },
-    "unitsNote": "La ganancia no incluye el costo de comprar agua (agréguelo en Más opciones). El agua es agua de riego aplicada con 75% de eficiencia."
+    "unitsNote": "La ganancia no incluye el costo de comprar agua (agréguelo en Más opciones). El agua es agua de riego aplicada con 75% de eficiencia.",
+    "soilRubric": {
+      "intro": "Cada rotación recibe hasta 20 puntos en cinco partes, y el puntaje de suelo es su suma (0 a 100). Cuatro partes siguen los principios de salud del suelo del USDA NRCS; la quinta cuenta el nitrógeno de las leguminosas.",
+      "caption": "Rúbrica del puntaje de suelo: cada parte, el principio del NRCS que sigue, y los puntos de cada rotación con su razón.",
+      "colPart": "Parte del suelo",
+      "colPrinciple": "Principio del NRCS",
+      "points": "{{v}} de 20",
+      "reviewed": "Un agrónomo todavía no ha revisado estos puntajes; revíselos con un experto local.",
+      "reason": {
+        "alfalfa": {
+          "legume": "TODO: una línea con la razón de este puntaje.",
+          "livingRoots": "TODO: una línea con la razón de este puntaje.",
+          "residue": "TODO: una línea con la razón de este puntaje.",
+          "lowTillage": "TODO: una línea con la razón de este puntaje.",
+          "diversity": "TODO: una línea con la razón de este puntaje."
+        },
+        "cotton_barley": {
+          "legume": "TODO: una línea con la razón de este puntaje.",
+          "livingRoots": "TODO: una línea con la razón de este puntaje.",
+          "residue": "TODO: una línea con la razón de este puntaje.",
+          "lowTillage": "TODO: una línea con la razón de este puntaje.",
+          "diversity": "TODO: una línea con la razón de este puntaje."
+        },
+        "durum_sorghum": {
+          "legume": "TODO: una línea con la razón de este puntaje.",
+          "livingRoots": "TODO: una línea con la razón de este puntaje.",
+          "residue": "TODO: una línea con la razón de este puntaje.",
+          "lowTillage": "TODO: una línea con la razón de este puntaje.",
+          "diversity": "TODO: una línea con la razón de este puntaje."
+        },
+        "barley_fallow": {
+          "legume": "TODO: una línea con la razón de este puntaje.",
+          "livingRoots": "TODO: una línea con la razón de este puntaje.",
+          "residue": "TODO: una línea con la razón de este puntaje.",
+          "lowTillage": "TODO: una línea con la razón de este puntaje.",
+          "diversity": "TODO: una línea con la razón de este puntaje."
+        },
+        "fallow": {
+          "legume": "TODO: una línea con la razón de este puntaje.",
+          "livingRoots": "TODO: una línea con la razón de este puntaje.",
+          "residue": "TODO: una línea con la razón de este puntaje.",
+          "lowTillage": "TODO: una línea con la razón de este puntaje.",
+          "diversity": "TODO: una línea con la razón de este puntaje."
+        }
+      }
+    }
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión.",
   "about": {
@@ -694,14 +741,23 @@
     "problem": "Las granjas del centro de Arizona perdieron su agua del río Colorado en solo tres años. Ahora deben elegir qué sembrar con menos agua, con veranos calurosos, sin saber qué años serán malos.",
     "approachTitle": "Nuestro enfoque",
     "approach": [
-      "El agua es un presupuesto firme: el plan debe caber en su agua en cada uno de {{n}} años pasados, no solo en promedio.",
-      "El riesgo son sus peores años, 1 de cada 5: comparamos cuánto gana un plan en sus {{k}} peores años con su promedio.",
-      "La salud del suelo es un mínimo, como el filtro de un inversionista: ningún plan baja del puntaje que usted fije."
+      "La salud del suelo va primero: usted fija un puntaje mínimo de suelo y ningún plan baja de él. Los puntajes siguen los principios de salud del suelo del USDA NRCS, y usted elige qué metas de suelo cuentan.",
+      "Resiliencia ante el clima y el agua: cada plan debe caber en su agua en cada uno de {{n}} años pasados de clima, incluido el más caluroso, no solo en promedio.",
+      "Después, el método del inversionista: comparamos cuánto gana un plan en sus {{k}} peores años con su promedio, y mostramos la compensación abiertamente."
     ],
     "realTitle": "Qué es real y qué es supuesto",
     "realIntro": "Cada conjunto de datos tiene su propia etiqueta. Esta lista se actualiza sola cuando los datos reales reemplacen a los de muestra.",
     "teamTitle": "Equipo",
     "siTitle": "Declaración de uso de SI"
   },
-  "_reviewFieldShift": "Textos nuevos de Field Shift (datos reales, suelo, metas): necesitan revisión."
+  "_reviewFieldShift": "Textos nuevos de Field Shift (datos reales, suelo, metas): necesitan revisión.",
+  "soilPrinciple": {
+    "legume": "Ciclo de nutrientes: las leguminosas aportan su propio nitrógeno",
+    "livingRoots": "Maximizar las raíces vivas continuas",
+    "residue": "Maximizar la cobertura del suelo",
+    "lowTillage": "Minimizar la alteración",
+    "diversity": "Maximizar la biodiversidad, que además rompe los ciclos de plagas",
+    "source": "USDA NRCS, Principios para suelos de alto funcionamiento (hoja informativa, en inglés)",
+    "sourceUrl": "https://www.nrcs.usda.gov/sites/default/files/2023-07/NRCS-Principles-for-High-Functioning-Soils-Factsheet.pdf"
+  }
 }

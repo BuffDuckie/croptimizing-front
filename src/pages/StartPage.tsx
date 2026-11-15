@@ -8,6 +8,7 @@ import { ROT_BG } from '../components/charts/rotation';
 import { FieldsReplan } from '../components/hero/FieldsReplan';
 import { InfoTip } from '../components/ui/InfoTip';
 import { af, whole } from '../lib/format';
+import { isSample } from '../lib/sources';
 import { DEMO_FARM, usePlanContext, type Region, useYears } from '../state/PlanContext';
 
 export default function StartPage() {
@@ -26,6 +27,8 @@ function Hero() {
   const yrs = useYears();
   const navigate = useNavigate();
   const { data, controls, setFarm, farm, resetControls } = usePlanContext();
+  // "NASA weather and real prices" only once those datasets really are real.
+  const heroReal = !isSample(data, ['weather', 'prices']);
   const startDemo = () => {
     setFarm(DEMO_FARM);
     resetControls();
@@ -43,7 +46,7 @@ function Hero() {
             <span className="text-accent">{t('start.headlineWater')}</span>
             {t('start.headlineB')}
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">{t('start.sub', yrs)}</p>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">{t(heroReal ? 'start.sub' : 'start.subSample', yrs)}</p>
           <p className="mt-8 text-base font-medium text-white">{t('pages.start.intro')}</p>
           <div className="mt-4 flex flex-col flex-wrap gap-3 sm:flex-row">
             <button type="button" onClick={startDemo} className="btn btn-on-dark min-h-[52px] whitespace-nowrap px-6 text-lg">

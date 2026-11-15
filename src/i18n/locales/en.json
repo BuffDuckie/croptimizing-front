@@ -26,7 +26,7 @@
   "footer": {
     "disclaimer": "This tool supports your judgment; it does not replace it. Check plans with your local extension agent.",
     "credits": "Weather: NASA POWER. Groundwater: NASA GRACE and GRACE-FO. Crop water use: OpenET and NASA ECOSTRESS.",
-    "built": "Built for the NASA Space Apps Challenge 2026, Field Shift.",
+    "built": "Built for the NASA Space Apps Challenge 2026, Field Shift: exploring rotations that may improve soil health and strengthen resilience to changing weather and water.",
     "notAffiliated": "Not an official NASA product."
   },
   "pages": {
@@ -157,10 +157,10 @@
   },
   "start": {
     "eyebrow": "Pinal County, Arizona",
-    "headlineA": "Plan your crops like an investor: the most profit for your ",
+    "headlineA": "Find crop rotations that protect your soil and still pay in your worst ",
     "headlineWater": "water",
-    "headlineB": ", your soil, and your worst years.",
-    "sub": "Croptimizing tests every mix of crops against {{n}} past years of weather and prices, then shows the plan that fits your water in every one of them.",
+    "headlineB": " years.",
+    "sub": "Croptimizing tests every mix of rotations against {{n}} past years of NASA weather and real prices, the way investors stress-test a portfolio, and shows the plan that fits your water in every year.",
     "cta": "Try the Pinal County demo farm",
     "ctaOwn": "Set up your own farm",
     "credit": "Weather: NASA POWER. Groundwater: NASA GRACE-FO.",
@@ -192,7 +192,7 @@
       "s2t": "Choose your comfort with risk",
       "s2d": "Slide toward playing it safe or going for more profit. You see what each choice costs.",
       "s3t": "See your plan",
-      "s3d": "Get a crop mix in acres, what it would have earned in normal and bad years, and why.",
+      "s3d": "Get a mix of rotations in acres, what it would have earned in normal and bad years, what it does for your soil, and why.",
       "previewWater": "Water budget",
       "previewRisk": "Risk comfort",
       "safe": "Play it safe",
@@ -217,7 +217,8 @@
       "errAcres": "Enter a farm size between 1 and 100,000 acres.",
       "errWater": "Enter between 0.5 and 6.0 acre-feet per acre.",
       "defaultName": "My farm"
-    }
+    },
+    "subSample": "Croptimizing tests every mix of rotations against {{n}} past years of weather and prices (sample data for now), the way investors stress-test a portfolio, and shows the plan that fits your water in every year."
   },
   "plan": {
     "farm": "{{name}}, {{acres}} acres",
@@ -250,7 +251,7 @@
     "mixSub": "Suggested plan for your {{acres}} acres",
     "currentRow": "What you grow today",
     "suggestedRow": "Suggested",
-    "mixAria": "Crop mix: {{list}}.",
+    "mixAria": "Mix of rotations: {{list}}.",
     "avg": "Average year profit",
     "avgHelp": "Average of the {{n}} past years.",
     "worst": "Worst 1-in-5 years",
@@ -271,7 +272,7 @@
     "toTradeoffs": "See the trade-offs",
     "toCompare": "Compare rotations",
     "toWhy": "Why this region",
-    "infeasibleTitle": "No crop mix fits these limits",
+    "infeasibleTitle": "No mix of rotations fits these limits",
     "infeasibleSoil": "At {{water}} AF per acre, the highest soil score any mix reaches is {{max}}.",
     "infeasibleWaterNeed": "To keep a soil minimum of {{soil}}, you need at least {{need}} AF per acre.",
     "infeasibleShare": "Your limits on each rotation leave no mix that covers your whole farm.",
@@ -484,7 +485,7 @@
   "report": {
     "print": "Print or save as PDF",
     "stale": "Your current settings have no plan, so this report shows your last plan that worked.",
-    "heading": "Crop plan for {{name}}",
+    "heading": "Rotation plan for {{name}}",
     "meta": "{{acres}} acres · Water budget {{water}} AF/acre · Risk {{risk}}/100 · Soil minimum {{soil}}/100 · {{date}}",
     "mix": "Suggested mix",
     "numbers": "What it would have earned",
@@ -512,7 +513,8 @@
       "sensitivity": "What if prices or costs change?",
       "why": "Why worst years, not variance",
       "risk": "Risk measures from finance",
-      "flow": "How the data flows"
+      "flow": "How the data flows",
+      "soil": "How we score soil"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -678,7 +680,52 @@
         "plan": "Your plan"
       }
     },
-    "unitsNote": "Profit leaves out the cost of buying water (add it under More options). Water is applied irrigation water at 75% efficiency."
+    "unitsNote": "Profit leaves out the cost of buying water (add it under More options). Water is applied irrigation water at 75% efficiency.",
+    "soilRubric": {
+      "intro": "Each rotation gets up to 20 points on five parts, and the soil score is their sum (0 to 100). Four parts follow the USDA NRCS soil-health principles; the fifth counts nitrogen from legumes.",
+      "caption": "Soil-score rubric: each part, the NRCS principle it follows, and each rotation's points with the reason.",
+      "colPart": "Soil part",
+      "colPrinciple": "NRCS principle",
+      "points": "{{v}} of 20",
+      "reviewed": "An agronomist has not reviewed these scores yet; check them with a local expert.",
+      "reason": {
+        "alfalfa": {
+          "legume": "TODO: one-line reason for this score.",
+          "livingRoots": "TODO: one-line reason for this score.",
+          "residue": "TODO: one-line reason for this score.",
+          "lowTillage": "TODO: one-line reason for this score.",
+          "diversity": "TODO: one-line reason for this score."
+        },
+        "cotton_barley": {
+          "legume": "TODO: one-line reason for this score.",
+          "livingRoots": "TODO: one-line reason for this score.",
+          "residue": "TODO: one-line reason for this score.",
+          "lowTillage": "TODO: one-line reason for this score.",
+          "diversity": "TODO: one-line reason for this score."
+        },
+        "durum_sorghum": {
+          "legume": "TODO: one-line reason for this score.",
+          "livingRoots": "TODO: one-line reason for this score.",
+          "residue": "TODO: one-line reason for this score.",
+          "lowTillage": "TODO: one-line reason for this score.",
+          "diversity": "TODO: one-line reason for this score."
+        },
+        "barley_fallow": {
+          "legume": "TODO: one-line reason for this score.",
+          "livingRoots": "TODO: one-line reason for this score.",
+          "residue": "TODO: one-line reason for this score.",
+          "lowTillage": "TODO: one-line reason for this score.",
+          "diversity": "TODO: one-line reason for this score."
+        },
+        "fallow": {
+          "legume": "TODO: one-line reason for this score.",
+          "livingRoots": "TODO: one-line reason for this score.",
+          "residue": "TODO: one-line reason for this score.",
+          "lowTillage": "TODO: one-line reason for this score.",
+          "diversity": "TODO: one-line reason for this score."
+        }
+      }
+    }
   },
   "about": {
     "tourTitle": "Take the 3-minute tour",
@@ -692,13 +739,22 @@
     "problem": "Central Arizona farms lost their Colorado River water in just three years. Farmers now have to choose what to plant on less water, through hot summers, without knowing which years will be bad.",
     "approachTitle": "Our approach",
     "approach": [
-      "Water is a hard budget: the plan must fit your water in every one of {{n}} past years, not just on average.",
-      "Risk is your worst 1-in-5 years: we weigh how much a plan earns in its {{k}} worst years against its average.",
-      "Soil health is a minimum standard, like an investor's screen: no plan goes below the score you set."
+      "Soil health comes first: you set a minimum soil score and no plan goes below it. Scores follow the USDA NRCS soil-health principles, and you choose which soil goals count.",
+      "Resilience to weather and water: every plan must fit your water in each of {{n}} past years of weather, including the hottest, not just on average.",
+      "Then the investor's method: we weigh how much a plan earns in its {{k}} worst years against its average, and show the trade-off openly."
     ],
     "realTitle": "What's real and what's assumed",
     "realIntro": "Each dataset carries its own flag. This list updates by itself when real data replaces the sample data.",
     "teamTitle": "Team",
     "siTitle": "SI-use statement"
+  },
+  "soilPrinciple": {
+    "legume": "Nutrient cycling: legumes add their own nitrogen",
+    "livingRoots": "Maximize continuous living roots",
+    "residue": "Maximize soil cover",
+    "lowTillage": "Minimize disturbance",
+    "diversity": "Maximize biodiversity, which also breaks pest cycles",
+    "source": "USDA NRCS, Principles for High Functioning Soils (fact sheet)",
+    "sourceUrl": "https://www.nrcs.usda.gov/sites/default/files/2023-07/NRCS-Principles-for-High-Functioning-Soils-Factsheet.pdf"
   }
 }

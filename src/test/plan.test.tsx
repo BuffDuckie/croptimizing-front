@@ -14,7 +14,7 @@ describe('My plan page', () => {
     expect(screen.getByText('Water in the highest year')).toBeInTheDocument();
     expect(screen.getByText('Soil score')).toBeInTheDocument();
     expect(screen.getByText(/One more acre-foot is worth/)).toBeInTheDocument();
-    expect(screen.getAllByRole('img', { name: /Crop mix:/ })).toHaveLength(2);
+    expect(screen.getAllByRole('img', { name: /Mix of rotations:/ })).toHaveLength(2);
   });
 
   it('explains which limit to relax when nothing fits', async () => {
@@ -26,7 +26,7 @@ describe('My plan page', () => {
     await screen.findByText('Average year profit', {}, { timeout: 8000 });
     const soil = screen.getAllByRole('slider', { name: 'Soil-health minimum' })[0];
     fireEvent.change(soil, { target: { value: '90' } });
-    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('No crop mix fits these limits'), { timeout: 8000 });
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('No mix of rotations fits these limits'), { timeout: 8000 });
     expect(screen.getByRole('button', { name: /Set soil minimum to/ })).toBeInTheDocument();
   });
 });

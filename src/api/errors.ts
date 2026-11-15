@@ -9,7 +9,7 @@ export type InfeasibleDetail = {
   minWaterForThisSoil?: number;
 };
 
-/** No crop mix satisfies every constraint. Carries which one to relax. */
+/** No mix of rotations satisfies every constraint. Carries which one to relax. */
 export class InfeasibleError extends Error {
   readonly detail: InfeasibleDetail;
   constructor(detail: InfeasibleDetail) {
