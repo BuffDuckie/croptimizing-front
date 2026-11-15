@@ -319,5 +319,44 @@
     "math2": "Una mezcla está en la frontera si ninguna otra la supera en ambos números. Su ajuste de riesgo elige un punto: maximiza (1 menos riesgo) por la ganancia de los peores años más riesgo por la ganancia promedio.",
     "sliderTitle": "Pruebe con menos o más agua",
     "sliderHelp": "Vea cómo se mueve la línea. Es el mismo presupuesto de agua que en Mi plan."
+  },
+  "compare": {
+    "finding": "{{name}} gana más por cada acre-pie de agua: {{v}}",
+    "findingSub": "Cuando el agua es el límite, la ganancia por acre-pie importa más que la ganancia por acre. Cada tarjeta muestra cuándo crece el cultivo, lo que ganó en 20 años y lo que aporta a su suelo.",
+    "inSuggested": "Sugerido: {{v}} de los acres",
+    "inCurrent": "Hoy: {{v}} de los acres",
+    "notUsed": "No está en ningún plan",
+    "calendar": "Calendario de cultivo",
+    "calAria": "Calendario de {{name}}: crece {{grow}} de 12 meses. {{list}}.",
+    "growing": "con cultivo",
+    "bare": "sin cultivo",
+    "statement": "Estado de cuenta (por acre, promedio de 20 años)",
+    "stat": {
+      "avg": "Ganancia prom.",
+      "perAf": "Por acre-pie",
+      "worst": "Peores 1 de 5",
+      "water": "Agua",
+      "soil": "Suelo /100"
+    },
+    "noWater": "Sin agua",
+    "soilTitle": "Desglose de salud del suelo",
+    "soil": {
+      "legume": "Leguminosa / nitrógeno",
+      "livingRoots": "Meses con raíz viva",
+      "residue": "Residuos devueltos",
+      "lowTillage": "Poca labranza",
+      "diversity": "Variedad de cultivos",
+      "total": "Puntaje de suelo",
+      "of20": "de 20"
+    },
+    "blocks": {
+      "why": "Por qué se sugiere",
+      "evidence": "Evidencia",
+      "benefits": "Beneficios",
+      "gaps": "Lo que no sabemos",
+      "checkLocally": "Revise localmente"
+    },
+    "math": "Cada número es un promedio de 20 años para un acre de esa rotación sola, con los mismos datos de muestra que su plan. Por acre-pie divide la ganancia promedio entre el agua aplicada promedio. Peores 1 de 5 es el promedio de sus 4 peores años.",
+    "tableCaption": "Rotaciones lado a lado"
   }
 }

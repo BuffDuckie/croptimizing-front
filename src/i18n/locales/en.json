@@ -318,5 +318,44 @@
     "math2": "A mix is on the frontier if no other mix beats it on both numbers. Your risk setting picks one point: it maximizes (1 minus risk) times worst-years profit plus risk times average profit.",
     "sliderTitle": "Try less or more water",
     "sliderHelp": "Watch the line move. This is the same water budget as on My plan."
+  },
+  "compare": {
+    "finding": "{{name}} earns the most for each acre-foot of water: {{v}}",
+    "findingSub": "When water is the limit, profit per acre-foot matters more than profit per acre. Each card shows when the crop grows, what it earned over 20 years, and what it does for your soil.",
+    "inSuggested": "Suggested: {{v}} of acres",
+    "inCurrent": "Today: {{v}} of acres",
+    "notUsed": "Not in either plan",
+    "calendar": "Growing calendar",
+    "calAria": "{{name}} calendar: grows {{grow}} of 12 months. {{list}}.",
+    "growing": "growing",
+    "bare": "bare",
+    "statement": "Portfolio statement (per acre, 20-year average)",
+    "stat": {
+      "avg": "Avg profit",
+      "perAf": "Per acre-foot",
+      "worst": "Worst 1-in-5",
+      "water": "Water",
+      "soil": "Soil /100"
+    },
+    "noWater": "No water",
+    "soilTitle": "Soil-health breakdown",
+    "soil": {
+      "legume": "Legume / nitrogen",
+      "livingRoots": "Living-root months",
+      "residue": "Residue returned",
+      "lowTillage": "Low tillage",
+      "diversity": "Crop diversity",
+      "total": "Soil score",
+      "of20": "out of 20"
+    },
+    "blocks": {
+      "why": "Why suggested",
+      "evidence": "Evidence",
+      "benefits": "Benefits",
+      "gaps": "What we don't know",
+      "checkLocally": "Check locally"
+    },
+    "math": "Each number is a 20-year average for one acre of that rotation alone, using the same sample data as your plan. Per acre-foot divides average profit by average applied water. Worst 1-in-5 is the average of its 4 worst years.",
+    "tableCaption": "Rotations side by side"
   }
 }

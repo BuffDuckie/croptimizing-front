@@ -1,0 +1,44 @@
+import { Sun } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { RotationCard } from '../../api/types';
+import { CROP_INITIALS, ROT_BG } from './rotation';
+
+/** 12 months per rotation: growing months filled with the crop initial, bare months hatched, sun on heat-risk months. */
+export function CalendarStrip({ card }: { card: RotationCard }) {
+  const { t } = useTranslation();
+  const months = t('months', { returnObjects: true }) as string[];
+  const initials = CROP_INITIALS[card.id];
+  const grow = card.calendar.filter((c) => c === 'grow').length;
+  const label = t('compare.calAria', {
+    name: card.name,
+    grow,
+    list: card.calendar.map((c, i) => `${months[i]} ${c === 'grow' ? t('compare.growing') : t('compare.bare')}`).join(', '),
+  });
+  return (
+    <div role="img" aria-label={label}>
+      <div className="grid grid-cols-12 gap-[3px]" aria-hidden="true">
+        {card.calendar.map((_c, i) => (
+          <div key={`s${i}`} className="flex h-5 items-end justify-center">
+            {card.heatRiskMonths.includes(i + 1) && <Sun className="h-4 w-4 text-warning" strokeWidth={2.25} />}
+          </div>
+        ))}
+        {card.calendar.map((c, i) => (
+          <div
+            key={`c${i}`}
+            className={`flex h-9 items-center justify-center rounded-[5px] text-sm font-bold ${
+              c === 'grow' ? `${ROT_BG[card.id]} text-white` : 'hatch-dark bg-bg text-text-muted ring-1 ring-inset ring-border'
+            }`}
+          >
+            {c === 'grow' ? initials[i] || '' : ''}
+          </div>
+        ))}
+        {months.map((m) => (
+          <div key={m} className="pt-1 text-center text-[0.875rem] leading-none text-text-muted">
+            <span className="hidden sm:inline">{m}</span>
+            <span className="sm:hidden">{m.charAt(0)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
