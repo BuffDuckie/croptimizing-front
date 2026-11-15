@@ -59,6 +59,14 @@ export type PlanResponse = {
   validation?: Validation;
   sensitivity?: SensitivityRow[];   // suggested plan re-run under price and cost changes
   classic?: Classic;                // classic mean-variance efficient set, for comparison
+  riskMetrics?: { recommended: RiskStats; current: RiskStats; fallowAvg: number }; // current = cut back to fit
+};
+
+export type RiskStats = {
+  sd: number;                       // standard deviation of yearly profit, $/acre
+  sharpe: number | null;            // (avg - fallow avg) / sd; null when sd is 0
+  sortino: number | null;           // (avg - fallow avg) / downside deviation below the fallow average
+  diversification: number | null;   // 1 - sd / share-weighted sd of each rotation (0-1)
 };
 
 export type Classic = {

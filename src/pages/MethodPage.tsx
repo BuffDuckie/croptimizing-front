@@ -14,7 +14,7 @@ import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 /** Dataset behind each row of the sources table (null: used in text only). */
 const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', null];
 
-const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'sensitivity', 'why', 'current', 'scenarios', 'assumptions'] as const;
+const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'sensitivity', 'why', 'risk', 'current', 'scenarios', 'assumptions'] as const;
 
 // Formulas (KaTeX) load after the page text so the page paints fast.
 const MathFormulas = lazy(() => import('../components/lazy/MathFormulas'));
@@ -141,6 +141,28 @@ export default function MethodPage() {
               <p className="mt-3 max-w-3xl text-base text-text">
                 {t('method.whyRisk')} {classicCaption(t, data.classic, lang)}
               </p>
+            </section>
+          )}
+
+          {data.riskMetrics && (
+            <section id="risk" className="scroll-mt-36">
+              <h2 className="text-3xl font-semibold">{t('method.sec.risk')}</h2>
+              <p className="mt-3 max-w-3xl text-base text-text">{t('method.risk.intro', { fallow: money(data.riskMetrics.fallowAvg, lang) })}</p>
+              <div className="card mt-5 overflow-x-auto" tabIndex={0}>
+                <DataTable
+                  caption={t('method.risk.caption')}
+                  head={[t('method.risk.colMetric'), t('common.recommended'), curLabel]}
+                  rows={(['sharpe', 'sortino', 'diversification'] as const).map((k) => {
+                    const fmt = (v: number | null) =>
+                      v === null ? (k === 'sortino' ? t('method.risk.noDownside') : '-') : k === 'diversification' ? `${whole(v * 100, lang)}%` : new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(v);
+                    return [t(`method.risk.${k}`), fmt(data.riskMetrics!.recommended[k]), fmt(data.riskMetrics!.current[k])];
+                  })}
+                  className="min-w-[520px]"
+                />
+              </div>
+              <Suspense fallback={<div className="skeleton mt-5 h-[330px] rounded-ctl" aria-busy="true" />}>
+                <MathFormulas keys={['sharpe', 'sortino', 'diversification']} />
+              </Suspense>
             </section>
           )}
 

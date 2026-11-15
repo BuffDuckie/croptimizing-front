@@ -110,6 +110,13 @@ export const planResponseSchema = z.object({
       largestGap: z.object({ avgProfit: finite, classicWorst1in5: finite, ourWorst1in5: finite }).nullable(),
     })
     .optional(),
+  riskMetrics: z
+    .object({
+      recommended: z.object({ sd: finite.min(0), sharpe: finite.nullable(), sortino: finite.nullable(), diversification: finite.nullable() }),
+      current: z.object({ sd: finite.min(0), sharpe: finite.nullable(), sortino: finite.nullable(), diversification: finite.nullable() }),
+      fallowAvg: finite,
+    })
+    .optional(),
   validation: z
     .object({
       lpCrossCheck: z.object({ method: z.string(), maxShareDifference: finite.min(0).max(1), note: z.string() }).optional(),

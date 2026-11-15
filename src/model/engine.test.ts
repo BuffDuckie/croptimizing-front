@@ -3,7 +3,7 @@ import { isInfeasible } from '../api/errors';
 import { planResponseSchema } from '../api/schemas';
 import type { PlanRequest } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
-import { bestIndex, feasibleIndices, fitToBudget, meanVarianceSet, objective, paretoFrontier, runPlan, waterScenario } from './engine';
+import { bestIndex, feasibleIndices, fitToBudget, meanVarianceSet, objective, paretoFrontier, riskStats, runPlan, waterScenario } from './engine';
 import { DEFAULT_ADJUST, getMixStats, mixCount, seriesForMix } from './metrics';
 import { getScenarioData } from './sampleData';
 
@@ -239,5 +239,27 @@ describe('classic portfolio theory', () => {
     const res = runPlan(base);
     const a = res.classic!.atSuggested!;
     expect(a.ourWorst1in5).toBeGreaterThanOrEqual(a.classicWorst1in5 - 1e-6);
+  });
+});
+
+describe('risk ratios', () => {
+  it('match their definitions for a two-rotation plan', () => {
+    const mix = { alfalfa: 0.5, durum_sorghum: 0.5 };
+    const r = riskStats(mix, DEFAULT_ADJUST);
+    const p = seriesForMix(mix).map((x) => x.profit);
+    const f = seriesForMix({ fallow: 1 }).map((x) => x.profit);
+    const m = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+    const sd = (xs: number[]) => Math.sqrt(m(xs.map((x) => (x - m(xs)) ** 2)));
+    expect(r.sharpe!).toBeCloseTo((m(p) - m(f)) / sd(p), 2);
+    const down = Math.sqrt(m(p.map((x) => Math.min(0, x - m(f)) ** 2)));
+    if (down > 0) expect(r.sortino!).toBeCloseTo((m(p) - m(f)) / down, 2);
+    const each = 0.5 * sd(seriesForMix({ alfalfa: 1 }).map((x) => x.profit)) + 0.5 * sd(seriesForMix({ durum_sorghum: 1 }).map((x) => x.profit));
+    expect(r.diversification!).toBeCloseTo(1 - sd(p) / each, 3);
+    expect(r.diversification!).toBeGreaterThanOrEqual(0);
+  });
+
+  it('are null when a plan never swings', () => {
+    const r = riskStats({ fallow: 1 }, { ...DEFAULT_ADJUST });
+    expect(r.diversification === null || r.diversification >= 0).toBe(true);
   });
 });

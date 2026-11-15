@@ -479,7 +479,8 @@
       "assumptions": "Assumptions and limits",
       "current": "Your current plan",
       "sensitivity": "What if prices or costs change?",
-      "why": "Why worst years, not variance"
+      "why": "Why worst years, not variance",
+      "risk": "Risk measures from finance"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -490,7 +491,10 @@
       "soil": "The soil score must meet your minimum, shares add up to your whole farm, and no rotation goes above your limit.",
       "cvar": "Worst 1-in-5 years: the average of the 4 lowest years out of 20. In finance this is the negative of CVaR at 80%.",
       "shadow": "Water value: how much the best plan improves if you had 0.1 more acre-feet per acre.",
-      "et": "Crop water need from NASA POWER weather (FAO-56), less effective rain, divided by irrigation efficiency."
+      "et": "Crop water need from NASA POWER weather (FAO-56), less effective rain, divided by irrigation efficiency.",
+      "sharpe": "Sharpe ratio: extra profit over fallow for each dollar of year-to-year swing.",
+      "sortino": "Sortino ratio: the same, but only years that fall below the fallow average count as risk.",
+      "diversification": "Diversification benefit: how much less the plan swings than its rotations would on their own, because they do not all have bad years together."
     },
     "stepsList": [
       "Build 20 scenarios, one per year from 2005 to 2024, each with that year's weather and prices.",
@@ -614,6 +618,15 @@
         "efficiencyHigh": "Irrigation efficiency {{v}}%"
       }
     },
-    "whyRisk": "Classic portfolio theory measures risk by variance: how far each year's profit lands from the average. That treats a great year as risk, the same as a bad one, and it favors plans that barely move, like leaving most fields fallow. A farmer is hurt by bad years, not good ones, so we measure risk by your worst 1-in-5 years instead."
+    "whyRisk": "Classic portfolio theory measures risk by variance: how far each year's profit lands from the average. That treats a great year as risk, the same as a bad one, and it favors plans that barely move, like leaving most fields fallow. A farmer is hurt by bad years, not good ones, so we measure risk by your worst 1-in-5 years instead.",
+    "risk": {
+      "intro": "Three standard portfolio ratios, comparing each plan with simply leaving fields fallow ({{fallow}} per acre on average). Higher is better for all three.",
+      "caption": "Risk ratios, suggested plan vs. your current plan",
+      "colMetric": "Measure",
+      "sharpe": "Sharpe ratio",
+      "sortino": "Sortino ratio",
+      "diversification": "Diversification benefit",
+      "noDownside": "No year fell below fallow"
+    }
   }
 }

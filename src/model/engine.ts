@@ -1,7 +1,7 @@
 // In-browser mirror of the backend's math. Same output shape as the API.
 
 import { InfeasibleError } from '../api/errors';
-import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RotationCard, RotationId, SensitivityRow } from '../api/types';
+import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RiskStats, RotationCard, RotationId, SensitivityRow } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
 import {
@@ -128,6 +128,35 @@ export function classicComparison(stats: MixStats, feasible: number[], recommend
   const gaps = set.map(gapAt);
   const largestGap = gaps.reduce((a, b) => (b.ourWorst1in5 - b.classicWorst1in5 > a.ourWorst1in5 - a.classicWorst1in5 ? b : a));
   return { points, atSuggested: gapAt(near), largestGap };
+}
+
+/**
+ * Risk ratios for one plan. The benchmark is fallow (the do-nothing return), so a
+ * ratio says how much extra profit the plan earns per unit of swing.
+ */
+export function riskStats(mix: Mix, adjust: Adjust): RiskStats & { fallowAvg: number } {
+  const profits = seriesForMix(mix, adjust).map((x) => x.profit);
+  const fallowAvg = mean(seriesForMix({ fallow: 1 }, adjust).map((x) => x.profit));
+  const avg = mean(profits);
+  const sdOf = (xs: number[]) => {
+    const m = mean(xs);
+    return Math.sqrt(mean(xs.map((x) => (x - m) ** 2)));
+  };
+  const sd = sdOf(profits);
+  const downside = Math.sqrt(mean(profits.map((p) => Math.min(0, p - fallowAvg) ** 2)));
+  let weighted = 0;
+  for (const id of ROTATION_IDS) {
+    const sh = mix[id] ?? 0;
+    if (sh > 0) weighted += sh * sdOf(seriesForMix({ [id]: 1 }, adjust).map((x) => x.profit));
+  }
+  const excess = avg - fallowAvg;
+  return {
+    sd: round(sd),
+    sharpe: sd > EPS ? round(excess / sd, 3) : null,
+    sortino: downside > EPS ? round(excess / downside, 3) : null,
+    diversification: weighted > EPS ? round(1 - sd / weighted, 4) : null,
+    fallowAvg: round(fallowAvg),
+  };
 }
 
 function bestObjectiveAt(stats: MixStats, c: Constraints, risk: number): number | null {
@@ -335,6 +364,10 @@ export function runPlan(req: PlanRequest): PlanResponse {
   const backtest = runBacktest(req, adjust, c, risk, asFarmedMix);
   const sensitivity = runSensitivity(adjust, c, risk, best);
   const classic = classicComparison(stats, feasible, stats.avg[best]);
+  const recRisk = riskStats(recMix, adjust);
+  const curRisk = riskStats(currentMix, adjust);
+  const ratios = (r: typeof recRisk): RiskStats => ({ sd: r.sd, sharpe: r.sharpe, sortino: r.sortino, diversification: r.diversification });
+  const riskMetrics = { recommended: ratios(recRisk), current: ratios(curRisk), fallowAvg: recRisk.fallowAvg };
 
   const correlations: PlanResponse['correlations'] = [];
   for (const a of ROTATION_IDS)
@@ -355,6 +388,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     assumptions: ASSUMPTIONS[lang],
     sensitivity,
     classic,
+    riskMetrics,
     sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample' },
   };
 }

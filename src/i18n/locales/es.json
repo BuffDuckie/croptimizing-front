@@ -480,7 +480,8 @@
       "assumptions": "Supuestos y límites",
       "current": "Su plan actual",
       "sensitivity": "¿Y si cambian los precios o costos?",
-      "why": "Por qué peores años y no varianza"
+      "why": "Por qué peores años y no varianza",
+      "risk": "Medidas de riesgo de finanzas"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -491,7 +492,10 @@
       "soil": "El puntaje de suelo debe llegar a su mínimo, las proporciones suman toda su granja y ninguna rotación pasa su límite.",
       "cvar": "Peores años, 1 de cada 5: el promedio de los 4 años más bajos de 20. En finanzas es el negativo del CVaR al 80%.",
       "shadow": "Valor del agua: cuánto mejora el mejor plan si tuviera 0.1 acre-pies más por acre.",
-      "et": "Necesidad de agua del cultivo con clima de NASA POWER (FAO-56), menos la lluvia efectiva, dividida entre la eficiencia de riego."
+      "et": "Necesidad de agua del cultivo con clima de NASA POWER (FAO-56), menos la lluvia efectiva, dividida entre la eficiencia de riego.",
+      "sharpe": "Razón de Sharpe: ganancia extra sobre el descanso por cada dólar de variación de un año a otro.",
+      "sortino": "Razón de Sortino: lo mismo, pero solo cuentan como riesgo los años por debajo del promedio del descanso.",
+      "diversification": "Beneficio de diversificación: cuánto menos varía el plan que sus rotaciones por separado, porque no todas tienen años malos al mismo tiempo."
     },
     "stepsList": [
       "Armar 20 escenarios, uno por año de 2005 a 2024, cada uno con el clima y los precios de ese año.",
@@ -615,7 +619,16 @@
         "efficiencyHigh": "Eficiencia de riego {{v}}%"
       }
     },
-    "whyRisk": "La teoría clásica de portafolios mide el riesgo con la varianza: qué tan lejos del promedio cae la ganancia de cada año. Eso trata un año excelente como riesgo, igual que uno malo, y favorece planes que casi no se mueven, como dejar en descanso la mayoría de los campos. A un agricultor le dañan los años malos, no los buenos, así que medimos el riesgo con sus peores años, 1 de cada 5."
+    "whyRisk": "La teoría clásica de portafolios mide el riesgo con la varianza: qué tan lejos del promedio cae la ganancia de cada año. Eso trata un año excelente como riesgo, igual que uno malo, y favorece planes que casi no se mueven, como dejar en descanso la mayoría de los campos. A un agricultor le dañan los años malos, no los buenos, así que medimos el riesgo con sus peores años, 1 de cada 5.",
+    "risk": {
+      "intro": "Tres razones estándar de portafolios que comparan cada plan con simplemente dejar los campos en descanso ({{fallow}} por acre en promedio). Más alto es mejor en las tres.",
+      "caption": "Razones de riesgo, plan sugerido vs. su plan actual",
+      "colMetric": "Medida",
+      "sharpe": "Razón de Sharpe",
+      "sortino": "Razón de Sortino",
+      "diversification": "Beneficio de diversificación",
+      "noDownside": "Ningún año quedó debajo del descanso"
+    }
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."
 }
