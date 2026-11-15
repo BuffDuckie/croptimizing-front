@@ -7,6 +7,7 @@ export const NAV = [
   { path: '/stress', key: 'stress' },
   { path: '/report', key: 'report' },
   { path: '/method', key: 'method' },
+  { path: '/about', key: 'about' },
 ] as const;
 
 export type NavKey = (typeof NAV)[number]['key'];

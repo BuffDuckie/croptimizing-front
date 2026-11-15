@@ -16,6 +16,7 @@ const StressPage = lazy(() => import('./pages/StressPage'));
 const ReportPage = lazy(() => import('./pages/ReportPage'));
 const MethodPage = lazy(() => import('./pages/MethodPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 /** Move focus and scroll to the top on route change, and set the tab title. */
 function RouteEffects() {
@@ -79,6 +80,7 @@ function Shell() {
             <Route path="/stress" element={<StressPage />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="/method" element={<MethodPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

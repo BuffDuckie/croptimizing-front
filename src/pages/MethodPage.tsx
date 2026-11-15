@@ -7,13 +7,9 @@ import { SensitivityChart } from '../components/charts/SensitivityChart';
 import { DataFlowDiagram } from '../components/charts/DataFlowDiagram';
 import { classicCaption } from '../components/charts/classicCaption';
 import { PageIntro } from '../components/layout/PageIntro';
-import type { DatasetId } from '../api/types';
 import { af, money, whole } from '../lib/format';
-import { isSample } from '../lib/sources';
+import { useSourceRows } from '../hooks/useSourceRows';
 import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
-
-/** Dataset behind each row of the sources table (null: used in text only). */
-const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', null];
 
 const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'flow', 'correlations', 'backtest', 'sensitivity', 'why', 'risk', 'current', 'scenarios', 'assumptions'] as const;
 
@@ -29,12 +25,7 @@ export default function MethodPage() {
   const steps = t('method.stepsList', { returnObjects: true }) as string[];
   const limits = t('method.limits', { returnObjects: true }) as string[];
   // Status comes from each dataset's own source flag, so it updates when real data loads.
-  const sourceRows = t('method.sourceRows', { returnObjects: true }) as string[][];
-  const sources = sourceRows.map((row, i) => {
-    const id = SOURCE_DATASETS[i];
-    const status = id === null || id === undefined ? t('method.status.text') : isSample(data, [id]) ? t('method.status.sample') : t('method.status.real');
-    return [...row, status];
-  });
+  const sources = useSourceRows().map((r) => r.cells);
 
   const downloadCsv = () => {
     if (!data) return;

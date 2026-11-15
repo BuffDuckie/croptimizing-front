@@ -1,5 +1,6 @@
 import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { LogoMark } from './Logo';
 
 export function Footer() {
@@ -17,6 +18,10 @@ export function Footer() {
             <span className="font-semibold text-text">Croptimizing</span>
             <span aria-hidden="true">·</span>
             <span>{t('footer.built')}</span>
+            <span aria-hidden="true">·</span>
+            <Link to="/about" className="inline-flex min-h-[44px] items-center font-semibold">
+              {t('nav.about')}
+            </Link>
           </div>
           <p className="max-w-xl md:text-right">
             {t('footer.credits')} {t('footer.notAffiliated')}

@@ -21,7 +21,8 @@
     "why": "Por qué esta región",
     "stress": "Prueba de estrés",
     "report": "Informe",
-    "method": "Ver los cálculos"
+    "method": "Ver los cálculos",
+    "about": "Acerca de"
   },
   "footer": {
     "disclaimer": "Esta herramienta apoya su criterio; no lo reemplaza. Revise sus planes con su agente de extensión local.",
@@ -61,6 +62,10 @@
     "method": {
       "title": "Ver los cálculos",
       "intro": "Cada número de esta herramienta, de dónde viene y cómo lo calculamos."
+    },
+    "about": {
+      "title": "Acerca de Croptimizing",
+      "intro": "Qué construimos, por qué y qué es real hasta ahora. Empiece con el recorrido de 3 minutos."
     }
   },
   "common": {
@@ -661,5 +666,26 @@
       }
     }
   },
-  "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."
+  "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión.",
+  "about": {
+    "tourTitle": "Haga el recorrido de 3 minutos",
+    "tour": {
+      "plan": "Vea la mezcla sugerida y los cuatro números debajo, comparados con su plan actual recortado para caber en su agua.",
+      "tradeoffs": "Mueva el control de agua y vea cómo se reducen las opciones; active la comparación con la teoría clásica de portafolios.",
+      "stress": "Elija 2020 o 2022 y vea cómo les habría ido a ambos planes en ese año difícil.",
+      "method": "Revise cada fórmula, la prueba de sensibilidad, la prueba con años no vistos y descargue la tabla de escenarios."
+    },
+    "problemTitle": "El problema",
+    "problem": "Las granjas del centro de Arizona perdieron su agua del río Colorado en solo tres años. Ahora deben elegir qué sembrar con menos agua, con veranos calurosos, sin saber qué años serán malos.",
+    "approachTitle": "Nuestro enfoque",
+    "approach": [
+      "El agua es un presupuesto firme: el plan debe caber en su agua en cada uno de {{n}} años pasados, no solo en promedio.",
+      "El riesgo son sus peores años, 1 de cada 5: comparamos cuánto gana un plan en sus {{k}} peores años con su promedio.",
+      "La salud del suelo es un mínimo, como el filtro de un inversionista: ningún plan baja del puntaje que usted fije."
+    ],
+    "realTitle": "Qué es real y qué es supuesto",
+    "realIntro": "Cada conjunto de datos tiene su propia etiqueta. Esta lista se actualiza sola cuando los datos reales reemplacen a los de muestra.",
+    "teamTitle": "Equipo",
+    "siTitle": "Declaración de uso de SI"
+  }
 }

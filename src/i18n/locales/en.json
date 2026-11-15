@@ -20,7 +20,8 @@
     "why": "Why this region",
     "stress": "Stress test",
     "report": "Report",
-    "method": "Show the math"
+    "method": "Show the math",
+    "about": "About"
   },
   "footer": {
     "disclaimer": "This tool supports your judgment; it does not replace it. Check plans with your local extension agent.",
@@ -60,6 +61,10 @@
     "method": {
       "title": "Show the math",
       "intro": "Every number in this tool, where it comes from, and how we got it."
+    },
+    "about": {
+      "title": "About Croptimizing",
+      "intro": "What we built, why, and what is real so far. Start with the 3-minute tour."
     }
   },
   "common": {
@@ -659,5 +664,26 @@
         "plan": "Your plan"
       }
     }
+  },
+  "about": {
+    "tourTitle": "Take the 3-minute tour",
+    "tour": {
+      "plan": "Look at the suggested mix and the four numbers under it, compared with your current plan cut back to fit your water.",
+      "tradeoffs": "Move the water slider and watch the choices shrink; turn on the classic portfolio theory comparison.",
+      "stress": "Pick 2020 or 2022 and see how both plans would have done in that one hard year.",
+      "method": "Audit every formula, the sensitivity check, the backtest, and download the scenario table."
+    },
+    "problemTitle": "The problem",
+    "problem": "Central Arizona farms lost their Colorado River water in just three years. Farmers now have to choose what to plant on less water, through hot summers, without knowing which years will be bad.",
+    "approachTitle": "Our approach",
+    "approach": [
+      "Water is a hard budget: the plan must fit your water in every one of {{n}} past years, not just on average.",
+      "Risk is your worst 1-in-5 years: we weigh how much a plan earns in its {{k}} worst years against its average.",
+      "Soil health is a minimum standard, like an investor's screen: no plan goes below the score you set."
+    ],
+    "realTitle": "What's real and what's assumed",
+    "realIntro": "Each dataset carries its own flag. This list updates by itself when real data replaces the sample data.",
+    "teamTitle": "Team",
+    "siTitle": "SI-use statement"
   }
 }

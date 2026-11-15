@@ -73,10 +73,11 @@ function Hero() {
 
 function Stats() {
   const { t } = useTranslation();
+  const yrs = useYears();
   const items = [
     { big: '65%', text: t('start.stats.cut65'), tone: 'text-primary' },
     { big: '0 AF', text: t('start.stats.zero'), tone: 'text-accent-strong' },
-    { big: '20', text: t('start.stats.years'), tone: 'text-primary' },
+    { big: String(yrs.n), text: t('start.stats.years'), tone: 'text-primary' },
   ];
   return (
     <section className="border-b border-border-soft bg-surface" aria-labelledby="stats-title">
