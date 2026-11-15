@@ -43,6 +43,8 @@ export function FrontierChart({
   recommended,
   waterKey,
   classic,
+  xKind = 'worst',
+  ariaLabel,
 }: {
   frontier: Point[];
   current: Marker;
@@ -51,6 +53,9 @@ export function FrontierChart({
   waterKey: number;
   /** Classic mean-variance plans, drawn as a dashed muted line when given. */
   classic?: Point[];
+  /** What x means: worst 1-in-5 years profit ($/acre), or soil score (0-100, stored in the same field). */
+  xKind?: 'worst' | 'soil';
+  ariaLabel?: string;
 }) {
   const { t, i18n } = useTranslation();
   const curLabel = useCurrentLabel();
@@ -76,6 +81,7 @@ export function FrontierChart({
 
   useEffect(() => () => window.clearTimeout(ghostTimer.current), []);
 
+  const fmtX = (v: number) => (xKind === 'soil' ? `${Math.round(v)}` : money(v, lang));
   const H = Math.max(320, Math.min(460, width * 0.62));
   const m = { l: 64, r: 24, t: 24, b: 56 };
   const all = [...frontier, current, recommended, ...(ghost?.pts ?? []), ...(classic ?? [])];
@@ -153,7 +159,7 @@ export function FrontierChart({
           onPointerDown={onPointer}
           onPointerLeave={(e) => e.pointerType === 'mouse' && setActive(null)}
           role="img"
-          aria-label={t('trade.aria', {
+          aria-label={ariaLabel ?? t('trade.aria', {
             n: frontier.length,
             recAvg: money(recommended.avgProfit, lang),
             recWorst: money(recommended.worst1in5, lang),
@@ -174,12 +180,12 @@ export function FrontierChart({
             <g key={`x${v}`}>
               <line x1={X(v)} x2={X(v)} y1={m.t} y2={H - m.b} stroke={colors['border-soft']} />
               <text x={X(v)} y={H - m.b + 22} textAnchor="middle" className="fill-text-muted text-[14px]">
-                {money(v, lang)}
+                {fmtX(v)}
               </text>
             </g>
           ))}
           <text x={width - m.r} y={H - 8} textAnchor="end" className="fill-text text-[14px] font-semibold">
-            {t('trade.xAxis')}
+            {xKind === 'soil' ? t('trade.soil.xAxis') : t('trade.xAxis')}
           </text>
           <text x={m.l - 52} y={m.t - 8} className="fill-text text-[14px] font-semibold">
             {t('trade.yAxis')}
@@ -239,7 +245,7 @@ export function FrontierChart({
             {t('trade.tipAvg')}: <strong>{money(sel.p.avgProfit, lang)}</strong>
           </p>
           <p className="tnum text-text">
-            {t('trade.tipWorst')}: <strong>{money(sel.p.worst1in5, lang)}</strong>
+            {xKind === 'soil' ? t('trade.soil.tipX') : t('trade.tipWorst')}: <strong>{fmtX(sel.p.worst1in5)}</strong>
           </p>
           <ul className="mt-2 space-y-1 border-t border-border-soft pt-2">
             {mixEntries(sel.p.mix).map((e) => (

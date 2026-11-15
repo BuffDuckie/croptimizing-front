@@ -388,6 +388,26 @@
       "worseAtSame": "Con la misma ganancia promedio, el plan del método clásico gana {{x}} menos en sus peores años.",
       "sameHereWorseElsewhere": "Con la ganancia promedio de su plan, ambos métodos eligen la misma mezcla. En otros puntos difieren: el plan del método clásico con promedio de {{avg}} gana {{cw}} en sus peores años, mientras que un plan con al menos ese promedio gana {{ow}}.",
       "negligible": "Aquí el método clásico encuentra casi los mismos planes que el nuestro: la diferencia en sus peores años es menor de {{x}} por acre."
+    },
+    "view": {
+      "label": "Vista del gráfico",
+      "risk": "Ganancia vs. años malos",
+      "soil": "Ganancia vs. suelo"
+    },
+    "soil": {
+      "title": "Subir su puntaje de suelo de {{a}} a {{b}} cuesta unos {{c}} por acre en un año promedio",
+      "titleFree": "Subir su puntaje de suelo de {{a}} a {{b}} no le costaría ganancia promedio",
+      "titleTop": "Su plan ya tiene el puntaje de suelo más alto que cabe en su agua: {{a}}",
+      "titleNone": "Ningún plan cabe en estos límites",
+      "subtitle": "Planes que caben en su agua ({{water}} AF/acre) y su mínimo de suelo ({{soil}}), calificados con sus metas de suelo.",
+      "how1": "Cada punto azul es una mezcla de rotaciones que ninguna otra mezcla supera a la vez en puntaje de suelo y ganancia promedio.",
+      "how2": "Hacia la derecha sube su puntaje de suelo; hacia abajo ve lo que cuesta en un año promedio. Toque o enfoque un punto para ver su mezcla.",
+      "xAxis": "Mejor suelo: puntaje de suelo (0 a 100) →",
+      "tipX": "Puntaje de suelo",
+      "legend": "Mejor ganancia en cada puntaje de suelo",
+      "tableCaption": "Mezclas en la línea de suelo y ganancia: puntaje de suelo y ganancia promedio por acre.",
+      "aria": "Gráfico de suelo y ganancia con {{n}} mezclas. Plan sugerido: puntaje de suelo {{recSoil}}, {{recAvg}} por acre en un año promedio. Plan actual: puntaje de suelo {{curSoil}}, {{curAvg}}.",
+      "math": "Guardamos cada mezcla que cabe en su agua en cada año, su mínimo de suelo y sus límites de proporción, y quitamos toda mezcla que otra supera a la vez en puntaje de suelo y ganancia promedio. Lo que queda es la línea."
     }
   },
   "compare": {
@@ -767,7 +787,7 @@
     "tourTitle": "Haga el recorrido de 3 minutos",
     "tour": {
       "plan": "Vea la mezcla sugerida y los cuatro números debajo, comparados con su plan actual recortado para caber en su agua.",
-      "tradeoffs": "Mueva el control de agua y vea cómo se reducen las opciones; active la comparación con la teoría clásica de portafolios.",
+      "tradeoffs": "Mueva el control de agua y vea cómo se reducen las opciones; cambie a Ganancia vs. suelo para ver lo que cuesta un mejor puntaje de suelo, y active la comparación con la teoría clásica de portafolios.",
       "stress": "Elija 2020 o 2022 y vea cómo les habría ido a ambos planes en ese año difícil.",
       "method": "Revise cada fórmula, la prueba de sensibilidad, la prueba con años no vistos y descargue la tabla de escenarios."
     },

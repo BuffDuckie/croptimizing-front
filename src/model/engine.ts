@@ -90,6 +90,20 @@ export function paretoFrontier(stats: MixStats, feasible: number[]): number[] {
   return out.reverse();
 }
 
+/** Feasible mixes no other feasible mix beats on both soil score and average profit, sorted by soil. */
+export function soilFrontier(stats: MixStats, feasible: number[]): number[] {
+  const sorted = [...feasible].sort((a, b) => stats.soil[b] - stats.soil[a] || stats.avg[b] - stats.avg[a]);
+  const out: number[] = [];
+  let bestAvg = -Infinity;
+  for (const k of sorted) {
+    if (stats.avg[k] > bestAvg + EPS) {
+      out.push(k);
+      bestAvg = stats.avg[k];
+    }
+  }
+  return out.reverse();
+}
+
 /**
  * Classic mean-variance efficient set: feasible mixes that no other feasible mix
  * beats on both higher average and lower standard deviation of yearly profit.
@@ -368,6 +382,12 @@ export function runPlan(req: PlanRequest): PlanResponse {
     mix: cleanMix(mixAt(k)),
   }));
 
+  const soilPareto = soilFrontier(stats, feasible).map((k) => ({
+    soilScore: round(stats.soil[k], 2),
+    avgProfit: round(stats.avg[k]),
+    mix: cleanMix(mixAt(k)),
+  }));
+
   const lang = req.lang;
   const labels = STRESS_LABELS[lang];
   const recSeries = seriesForMix(recMix, adjust);
@@ -409,6 +429,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     assumptions: assumptionsFor(lang, ds),
     sensitivity,
     classic,
+    soilFrontier: soilPareto,
     riskMetrics,
     sources: { ...ds.sources },
     ...(ds.validation ? { validation: ds.validation } : {}),

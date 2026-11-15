@@ -387,6 +387,26 @@
       "worseAtSame": "At the same average profit, the classic method's plan does {{x}} worse in your worst years.",
       "sameHereWorseElsewhere": "At your plan's average profit, both methods pick the same mix. Elsewhere they differ: the classic method's plan averaging {{avg}} earns {{cw}} in your worst years, while a plan earning at least as much on average earns {{ow}}.",
       "negligible": "Here the classic method finds almost the same plans as ours: the difference in your worst years is under {{x}} per acre."
+    },
+    "view": {
+      "label": "Chart view",
+      "risk": "Profit vs. bad years",
+      "soil": "Profit vs. soil"
+    },
+    "soil": {
+      "title": "Raising your soil score from {{a}} to {{b}} costs about {{c}} per acre in an average year",
+      "titleFree": "Raising your soil score from {{a}} to {{b}} would not cost you average profit",
+      "titleTop": "Your plan already has the highest soil score that fits your water: {{a}}",
+      "titleNone": "No plan fits these limits",
+      "subtitle": "Plans that fit your water ({{water}} AF/acre) and soil minimum ({{soil}}), scored on your soil goals.",
+      "how1": "Each navy point is a mix of rotations that no other mix beats on both soil score and average profit.",
+      "how2": "Moving right raises your soil score; moving down shows what that costs in an average year. Tap or focus a point to see its mix.",
+      "xAxis": "Better soil: soil score (0 to 100) →",
+      "tipX": "Soil score",
+      "legend": "Best profit at each soil score",
+      "tableCaption": "Mixes on the soil and profit line: soil score and average profit per acre.",
+      "aria": "Soil and profit chart with {{n}} mixes. Suggested plan: soil score {{recSoil}}, {{recAvg}} per acre in an average year. Current plan: soil score {{curSoil}}, {{curAvg}}.",
+      "math": "We keep every mix that fits your water in every year, your soil minimum, and your share limits, then drop any mix that another mix beats on both soil score and average profit. What is left is the line."
     }
   },
   "compare": {
@@ -765,7 +785,7 @@
     "tourTitle": "Take the 3-minute tour",
     "tour": {
       "plan": "Look at the suggested mix and the four numbers under it, compared with your current plan cut back to fit your water.",
-      "tradeoffs": "Move the water slider and watch the choices shrink; turn on the classic portfolio theory comparison.",
+      "tradeoffs": "Move the water slider and watch the choices shrink; switch to Profit vs. soil to see what a higher soil score costs, and turn on the classic portfolio theory comparison.",
       "stress": "Pick 2020 or 2022 and see how both plans would have done in that one hard year.",
       "method": "Audit every formula, the sensitivity check, the backtest, and download the scenario table."
     },

@@ -8,7 +8,9 @@ import { PageIntro } from '../components/layout/PageIntro';
 import { WaterSlider } from '../components/plan/Controls';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
-import { af, mixEntries, money, pct } from '../lib/format';
+import { Segmented } from '../components/ui/Segmented';
+import { useUrlParam } from '../hooks/useUrlParam';
+import { af, mixEntries, money, pct, whole } from '../lib/format';
 import { usePlanContext, useCurrentLabel, usePlanSample } from '../state/PlanContext';
 
 export default function TradeoffsPage() {
@@ -18,6 +20,7 @@ export default function TradeoffsPage() {
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls, infeasible, softened } = usePlanContext();
   const [showClassic, setShowClassic] = useState(false);
+  const [view, setView] = useUrlParam('view', ['risk', 'soil'] as const, 'risk');
   const classic = showClassic && data?.classic ? data.classic : null;
 
   const frontier = data?.frontier ?? [];
@@ -38,7 +41,20 @@ export default function TradeoffsPage() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-6">
           {!data && <div className="min-h-[110vh]" aria-busy="true" />}
-          {data && (
+          {data && data.soilFrontier && (
+            <Segmented
+              label={t('trade.view.label')}
+              value={view}
+              onChange={setView}
+              options={[
+                { value: 'risk', label: t('trade.view.risk') },
+                { value: 'soil', label: t('trade.view.soil') },
+              ]}
+              className="max-w-md"
+            />
+          )}
+          {data && view === 'soil' && data.soilFrontier && <SoilView />}
+          {data && (view === 'risk' || !data.soilFrontier) && (
             <ChartCard
               sample={planSample}
               title={title}
@@ -139,7 +155,7 @@ export default function TradeoffsPage() {
               )}
             </ChartCard>
           )}
-          {data && (
+          {data && view === 'risk' && (
             <section className="card">
               <h2 className="text-xl font-semibold">{t('trade.captionTitle')}</h2>
               <p className="mt-2 text-base text-text">{t('trade.caption')}</p>
@@ -177,5 +193,110 @@ export default function TradeoffsPage() {
         </aside>
       </div>
     </div>
+  );
+}
+
+/** Profit vs. soil: the feasible mixes no other mix beats on both soil score and average profit. */
+function SoilView() {
+  const { t, i18n } = useTranslation();
+  const planSample = usePlanSample();
+  const curLabel = useCurrentLabel();
+  const lang = i18n.language === 'es' ? 'es' : 'en';
+  const { data, controls } = usePlanContext();
+  if (!data?.soilFrontier) return null;
+  const pts = [...data.soilFrontier].sort((a, b) => a.soilScore - b.soilScore);
+  const rec = data.recommended.metrics;
+  const cur = data.current.metrics;
+  const top = pts[pts.length - 1];
+  // Computed finding: what the highest soil score that fits would cost in an average year.
+  const a = rec.soilScore;
+  const title = !top
+    ? t('trade.soil.titleNone')
+    : top.soilScore - a < 0.5
+      ? t('trade.soil.titleTop', { a: whole(a, lang) })
+      : rec.avgProfitPerAcre - top.avgProfit < 0.5
+        ? t('trade.soil.titleFree', { a: whole(a, lang), b: whole(top.soilScore, lang) })
+        : t('trade.soil.title', { a: whole(a, lang), b: whole(top.soilScore, lang), c: money(rec.avgProfitPerAcre - top.avgProfit, lang) });
+  const rows = pts.map((p) => [
+    mixEntries(p.mix)
+      .map((e) => `${t(`rotations.${e.id}`)} ${pct(e.share, lang)}`)
+      .join(', '),
+    whole(p.soilScore, lang),
+    money(p.avgProfit, lang),
+  ]);
+  return (
+    <>
+      <ChartCard
+        sample={planSample}
+        title={title}
+        subtitle={
+          <span className="flex items-center gap-1">
+            {t('trade.soil.subtitle', { water: af(controls.water, lang), soil: controls.soil })}
+            <InfoTip term="soilScore" />
+          </span>
+        }
+        howTo={
+          <>
+            <p>{t('trade.soil.how1')}</p>
+            <p>{t('trade.soil.how2')}</p>
+          </>
+        }
+        table={<DataTable caption={t('trade.soil.tableCaption')} head={[t('trade.colPlan'), t('trade.soil.tipX'), t('trade.tipAvg')]} rows={rows} />}
+        footer={
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-text-muted" aria-hidden="true">
+            <li className="flex items-center gap-2">
+              <svg width="28" height="10">
+                <line x1="0" x2="28" y1="5" y2="5" stroke={colors.primary} strokeWidth="3" />
+                <circle cx="14" cy="5" r="4" fill={colors.primary} />
+              </svg>
+              {t('trade.soil.legend')}
+            </li>
+            <li className="flex items-center gap-2">
+              <svg width="18" height="18">
+                <path d="M9 1.5 L11 7 L16.5 7 L12 10.5 L13.8 16 L9 12.6 L4.2 16 L6 10.5 L1.5 7 L7 7 Z" fill={colors.accent} stroke={colors.primary} strokeWidth="1.5" />
+              </svg>
+              {t('common.recommended')}
+            </li>
+            <li className="flex items-center gap-2">
+              <svg width="16" height="16">
+                <circle cx="8" cy="8" r="6" fill={colors.surface} stroke={colors.text} strokeWidth="2" />
+              </svg>
+              {curLabel}
+            </li>
+            <li className="flex items-center gap-2">
+              <svg width="28" height="10">
+                <line x1="0" x2="28" y1="5" y2="5" stroke={colors.primary} strokeWidth="2" strokeDasharray="5 5" opacity="0.5" />
+              </svg>
+              {t('trade.legendGhost')}
+            </li>
+          </ul>
+        }
+      >
+        <FrontierChart
+          xKind="soil"
+          frontier={pts.map((p) => ({ worst1in5: p.soilScore, avgProfit: p.avgProfit, mix: p.mix }))}
+          current={{ worst1in5: cur.soilScore, avgProfit: cur.avgProfitPerAcre, mix: data.current.mix }}
+          recommended={{ worst1in5: rec.soilScore, avgProfit: rec.avgProfitPerAcre, mix: data.recommended.mix }}
+          waterKey={controls.water}
+          ariaLabel={t('trade.soil.aria', {
+            n: pts.length,
+            recSoil: whole(rec.soilScore, lang),
+            recAvg: money(rec.avgProfitPerAcre, lang),
+            curSoil: whole(cur.soilScore, lang),
+            curAvg: money(cur.avgProfitPerAcre, lang),
+          })}
+        />
+      </ChartCard>
+      <section className="card">
+        <Disclosure>
+          <div className="space-y-3 text-base">
+            <p>{t('trade.soil.math')}</p>
+            <div className="overflow-x-auto" tabIndex={0}>
+              <DataTable caption={t('trade.soil.tableCaption')} head={[t('trade.colPlan'), t('trade.soil.tipX'), t('trade.tipAvg')]} rows={rows} />
+            </div>
+          </div>
+        </Disclosure>
+      </section>
+    </>
   );
 }
