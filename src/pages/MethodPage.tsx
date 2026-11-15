@@ -4,8 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { DataTable } from '../components/charts/ChartCard';
 import { CorrelationHeatmap } from '../components/charts/CorrelationHeatmap';
 import { PageIntro } from '../components/layout/PageIntro';
+import type { DatasetId } from '../api/types';
 import { af, money, whole } from '../lib/format';
+import { isSample } from '../lib/sources';
 import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
+
+/** Dataset behind each row of the sources table (null: used in text only). */
+const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', null];
 
 const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'current', 'scenarios', 'assumptions'] as const;
 
@@ -20,7 +25,13 @@ export default function MethodPage() {
 
   const steps = t('method.stepsList', { returnObjects: true }) as string[];
   const limits = t('method.limits', { returnObjects: true }) as string[];
-  const sources = t('method.sourceRows', { returnObjects: true }) as string[][];
+  // Status comes from each dataset's own source flag, so it updates when real data loads.
+  const sourceRows = t('method.sourceRows', { returnObjects: true }) as string[][];
+  const sources = sourceRows.map((row, i) => {
+    const id = SOURCE_DATASETS[i];
+    const status = id === null || id === undefined ? t('method.status.text') : isSample(data, [id]) ? t('method.status.sample') : t('method.status.real');
+    return [...row, status];
+  });
 
   const downloadCsv = () => {
     if (!data) return;
@@ -105,6 +116,11 @@ export default function MethodPage() {
                 className="min-w-[560px]"
               />
             </div>
+            {data.validation?.lpCrossCheck && (
+              <p className="mt-4 max-w-3xl text-base text-text">
+                {t('method.crossCheck', { x: whole(data.validation.lpCrossCheck.maxShareDifference * 100, lang) })} {data.validation.lpCrossCheck.note} ({data.validation.lpCrossCheck.method})
+              </p>
+            )}
           </section>
 
           {data.currentAsFarmed && (

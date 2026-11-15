@@ -6,6 +6,7 @@ import { Header } from './components/layout/Header';
 import { FallbackBanner } from './components/layout/FallbackBanner';
 import StartPage from './pages/StartPage';
 import { PlanProvider, usePlanContext } from './state/PlanContext';
+import { ALL_DATASETS, isSample } from './lib/sources';
 
 const PlanPage = lazy(() => import('./pages/PlanPage'));
 const TradeoffsPage = lazy(() => import('./pages/TradeoffsPage'));
@@ -42,7 +43,7 @@ export function AppShell() {
 function Shell() {
   const { t } = useTranslation();
   const { data, fellBack } = usePlanContext();
-  const showSample = !data || data.dataSource === 'sample' || fellBack;
+  const showSample = fellBack || isSample(data, ALL_DATASETS);
   return (
     <div className="flex min-h-screen flex-col">
       <a

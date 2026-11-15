@@ -5,13 +5,9 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart,
 import { ChartCard, DataTable } from '../charts/ChartCard';
 import { axisLine, axisTick, gridStroke, tooltipStyle } from '../charts/rechartsTheme';
 import { InfoTip } from '../ui/InfoTip';
+import { isSample } from '../../lib/sources';
 import { usePlanContext } from '../../state/PlanContext';
 import { colors } from '../../theme/tokens';
-
-function SamplePill() {
-  const { t } = useTranslation();
-  return <span className="rounded-full bg-warning-tint px-2 py-0.5 text-sm font-semibold text-warning">{t('app.sampleBadge')}</span>;
-}
 
 function Source({ mission, detail }: { mission: string; detail: string }) {
   return (
@@ -28,7 +24,6 @@ export default function WhyPanels() {
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data } = usePlanContext();
   if (!data) return <PanelsSkeleton />;
-  const sample = data.dataSource === 'sample';
   const ctx = data.context;
   const nf = (n: number, d = 0) => new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d }).format(n);
 
@@ -57,20 +52,22 @@ export default function WhyPanels() {
     <>
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartCard
-          title={t('why.graceTitle', { v: nf(drop, 0) })}
+          title={t('why.graceTitle', { v: nf(drop, 0), from: years[0], to: years[years.length - 1] })}
           subtitle={<Source mission="NASA GRACE / GRACE-FO" detail={t('why.graceRes')} />}
           howTo={
             <>
-              <p>{t('why.graceHow1')}</p>
+              <p>{t('why.graceHow1', { from: years[0], to: years[years.length - 1] })}</p>
               <p className="flex items-center gap-1">
                 {t('why.graceHow2')} <InfoTip term="grace" />
               </p>
             </>
           }
           table={<DataTable caption={t('why.graceCaption')} head={[t('why.year'), t('why.cm')]} rows={years.map((y) => [y, nf(yMean(y), 1)])} />}
-          footer={sample ? <SamplePill /> : undefined}
+          sample={isSample(data, ['grace'])}
+          id="grace"
+          className="scroll-mt-36"
         >
-          <div className="h-64" role="img" aria-label={t('why.graceAria', { v: nf(drop, 0) })}>
+          <div className="h-64" role="img" aria-label={t('why.graceAria', { v: nf(drop, 0), from: years[0], to: years[years.length - 1] })}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={grace} margin={{ top: 8, right: 12, left: 0, bottom: 8 }}>
                 <defs>
@@ -102,9 +99,11 @@ export default function WhyPanels() {
             </>
           }
           table={<DataTable caption={t('why.heatCaption')} head={[t('why.year'), t('why.days')]} rows={heat.map((h) => [h.year, h.days])} />}
-          footer={sample ? <SamplePill /> : undefined}
+          sample={isSample(data, ['weather'])}
+          id="heat"
+          className="scroll-mt-36"
         >
-          <div className="h-64" role="img" aria-label={t('why.heatAria', { a: nf(firstFive), b: nf(lastFive) })}>
+          <div className="h-64" role="img" aria-label={t('why.heatAria', { a: nf(firstFive), b: nf(lastFive), from: heat[0]?.year, to: heat[heat.length - 1]?.year })}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={heat} margin={{ top: 8, right: 12, left: 0, bottom: 8 }}>
                 <CartesianGrid stroke={gridStroke} vertical={false} />
@@ -129,7 +128,9 @@ export default function WhyPanels() {
             </>
           }
           table={<DataTable caption={t('why.et0Caption')} head={[t('why.month'), 'mm']} rows={et0.map((m) => [m.name, m.mm])} />}
-          footer={sample ? <SamplePill /> : undefined}
+          sample={isSample(data, ['weather'])}
+          id="et0"
+          className="scroll-mt-36"
         >
           <div className="h-64" role="img" aria-label={t('why.et0Aria', { m: peak.name, v: nf(peak.mm) })}>
             <ResponsiveContainer width="100%" height="100%">
@@ -156,7 +157,9 @@ export default function WhyPanels() {
             </>
           }
           table={<DataTable caption={t('why.etCaption')} head={[t('why.crop'), t('why.modeled'), t('why.satellite')]} rows={etCheck.map((c) => [c.name, c.modeledMm, c.satelliteMm])} />}
-          footer={sample ? <SamplePill /> : undefined}
+          sample={isSample(data, ['etCheck'])}
+          id="et-check"
+          className="scroll-mt-36"
         >
           <div className="h-64" role="img" aria-label={t('why.etAria', { v: nf(maxGap) })}>
             <ResponsiveContainer width="100%" height="100%">

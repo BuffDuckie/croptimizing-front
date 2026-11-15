@@ -9,7 +9,7 @@ import { PageIntro } from '../components/layout/PageIntro';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { af, money, pct, whole } from '../lib/format';
-import { usePlanContext } from '../state/PlanContext';
+import { usePlanContext, useYears } from '../state/PlanContext';
 
 function order(data: PlanResponse): RotationCard[] {
   const rec = data.recommended.mix;
@@ -22,6 +22,7 @@ function order(data: PlanResponse): RotationCard[] {
 
 export default function ComparePage() {
   const { t, i18n } = useTranslation();
+  const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data } = usePlanContext();
   if (!data) return <div className="container-content min-h-[110vh]" />;
@@ -35,7 +36,7 @@ export default function ComparePage() {
       <h2 className="max-w-3xl text-2xl font-semibold leading-snug">
         {t('compare.finding', { name: best.name, v: money(best.stats.profitPerAf, lang) })}
       </h2>
-      <p className="mt-2 max-w-3xl text-base text-text-muted">{t('compare.findingSub')}</p>
+      <p className="mt-2 max-w-3xl text-base text-text-muted">{t('compare.findingSub', yrs)}</p>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-2">
         {cards.map((c) => (
@@ -70,6 +71,7 @@ export default function ComparePage() {
 
 function RotationCardView({ card, recShare, curShare }: { card: RotationCard; recShare: number; curShare: number }) {
   const { t, i18n } = useTranslation();
+  const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const blocks = [
     { key: 'why', icon: Lightbulb, text: card.why },
@@ -120,8 +122,8 @@ function RotationCardView({ card, recShare, curShare }: { card: RotationCard; re
         <CalendarStrip card={card} />
       </section>
 
-      <section aria-label={t('compare.statement')}>
-        <h3 className="mb-2 text-sm font-semibold text-text-muted">{t('compare.statement')}</h3>
+      <section aria-label={t('compare.statement', yrs)}>
+        <h3 className="mb-2 text-sm font-semibold text-text-muted">{t('compare.statement', yrs)}</h3>
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-ctl bg-border-soft ring-1 ring-border-soft sm:grid-cols-5">
           {stats.map((s) => (
             <div key={s.label} className="bg-surface p-3">

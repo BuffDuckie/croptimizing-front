@@ -5,10 +5,11 @@ import { MixBar } from '../components/charts/MixBar';
 import { PageIntro } from '../components/layout/PageIntro';
 import { LogoMark } from '../components/layout/Logo';
 import { acresSplit, af, money, pct, whole } from '../lib/format';
-import { currentTrim, useCurrentLabel, usePlanContext } from '../state/PlanContext';
+import { currentTrim, useCurrentLabel, usePlanContext, useYears } from '../state/PlanContext';
 
 export default function ReportPage() {
   const { t, i18n } = useTranslation();
+  const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, farm, controls, infeasible, softened } = usePlanContext();
   const curLabel = useCurrentLabel(true);
@@ -62,7 +63,7 @@ export default function ReportPage() {
 
         <section className="mt-5">
           <h2 className="text-lg font-semibold">{t('report.mix')}</h2>
-          <p className="mt-1 text-base text-text">{t('plan.mixTitle', { water: af(controls.water, lang) })}.</p>
+          <p className="mt-1 text-base text-text">{t('plan.mixTitle', { ...yrs, water: af(controls.water, lang) })}.</p>
           <div className="mt-3">
             <MixBar mix={data.recommended.mix} acres={farm.acres} label={t('plan.suggestedRow')} showLegend={false} />
           </div>

@@ -6,12 +6,13 @@ import { af, money } from '../../lib/format';
 import { colors } from '../../theme/tokens';
 import { ChartCard, DataTable } from '../charts/ChartCard';
 import { axisLine, axisTick, gridStroke, tooltipStyle } from '../charts/rechartsTheme';
-import { currentTrim, useCurrentLabel, usePlanContext } from '../../state/PlanContext';
+import { currentTrim, useCurrentLabel, usePlanContext, usePlanSample } from '../../state/PlanContext';
 
 type Stress = PlanResponse['stressTests'][number];
 
 export default function StressCharts({ s, budget }: { s: Stress; budget: number }) {
   const { t, i18n } = useTranslation();
+  const planSample = usePlanSample();
   const curLabel = useCurrentLabel(true);
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const year = s.year;
@@ -30,6 +31,7 @@ export default function StressCharts({ s, budget }: { s: Stress; budget: number 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <ChartCard
+        sample={planSample}
         title={better ? t('stress.profitBetter', { year, rec: money(s.recommendedProfit, lang), cur: money(s.currentProfit, lang) }) : t('stress.profitWorse', { year, rec: money(s.recommendedProfit, lang), cur: money(s.currentProfit, lang) })}
         subtitle={t('stress.profitSub')}
         howTo={<p>{t('stress.how1')}</p>}
@@ -52,6 +54,8 @@ export default function StressCharts({ s, budget }: { s: Stress; budget: number 
       </ChartCard>
 
       <ChartCard
+
+        sample={planSample}
         title={curOver ? t('stress.waterOver', { year, need: af(s.currentWater, lang), budget: af(controls.water, lang) }) : t('stress.waterFits', { year })}
         subtitle={t('stress.waterSub')}
         howTo={<p>{t('stress.how2')}</p>}

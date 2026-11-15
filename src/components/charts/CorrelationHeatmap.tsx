@@ -4,6 +4,7 @@ import { ROTATION_IDS } from '../../api/types';
 import { colors } from '../../theme/tokens';
 import { ChartCard, DataTable } from './ChartCard';
 import { ROT_BG } from './rotation';
+import { useYears, usePlanSample } from '../../state/PlanContext';
 
 /** Mix a hex color with white. t = 0 is white, 1 is the color. */
 function tint(hex: string, t: number): string {
@@ -18,6 +19,8 @@ function tint(hex: string, t: number): string {
 /** Diverging scale: warning-orange for negative, navy for positive, white at zero. Values printed in cells. */
 export function CorrelationHeatmap({ correlations }: { correlations: PlanResponse['correlations'] }) {
   const { t, i18n } = useTranslation();
+  const planSample = usePlanSample();
+  const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const r = (a: RotationId, b: RotationId) => correlations.find((c) => c.a === a && c.b === b)?.r ?? (a === b ? 1 : 0);
   const fmt = (v: number) => new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
@@ -27,9 +30,10 @@ export function CorrelationHeatmap({ correlations }: { correlations: PlanRespons
 
   return (
     <ChartCard
+      sample={planSample}
       headingLevel={3}
       title={t('method.heatTitle', { a: t(`rotations.${lowest.a}`), b: t(`rotations.${lowest.b}`), v: fmt(lowest.v) })}
-      subtitle={t('method.heatSub')}
+      subtitle={t('method.heatSub', yrs)}
       howTo={
         <>
           <p>{t('method.heatHow1')}</p>

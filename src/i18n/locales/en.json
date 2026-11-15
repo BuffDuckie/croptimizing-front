@@ -155,7 +155,7 @@
     "headlineA": "Plan your crops like an investor: the most profit for your ",
     "headlineWater": "water",
     "headlineB": ", your soil, and your worst years.",
-    "sub": "Croptimizing tests every mix of crops against 20 past years of weather and prices, then shows the plan that fits your water in every one of them.",
+    "sub": "Croptimizing tests every mix of crops against {{n}} past years of weather and prices, then shows the plan that fits your water in every one of them.",
     "cta": "Try the Pinal County demo farm",
     "ctaOwn": "Set up your own farm",
     "credit": "Weather: NASA POWER. Groundwater: NASA GRACE-FO.",
@@ -241,15 +241,15 @@
     "efficiency": "Irrigation efficiency",
     "efficiencyHelp": "Drip and good scheduling raise this. Higher means less water per acre for the same crop.",
     "efficiencyText": "{{n}} percent",
-    "mixTitle": "Based on 20 past years, this mix fits {{water}} AF per acre in every year",
+    "mixTitle": "Based on {{n}} past years, this mix fits {{water}} AF per acre in every year",
     "mixSub": "Suggested plan for your {{acres}} acres",
     "currentRow": "What you grow today",
     "suggestedRow": "Suggested",
     "mixAria": "Crop mix: {{list}}.",
     "avg": "Average year profit",
-    "avgHelp": "Average of the 20 past years.",
+    "avgHelp": "Average of the {{n}} past years.",
     "worst": "Worst 1-in-5 years",
-    "worstHelp": "Average of the 4 worst years out of 20.",
+    "worstHelp": "Average of the {{k}} worst years out of {{n}}.",
     "waterCard": "Water in the highest year",
     "waterOf": "of {{budget}} AF budget",
     "soilCard": "Soil score",
@@ -288,15 +288,15 @@
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",
     "titleCost": "Fitting your water costs {{v}} per acre in your worst years",
-    "subtitle": "20 years at a glance: what each plan would have earned in each past year.",
-    "how1": "Each dot is one past year, from 2005 to 2024. Dots further right earned more per acre.",
-    "how2": "The shaded area holds the 4 worst years. The red triangle marks their average: that is the worst 1-in-5 years number.",
+    "subtitle": "{{n}} years at a glance: what each plan would have earned in each past year.",
+    "how1": "Each dot is one past year, from {{from}} to {{to}}. Dots further right earned more per acre.",
+    "how2": "The shaded area holds the {{k}} worst years. The red triangle marks their average: that is the worst 1-in-5 years number.",
     "tableCaption": "Profit per acre in each past year",
     "year": "Year",
-    "aria": "Dot chart of 20 past years. Suggested plan worst 1-in-5 years average {{recWorst}} per acre; current plan {{curWorst}} per acre.",
+    "aria": "Dot chart of {{n}} past years. Suggested plan worst 1-in-5 years average {{recWorst}} per acre; current plan {{curWorst}} per acre.",
     "band": "Worst 1-in-5 years",
     "avgMark": "Average of those 4 years",
-    "axis": "Profit per acre in each of the 20 years ($/acre)"
+    "axis": "Profit per acre in each of the {{n}} years ($/acre)"
   },
   "trade": {
     "title": "Playing it safe adds {{gain}} per acre in your worst years and costs {{cost}} in an average year",
@@ -325,7 +325,7 @@
   },
   "compare": {
     "finding": "{{name}} earns the most for each acre-foot of water: {{v}}",
-    "findingSub": "When water is the limit, profit per acre-foot matters more than profit per acre. Each card shows when the crop grows, what it earned over 20 years, and what it does for your soil.",
+    "findingSub": "When water is the limit, profit per acre-foot matters more than profit per acre. Each card shows when the crop grows, what it earned over {{n}} years, and what it does for your soil.",
     "inSuggested": "Suggested: {{v}} of acres",
     "inCurrent": "Today: {{v}} of acres",
     "notUsed": "Not in either plan",
@@ -333,7 +333,7 @@
     "calAria": "{{name}} calendar: grows {{grow}} of 12 months. {{list}}.",
     "growing": "growing",
     "bare": "bare",
-    "statement": "Portfolio statement (per acre, 20-year average)",
+    "statement": "Portfolio statement (per acre, {{n}}-year average)",
     "stat": {
       "avg": "Avg profit",
       "perAf": "Per acre-foot",
@@ -367,12 +367,12 @@
     "satVsGroundTitle": "Satellite vs. ground.",
     "satVsGround1": "Ground gauges measure one well or one field very precisely, but only where someone put a gauge.",
     "satVsGround2": "Satellites measure every field and every aquifer the same way, every month, so we can compare places and years. We use satellites to see the whole region, and ask you to check the numbers against your own meters.",
-    "graceTitle": "Water stored underground here has dropped about {{v}} cm since 2005",
+    "graceTitle": "Water stored underground here has dropped about {{v}} cm since {{from}}",
     "graceRes": "Monthly, about 300 km grid. Change in water stored on land and underground.",
-    "graceHow1": "The line shows how much more or less water is stored in this area than the 2005 to 2024 average, as a depth of water in centimeters. It rises a little each winter and falls each summer.",
+    "graceHow1": "The line shows how much more or less water is stored in this area than the {{from}} to {{to}} average, as a depth of water in centimeters. It rises a little each winter and falls each summer.",
     "graceHow2": "A falling line means aquifers are being drawn down faster than rain and rivers refill them.",
     "graceCaption": "Yearly average water storage change",
-    "graceAria": "Line chart of underground water storage from 2005 to 2024, dropping about {{v}} centimeters.",
+    "graceAria": "Line chart of underground water storage from {{from}} to {{to}}, dropping about {{v}} centimeters.",
     "storage": "Storage change",
     "cm": "Change (cm)",
     "year": "Year",
@@ -381,7 +381,7 @@
     "heatHow1": "Each bar is one year. Taller bars mean more days at or above 110°F, when crops need the most water and lose the most yield.",
     "heatHow2": "The plan must fit your water budget even in the hottest of these years.",
     "heatCaption": "Days at or above 110°F per year",
-    "heatAria": "Bar chart of hot days per year from 2005 to 2024, rising from about {{a}} to {{b}}.",
+    "heatAria": "Bar chart of hot days per year from {{from}} to {{to}}, rising from about {{a}} to {{b}}.",
     "days": "Days",
     "et0Title": "Crop thirst peaks in {{m}} at about {{v}} mm of water",
     "et0Res": "Daily weather, about 50 km grid. Reference evapotranspiration (FAO-56).",
@@ -494,48 +494,41 @@
       [
         "Weather and reference ET",
         "NASA POWER (FAO-56 Penman-Monteith)",
-        "Daily, about 50 km",
-        "Sample series"
+        "Daily, about 50 km"
       ],
       [
         "Groundwater storage trend",
         "NASA GRACE / GRACE-FO",
-        "Monthly, about 300 km",
-        "Sample series"
+        "Monthly, about 300 km"
       ],
       [
         "Crop water use check",
         "OpenET ensemble, NASA ECOSTRESS",
-        "30 to 70 m",
-        "Sample values"
+        "30 to 70 m"
       ],
       [
         "Crop costs and returns",
         "University of Arizona Cooperative Extension, Pinal County crop budgets",
-        "Per crop, per year",
-        "Placeholder"
+        "Per crop, per year"
       ],
       [
         "Price and yield variation",
         "USDA NASS Quick Stats",
-        "County and state, yearly",
-        "Placeholder"
+        "County and state, yearly"
       ],
       [
         "Soil properties",
         "USDA Web Soil Survey",
-        "Map unit",
-        "Placeholder scores"
+        "Map unit"
       ],
       [
         "Water cuts",
         "ASU Arizona Water Innovation Initiative",
-        "District",
-        "Used in text"
+        "District"
       ]
     ],
     "heatTitle": "{{a}} and {{b}} move together least (r = {{v}}), so mixing them spreads risk",
-    "heatSub": "How each pair of rotations' yearly profits moved together over 2005 to 2024.",
+    "heatSub": "How each pair of rotations' yearly profits moved together over {{from}} to {{to}}.",
     "heatHow1": "1 means two rotations always rose and fell together. 0 means no link. Below 0 means one tends to do well when the other does badly.",
     "heatHow2": "Mixing rotations with low numbers is what protects you in bad years, just like a diversified investment portfolio.",
     "heatCaption": "Profit correlations between rotations",
@@ -568,6 +561,12 @@
     "asFarmedCaption": "Current plan as farmed vs. cut back to fit",
     "asFarmedRow": "As you farm today (does not fit your water)",
     "colHighWater": "Highest-year water",
-    "colSoil": "Soil score"
+    "colSoil": "Soil score",
+    "status": {
+      "sample": "Sample data",
+      "real": "Real data loaded",
+      "text": "Used in text"
+    },
+    "crossCheck": "Cross-check: an exact solver on the same data picks a mix within {{x}}% of ours."
   }
 }

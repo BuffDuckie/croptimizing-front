@@ -156,7 +156,7 @@
     "headlineA": "Planee sus cultivos como un inversionista: la mayor ganancia para su ",
     "headlineWater": "agua",
     "headlineB": ", su suelo y sus peores años.",
-    "sub": "Croptimizing prueba cada mezcla de cultivos con 20 años pasados de clima y precios, y le muestra el plan que cabe en su agua en cada uno de ellos.",
+    "sub": "Croptimizing prueba cada mezcla de cultivos con {{n}} años pasados de clima y precios, y le muestra el plan que cabe en su agua en cada uno de ellos.",
     "cta": "Probar la granja de demostración de Pinal",
     "ctaOwn": "Configurar su propia granja",
     "credit": "Clima: NASA POWER. Agua subterránea: NASA GRACE-FO.",
@@ -242,15 +242,15 @@
     "efficiency": "Eficiencia de riego",
     "efficiencyHelp": "El goteo y una buena programación la suben. Más alta significa menos agua por acre para el mismo cultivo.",
     "efficiencyText": "{{n}} por ciento",
-    "mixTitle": "Según 20 años pasados, esta mezcla cabe en {{water}} AF por acre en todos los años",
+    "mixTitle": "Según {{n}} años pasados, esta mezcla cabe en {{water}} AF por acre en todos los años",
     "mixSub": "Plan sugerido para sus {{acres}} acres",
     "currentRow": "Lo que siembra hoy",
     "suggestedRow": "Sugerido",
     "mixAria": "Mezcla de cultivos: {{list}}.",
     "avg": "Ganancia en un año promedio",
-    "avgHelp": "Promedio de los 20 años pasados.",
+    "avgHelp": "Promedio de los {{n}} años pasados.",
     "worst": "Peores años, 1 de cada 5",
-    "worstHelp": "Promedio de los 4 peores años de 20.",
+    "worstHelp": "Promedio de los {{k}} peores años de {{n}}.",
     "waterCard": "Agua en el año más alto",
     "waterOf": "de un presupuesto de {{budget}} AF",
     "soilCard": "Puntaje de suelo",
@@ -289,15 +289,15 @@
   "strip": {
     "titleBetter": "Su plan sugerido aguanta mejor los años malos",
     "titleCost": "Ajustarse a su agua cuesta {{v}} por acre en sus peores años",
-    "subtitle": "20 años de un vistazo: lo que cada plan habría ganado en cada año pasado.",
-    "how1": "Cada punto es un año pasado, de 2005 a 2024. Los puntos más a la derecha ganaron más por acre.",
-    "how2": "El área sombreada contiene los 4 peores años. El triángulo rojo marca su promedio: ese es el número de los peores años, 1 de cada 5.",
+    "subtitle": "{{n}} años de un vistazo: lo que cada plan habría ganado en cada año pasado.",
+    "how1": "Cada punto es un año pasado, de {{from}} a {{to}}. Los puntos más a la derecha ganaron más por acre.",
+    "how2": "El área sombreada contiene los {{k}} peores años. El triángulo rojo marca su promedio: ese es el número de los peores años, 1 de cada 5.",
     "tableCaption": "Ganancia por acre en cada año pasado",
     "year": "Año",
-    "aria": "Gráfica de puntos de 20 años pasados. Peores años del plan sugerido: promedio de {{recWorst}} por acre; plan actual: {{curWorst}} por acre.",
+    "aria": "Gráfica de puntos de {{n}} años pasados. Peores años del plan sugerido: promedio de {{recWorst}} por acre; plan actual: {{curWorst}} por acre.",
     "band": "Peores años, 1 de cada 5",
     "avgMark": "Promedio de esos 4 años",
-    "axis": "Ganancia por acre en cada uno de los 20 años ($/acre)"
+    "axis": "Ganancia por acre en cada uno de los {{n}} años ($/acre)"
   },
   "trade": {
     "title": "Ir a lo seguro suma {{gain}} por acre en sus peores años y cuesta {{cost}} en un año promedio",
@@ -326,7 +326,7 @@
   },
   "compare": {
     "finding": "{{name}} gana más por cada acre-pie de agua: {{v}}",
-    "findingSub": "Cuando el agua es el límite, la ganancia por acre-pie importa más que la ganancia por acre. Cada tarjeta muestra cuándo crece el cultivo, lo que ganó en 20 años y lo que aporta a su suelo.",
+    "findingSub": "Cuando el agua es el límite, la ganancia por acre-pie importa más que la ganancia por acre. Cada tarjeta muestra cuándo crece el cultivo, lo que ganó en {{n}} años y lo que aporta a su suelo.",
     "inSuggested": "Sugerido: {{v}} de los acres",
     "inCurrent": "Hoy: {{v}} de los acres",
     "notUsed": "No está en ningún plan",
@@ -334,7 +334,7 @@
     "calAria": "Calendario de {{name}}: crece {{grow}} de 12 meses. {{list}}.",
     "growing": "con cultivo",
     "bare": "sin cultivo",
-    "statement": "Estado de cuenta (por acre, promedio de 20 años)",
+    "statement": "Estado de cuenta (por acre, promedio de {{n}} años)",
     "stat": {
       "avg": "Ganancia prom.",
       "perAf": "Por acre-pie",
@@ -368,12 +368,12 @@
     "satVsGroundTitle": "Satélite vs. suelo.",
     "satVsGround1": "Los medidores en tierra miden un pozo o un campo con mucha precisión, pero solo donde alguien puso un medidor.",
     "satVsGround2": "Los satélites miden cada campo y cada acuífero de la misma forma, cada mes, así que podemos comparar lugares y años. Usamos satélites para ver toda la región y le pedimos que compare los números con sus propios medidores.",
-    "graceTitle": "El agua guardada bajo tierra aquí ha bajado unos {{v}} cm desde 2005",
+    "graceTitle": "El agua guardada bajo tierra aquí ha bajado unos {{v}} cm desde {{from}}",
     "graceRes": "Mensual, malla de unos 300 km. Cambio en el agua guardada en la superficie y bajo tierra.",
-    "graceHow1": "La línea muestra cuánta más o menos agua hay guardada en esta zona que el promedio de 2005 a 2024, como una profundidad de agua en centímetros. Sube un poco cada invierno y baja cada verano.",
+    "graceHow1": "La línea muestra cuánta más o menos agua hay guardada en esta zona que el promedio de {{from}} a {{to}}, como una profundidad de agua en centímetros. Sube un poco cada invierno y baja cada verano.",
     "graceHow2": "Una línea que baja significa que los acuíferos se vacían más rápido de lo que la lluvia y los ríos los rellenan.",
     "graceCaption": "Cambio promedio anual del agua guardada",
-    "graceAria": "Gráfica de línea del agua guardada bajo tierra de 2005 a 2024, que baja unos {{v}} centímetros.",
+    "graceAria": "Gráfica de línea del agua guardada bajo tierra de {{from}} a {{to}}, que baja unos {{v}} centímetros.",
     "storage": "Cambio en el agua guardada",
     "cm": "Cambio (cm)",
     "year": "Año",
@@ -382,7 +382,7 @@
     "heatHow1": "Cada barra es un año. Barras más altas significan más días a 110°F o más, cuando los cultivos necesitan más agua y pierden más rendimiento.",
     "heatHow2": "El plan debe caber en su presupuesto de agua aun en el año más caluroso.",
     "heatCaption": "Días a 110°F o más por año",
-    "heatAria": "Gráfica de barras de días calurosos por año de 2005 a 2024, que suben de unos {{a}} a {{b}}.",
+    "heatAria": "Gráfica de barras de días calurosos por año de {{from}} a {{to}}, que suben de unos {{a}} a {{b}}.",
     "days": "Días",
     "et0Title": "La sed de los cultivos llega al máximo en {{m}} con unos {{v}} mm de agua",
     "et0Res": "Clima diario, malla de unos 50 km. Evapotranspiración de referencia (FAO-56).",
@@ -495,48 +495,41 @@
       [
         "Clima y ET de referencia",
         "NASA POWER (FAO-56 Penman-Monteith)",
-        "Diario, unos 50 km",
-        "Serie de muestra"
+        "Diario, unos 50 km"
       ],
       [
         "Tendencia del agua subterránea",
         "NASA GRACE / GRACE-FO",
-        "Mensual, unos 300 km",
-        "Serie de muestra"
+        "Mensual, unos 300 km"
       ],
       [
         "Verificación del uso de agua",
         "Conjunto OpenET, NASA ECOSTRESS",
-        "30 a 70 m",
-        "Valores de muestra"
+        "30 a 70 m"
       ],
       [
         "Costos e ingresos de cultivos",
         "Extensión Cooperativa de la Universidad de Arizona, presupuestos del condado de Pinal",
-        "Por cultivo, por año",
-        "Valor de prueba"
+        "Por cultivo, por año"
       ],
       [
         "Variación de precios y rendimientos",
         "USDA NASS Quick Stats",
-        "Condado y estado, anual",
-        "Valor de prueba"
+        "Condado y estado, anual"
       ],
       [
         "Propiedades del suelo",
         "USDA Web Soil Survey",
-        "Unidad de mapa",
-        "Puntajes de prueba"
+        "Unidad de mapa"
       ],
       [
         "Recortes de agua",
         "ASU Arizona Water Innovation Initiative",
-        "Distrito",
-        "Usado en el texto"
+        "Distrito"
       ]
     ],
     "heatTitle": "{{a}} y {{b}} se mueven juntas lo menos (r = {{v}}), así que mezclarlas reparte el riesgo",
-    "heatSub": "Cómo se movieron juntas las ganancias anuales de cada par de rotaciones de 2005 a 2024.",
+    "heatSub": "Cómo se movieron juntas las ganancias anuales de cada par de rotaciones de {{from}} a {{to}}.",
     "heatHow1": "1 significa que dos rotaciones siempre subieron y bajaron juntas. 0 significa que no hay relación. Debajo de 0 significa que a una le suele ir bien cuando a la otra le va mal.",
     "heatHow2": "Mezclar rotaciones con números bajos es lo que lo protege en los años malos, igual que un portafolio de inversión diversificado.",
     "heatCaption": "Correlaciones de ganancia entre rotaciones",
@@ -569,7 +562,13 @@
     "asFarmedCaption": "Plan actual como se cultiva vs. recortado para caber",
     "asFarmedRow": "Como cultiva hoy (no cabe en su agua)",
     "colHighWater": "Agua del año más alto",
-    "colSoil": "Puntaje de suelo"
+    "colSoil": "Puntaje de suelo",
+    "status": {
+      "sample": "Datos de muestra",
+      "real": "Datos reales cargados",
+      "text": "Usado en el texto"
+    },
+    "crossCheck": "Verificación: un solucionador exacto con los mismos datos elige una mezcla a menos de {{x}}% de la nuestra."
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."
 }

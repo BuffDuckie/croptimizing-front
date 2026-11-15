@@ -3,7 +3,7 @@ import { useElementWidth } from '../../hooks/useElementWidth';
 import { money } from '../../lib/format';
 import { colors } from '../../theme/tokens';
 import { ChartCard, DataTable } from './ChartCard';
-import { useCurrentLabel } from '../../state/PlanContext';
+import { useCurrentLabel, useYears, usePlanSample } from '../../state/PlanContext';
 
 type Year = { year: number; profit: number };
 
@@ -31,6 +31,8 @@ function worst4(ys: Year[]) {
  */
 export function YearsDotStrip({ current, recommended }: { current: Year[]; recommended: Year[] }) {
   const { t, i18n } = useTranslation();
+  const planSample = usePlanSample();
+  const yrs = useYears();
   const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const [ref, width] = useElementWidth<HTMLDivElement>();
@@ -61,12 +63,13 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
 
   return (
     <ChartCard
+      sample={planSample}
       title={title}
-      subtitle={t('strip.subtitle')}
+      subtitle={t('strip.subtitle', yrs)}
       howTo={
         <>
-          <p>{t('strip.how1')}</p>
-          <p>{t('strip.how2')}</p>
+          <p>{t('strip.how1', yrs)}</p>
+          <p>{t('strip.how2', yrs)}</p>
         </>
       }
       table={
@@ -83,7 +86,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
           height={H}
           viewBox={`0 0 ${W} ${H}`}
           role="img"
-          aria-label={t('strip.aria', { recWorst: money(rw.avg, lang), curWorst: money(cw.avg, lang) })}
+          aria-label={t('strip.aria', { ...yrs, recWorst: money(rw.avg, lang), curWorst: money(cw.avg, lang) })}
           className="block overflow-visible"
         >
           {rows.map((row, ri) => {
@@ -140,7 +143,7 @@ export function YearsDotStrip({ current, recommended }: { current: Year[]; recom
           ))}
           {lo < 0 && <line x1={x(0)} x2={x(0)} y1={top} y2={H - 32} stroke={colors.border} strokeDasharray="3 4" />}
         </svg>
-        <p className="mt-1 text-center text-sm text-text-muted">{t('strip.axis')}</p>
+        <p className="mt-1 text-center text-sm text-text-muted">{t('strip.axis', yrs)}</p>
         <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-text-muted" aria-hidden="true">
           <li className="flex items-center gap-2">
             <svg width="14" height="14"><circle cx="7" cy="7" r="6" fill={colors.primary} /></svg>

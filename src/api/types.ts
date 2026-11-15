@@ -54,6 +54,16 @@ export type PlanResponse = {
     etCheck: { crop: string; modeledMm: number; satelliteMm: number }[];
   };
   assumptions: string[];
+  // Optional additions (judging upgrades). The UI works without them.
+  sources?: Partial<Record<DatasetId, SourceFlag>>; // per-dataset flag; a missing dataset counts as sample
+  validation?: Validation;
+};
+
+export type SourceFlag = "sample" | "real";
+export type DatasetId = "weather" | "grace" | "etCheck" | "cropBudgets" | "prices" | "soil" | "otherRegions";
+
+export type Validation = {
+  lpCrossCheck?: { method: string; maxShareDifference: number; note: string }; // maxShareDifference: 0-1 share of acres
 };
 
 /** Display order used everywhere in the UI. */

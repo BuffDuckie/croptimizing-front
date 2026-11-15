@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { SamplePill } from '../layout/SampleBadge';
 import { HowToRead } from '../ui/InfoTip';
 
 /**
@@ -14,6 +15,8 @@ export function ChartCard({
   footer,
   className = '',
   headingLevel = 2,
+  sample = false,
+  id,
 }: {
   title: string;
   subtitle?: ReactNode;
@@ -23,12 +26,20 @@ export function ChartCard({
   footer?: ReactNode;
   className?: string;
   headingLevel?: 2 | 3;
+  /** Show the Sample data tag: this chart's series is sample data. */
+  sample?: boolean;
+  id?: string;
 }) {
   const H = headingLevel === 2 ? 'h2' : 'h3';
   return (
-    <section className={`card ${className}`}>
+    <section id={id} className={`card ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
+          {sample && (
+            <div className="mb-2">
+              <SamplePill />
+            </div>
+          )}
           <H className="text-xl font-semibold leading-snug">{title}</H>
           {subtitle && <div className="mt-1 text-base text-text-muted">{subtitle}</div>}
         </div>

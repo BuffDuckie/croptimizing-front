@@ -7,10 +7,11 @@ import { WaterSlider } from '../components/plan/Controls';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { af, mixEntries, money, pct } from '../lib/format';
-import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
+import { usePlanContext, useCurrentLabel, usePlanSample } from '../state/PlanContext';
 
 export default function TradeoffsPage() {
   const { t, i18n } = useTranslation();
+  const planSample = usePlanSample();
   const curLabel = useCurrentLabel();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls, infeasible, softened } = usePlanContext();
@@ -35,6 +36,7 @@ export default function TradeoffsPage() {
           {!data && <div className="min-h-[110vh]" aria-busy="true" />}
           {data && (
             <ChartCard
+              sample={planSample}
               title={title}
               subtitle={
                 <span className="flex items-center gap-1">

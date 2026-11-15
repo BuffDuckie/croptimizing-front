@@ -316,6 +316,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     correlations,
     context: getSampleContext(),
     assumptions: ASSUMPTIONS[lang],
+    sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample' },
   };
 }
 

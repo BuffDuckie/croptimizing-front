@@ -13,7 +13,7 @@ import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { acresSplit, af, afDelta, money, moneyDelta, pct, whole, wholeDelta } from '../lib/format';
-import { currentTrim, useCurrentLabel, usePlanContext } from '../state/PlanContext';
+import { currentTrim, useCurrentLabel, usePlanContext, useYears } from '../state/PlanContext';
 
 export default function PlanPage() {
   const { t, i18n } = useTranslation();
@@ -40,6 +40,7 @@ export default function PlanPage() {
 
 function Results() {
   const { t, i18n } = useTranslation();
+  const yrs = useYears();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, infeasible, softened, controls, farm, isLoading } = usePlanContext();
   const curLabel = useCurrentLabel();
@@ -70,7 +71,7 @@ function Results() {
       <section className="card" aria-labelledby="mix-title">
         <p className="eyebrow">{t('plan.mixSub', { acres: whole(farm.acres, lang) })}</p>
         <h2 id="mix-title" className="mt-2 text-2xl font-semibold leading-tight">
-          {t('plan.mixTitle', { water: af(budget, lang) })}
+          {t('plan.mixTitle', { ...yrs, water: af(budget, lang) })}
         </h2>
         <div className="mt-6 space-y-6">
           <MixBar mix={data.recommended.mix} acres={farm.acres} label={t('plan.suggestedRow')} />
@@ -92,7 +93,7 @@ function Results() {
               <span>{t('plan.vsCurrent')}</span>
             </>
           }
-          sub={t('plan.avgHelp')}
+          sub={t('plan.avgHelp', yrs)}
         />
         <MetricCard
           label={t('plan.worst')}
@@ -105,7 +106,7 @@ function Results() {
               <span>{t('plan.vsCurrent')}</span>
             </>
           }
-          sub={t('plan.worstHelp')}
+          sub={t('plan.worstHelp', yrs)}
         />
         <MetricCard
           label={t('plan.waterCard')}

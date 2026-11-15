@@ -16,3 +16,6 @@ export const DEMO_DEFAULTS = {
   /** Soil-health minimum, 0 to 100. */
   soil: 30,
 };
+
+/** Shown only for the instant before the first plan loads; real counts come from the data. */
+export const YEARS_BEFORE_DATA = { from: 2005, to: 2024 };

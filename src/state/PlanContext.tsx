@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { isInfeasible, type InfeasibleDetail } from '../api/errors';
 import type { Mix, PlanRequest, PlanResponse, RotationId } from '../api/types';
-import { DEMO_DEFAULTS } from '../config/demo';
+import { DEMO_DEFAULTS, YEARS_BEFORE_DATA } from '../config/demo';
 import { usePlan } from '../hooks/usePlan';
+import { isSample, PLAN_DATASETS } from '../lib/sources';
 
 export type Region = PlanRequest['region'];
 
@@ -176,4 +177,25 @@ export function useCurrentLabel(short = false): string {
   const { data } = usePlanContext();
   if (!currentTrim(data)) return t('common.current');
   return short ? t('common.currentFittedShort') : t('common.currentFitted');
+}
+
+export type YearSpan = { n: number; from: number; to: number; k: number };
+
+/** The scenario years in the data: how many, first, last, and how many make the worst 1-in-5. */
+export function yearSpan(data: PlanResponse | null): YearSpan {
+  const years = data?.recommended.metrics.yearlyProfit.map((y) => y.year) ?? [];
+  if (years.length === 0) {
+    const n = YEARS_BEFORE_DATA.to - YEARS_BEFORE_DATA.from + 1;
+    return { n, ...YEARS_BEFORE_DATA, k: Math.max(1, Math.round(n * 0.2)) };
+  }
+  return { n: years.length, from: Math.min(...years), to: Math.max(...years), k: Math.max(1, Math.round(years.length * 0.2)) };
+}
+
+export function useYears(): YearSpan {
+  return yearSpan(usePlanContext().data);
+}
+
+/** True when the optimizer's inputs (weather, budgets, prices, soil) include sample data. */
+export function usePlanSample(): boolean {
+  return isSample(usePlanContext().data, PLAN_DATASETS);
 }

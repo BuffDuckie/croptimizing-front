@@ -90,6 +90,12 @@ export const planResponseSchema = z.object({
     etCheck: z.array(z.object({ crop: z.string(), modeledMm: finite, satelliteMm: finite })),
   }),
   assumptions: z.array(z.string()),
+  sources: z.record(z.enum(['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', 'otherRegions']), z.enum(['sample', 'real'])).optional(),
+  validation: z
+    .object({
+      lpCrossCheck: z.object({ method: z.string(), maxShareDifference: finite.min(0).max(1), note: z.string() }).optional(),
+    })
+    .optional(),
 });
 
 /** Body a backend returns with HTTP 422 when no mix satisfies the constraints. */

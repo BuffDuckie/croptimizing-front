@@ -2,6 +2,17 @@ import { FlaskConical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Popover } from '../ui/Popover';
 
+/** Small inline tag for one chart whose data is sample data. */
+export function SamplePill() {
+  const { t } = useTranslation();
+  return (
+    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-warning-tint px-2 py-0.5 text-sm font-semibold text-warning">
+      <FlaskConical aria-hidden="true" className="h-3.5 w-3.5" />
+      {t('app.sampleBadge')}
+    </span>
+  );
+}
+
 export function SampleBadge() {
   const { t } = useTranslation();
   return (
