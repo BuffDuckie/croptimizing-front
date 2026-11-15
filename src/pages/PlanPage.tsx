@@ -168,6 +168,11 @@ function Results() {
       </section>
 
       <YearsDotStrip current={cur.yearlyProfit} recommended={rec.yearlyProfit} />
+      <p className="-mt-2">
+        <Link to="/method#sensitivity" className="inline-flex min-h-[44px] items-center gap-1 text-base font-semibold">
+          {t('plan.sensitive')} <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
+      </p>
 
       <nav aria-label={t('plan.next')} className="grid gap-3 sm:grid-cols-3">
         {[

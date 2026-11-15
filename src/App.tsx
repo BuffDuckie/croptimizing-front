@@ -19,11 +19,24 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 /** Move focus and scroll to the top on route change, and set the tab title. */
 function RouteEffects() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const { t, i18n } = useTranslation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (!hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+    // Links like /why#grace: wait for the lazy page and its panel to render, then scroll.
+    let tries = 0;
+    let frame = 0;
+    const find = () => {
+      const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (el) el.scrollIntoView({ block: 'start' });
+      else if (tries++ < 120) frame = requestAnimationFrame(find);
+    };
+    find();
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, hash]);
   useEffect(() => {
     const key = pathname === '/' ? 'start' : pathname.slice(1);
     const title = t(`pages.${key}.title`, { defaultValue: '' });

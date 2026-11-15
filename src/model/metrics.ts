@@ -86,7 +86,11 @@ export function mean(values: ArrayLike<number>): number {
   return s / values.length;
 }
 
-export type Adjust = { waterCostPerAf: number; efficiency: number };
+/**
+ * Inputs that change every mix's numbers. profitShock scales the profit of every
+ * rotation except fallow (0.2 = +20%), used by the sensitivity check.
+ */
+export type Adjust = { waterCostPerAf: number; efficiency: number; profitShock?: number };
 export const DEFAULT_ADJUST: Adjust = { waterCostPerAf: 0, efficiency: BASE_EFFICIENCY };
 
 /** Better irrigation needs less applied water for the same crop. */
@@ -99,6 +103,8 @@ export type MixStats = {
   worst: Float64Array;
   maxWater: Float64Array;
   soil: Float64Array;
+  /** Standard deviation of yearly profit (population). */
+  sd: Float64Array;
 };
 
 const statsCache = new Map<string, MixStats>();
@@ -107,28 +113,40 @@ const statsCache = new Map<string, MixStats>();
 export function getMixStats(adjust: Adjust = DEFAULT_ADJUST, yearIdx?: number[]): MixStats {
   const b = getBaseMatrices();
   const idx = yearIdx ?? Array.from({ length: b.years }, (_, i) => i);
-  const key = `${adjust.waterCostPerAf}|${adjust.efficiency}|${idx.join(',')}`;
+  const shock = adjust.profitShock ?? 0;
+  const key = `${adjust.waterCostPerAf}|${adjust.efficiency}|${shock}|${idx.join(',')}`;
   const hit = statsCache.get(key);
   if (hit) return hit;
 
   const scale = waterScale(adjust.efficiency);
+  const u = enumerateMixes();
+  const fallowProfit = getScenarioData().profit.fallow;
+  const fallowCol = ROTATION_IDS.indexOf('fallow');
   const avg = new Float64Array(b.n);
   const worst = new Float64Array(b.n);
   const maxWater = new Float64Array(b.n);
+  const sd = new Float64Array(b.n);
   const buf = new Float64Array(idx.length);
   for (let k = 0; k < b.n; k++) {
     let mw = 0;
+    const fallowShare = u[k * R + fallowCol] / UNITS;
     for (let j = 0; j < idx.length; j++) {
       const t = idx[j];
       const w = b.water[k * b.years + t] * scale;
-      buf[j] = b.profit[k * b.years + t] - adjust.waterCostPerAf * w;
+      let p = b.profit[k * b.years + t];
+      if (shock !== 0) p = p * (1 + shock) - shock * fallowShare * fallowProfit[t];
+      buf[j] = p - adjust.waterCostPerAf * w;
       if (w > mw) mw = w;
     }
-    avg[k] = mean(buf);
+    const m = mean(buf);
+    avg[k] = m;
     worst[k] = worstShareMean(buf);
     maxWater[k] = mw;
+    let v = 0;
+    for (let j = 0; j < buf.length; j++) v += (buf[j] - m) ** 2;
+    sd[k] = Math.sqrt(v / buf.length);
   }
-  const stats = { avg, worst, maxWater, soil: b.soil };
+  const stats = { avg, worst, maxWater, soil: b.soil, sd };
   if (statsCache.size > 24) statsCache.clear();
   statsCache.set(key, stats);
   return stats;
@@ -138,11 +156,12 @@ export function getMixStats(adjust: Adjust = DEFAULT_ADJUST, yearIdx?: number[])
 export function seriesForMix(mix: Mix, adjust: Adjust = DEFAULT_ADJUST, data: ScenarioData = getScenarioData()) {
   const shares = shareVector(mix);
   const scale = waterScale(adjust.efficiency);
+  const shock = adjust.profitShock ?? 0;
   return data.years.map((year, t) => {
     let p = 0;
     let w = 0;
     ROTATION_IDS.forEach((id, i) => {
-      p += shares[i] * data.profit[id][t];
+      p += shares[i] * data.profit[id][t] * (id === 'fallow' ? 1 : 1 + shock);
       w += shares[i] * data.water[id][t] * scale;
     });
     return { year, profit: p - adjust.waterCostPerAf * w, water: w };

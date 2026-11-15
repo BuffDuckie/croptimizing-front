@@ -290,7 +290,8 @@
     "leaseHelp": "Lo comparamos con lo que vale para usted un acre-pie más.",
     "leasePays": "Rentar conviene: un acre-pie más gana unos {{v}} y cuesta {{p}}.",
     "leaseNo": "Rentar no conviene a {{p}}: un acre-pie más gana solo unos {{v}}.",
-    "leaseNotBinding": "Más agua no cambiaría su plan por ahora."
+    "leaseNotBinding": "Más agua no cambiaría su plan por ahora.",
+    "sensitive": "¿Qué tan sensible es esto?"
   },
   "strip": {
     "titleBetter": "Su plan sugerido aguanta mejor los años malos",
@@ -468,7 +469,8 @@
       "backtest": "Probado en años que no vio",
       "scenarios": "Cada año pasado",
       "assumptions": "Supuestos y límites",
-      "current": "Su plan actual"
+      "current": "Su plan actual",
+      "sensitivity": "¿Y si cambian los precios o costos?"
     },
     "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
     "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
@@ -574,7 +576,35 @@
       "real": "Datos reales cargados",
       "text": "Usado en el texto"
     },
-    "crossCheck": "Verificación: un solucionador exacto con los mismos datos elige una mezcla a menos de {{x}}% de la nuestra."
+    "crossCheck": "Verificación: un solucionador exacto con los mismos datos elige una mezcla a menos de {{x}}% de la nuestra.",
+    "sens": {
+      "intro": "Los precios, el costo del agua y el riego no serán iguales al pasado. Repetimos toda la búsqueda con cada dato cambiado y revisamos si la mezcla sugerida sigue ganando.",
+      "titleNone": "Su plan se sostiene: la mezcla es la misma en los {{total}} casos",
+      "titleFew": "Su plan se sostiene: la mezcla cambia en {{n}} de {{total}} casos",
+      "titleMany": "Su plan depende de estos datos: la mezcla cambia en {{n}} de {{total}} casos",
+      "sub": "Cambio en la ganancia de un año promedio respecto a los {{avg}} por acre de su plan, repitiendo la búsqueda en cada caso.",
+      "how1": "Cada fila cambia un dato y repite la búsqueda. La barra muestra cómo se mueve la ganancia de un año promedio: a la derecha es más, a la izquierda es menos.",
+      "how2": "La etiqueta Nueva mezcla significa que otra mezcla gana en ese caso. Nuestros datos de muestra solo tienen ganancia, así que los cambios de precio se aplican a la ganancia de cada rotación (un choque de ganancia); el descanso no cambia.",
+      "axis": "Cambio en la ganancia de un año promedio ($/acre)",
+      "aria": "Gráfica de barras de la ganancia de un año promedio con precios y costos cambiados. La mezcla sugerida cambia en {{n}} de {{total}} casos.",
+      "caption": "Plan sugerido con precios y costos cambiados (por acre)",
+      "colCase": "Caso",
+      "colMix": "Mezcla sugerida",
+      "colChanged": "¿Cambió la mezcla?",
+      "yes": "Sí",
+      "no": "No",
+      "newMix": "Nueva mezcla",
+      "noPlan": "Ninguna mezcla cabe",
+      "baseLine": "Su plan hoy: peores años, 1 de cada 5, {{worst}} por acre.",
+      "case": {
+        "profitDown": "Ganancia de cultivos 20% menor (choque de ganancia)",
+        "profitUp": "Ganancia de cultivos 20% mayor (choque de ganancia)",
+        "waterCostDown": "Costo del agua 20% menor ({{v}}/AF)",
+        "waterCostUp": "Costo del agua 20% mayor ({{v}}/AF)",
+        "efficiencyLow": "Eficiencia de riego {{v}}%",
+        "efficiencyHigh": "Eficiencia de riego {{v}}%"
+      }
+    }
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión."
 }

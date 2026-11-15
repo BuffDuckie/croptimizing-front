@@ -91,6 +91,18 @@ export const planResponseSchema = z.object({
   }),
   assumptions: z.array(z.string()),
   sources: z.record(z.enum(['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', 'otherRegions']), z.enum(['sample', 'real'])).optional(),
+  sensitivity: z
+    .array(
+      z.object({
+        case: z.enum(['profitDown', 'profitUp', 'waterCostDown', 'waterCostUp', 'efficiencyLow', 'efficiencyHigh']),
+        value: finite,
+        avgProfit: finite.nullable(),
+        worst1in5: finite.nullable(),
+        mix: mixSchema.nullable(),
+        mixChanged: z.boolean(),
+      }),
+    )
+    .optional(),
   validation: z
     .object({
       lpCrossCheck: z.object({ method: z.string(), maxShareDifference: finite.min(0).max(1), note: z.string() }).optional(),

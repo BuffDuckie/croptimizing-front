@@ -289,7 +289,8 @@
     "leaseHelp": "We compare it with what one more acre-foot is worth to you.",
     "leasePays": "Leasing pays: one more acre-foot earns about {{v}} and costs {{p}}.",
     "leaseNo": "Leasing does not pay at {{p}}: one more acre-foot earns only about {{v}}.",
-    "leaseNotBinding": "More water would not change your plan right now."
+    "leaseNotBinding": "More water would not change your plan right now.",
+    "sensitive": "How sensitive is this?"
   },
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",
@@ -467,7 +468,8 @@
       "backtest": "Tested on years it never saw",
       "scenarios": "Every past year",
       "assumptions": "Assumptions and limits",
-      "current": "Your current plan"
+      "current": "Your current plan",
+      "sensitivity": "What if prices or costs change?"
     },
     "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
     "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
@@ -573,6 +575,34 @@
       "real": "Real data loaded",
       "text": "Used in text"
     },
-    "crossCheck": "Cross-check: an exact solver on the same data picks a mix within {{x}}% of ours."
+    "crossCheck": "Cross-check: an exact solver on the same data picks a mix within {{x}}% of ours.",
+    "sens": {
+      "intro": "Prices, water costs, and irrigation will not match the past exactly. We re-run the whole search with each input changed and check whether the suggested mix still wins.",
+      "titleNone": "Your plan holds up: the mix stays the same in all {{total}} cases",
+      "titleFew": "Your plan holds up: the mix changes in {{n}} of {{total}} cases",
+      "titleMany": "Your plan depends on these inputs: the mix changes in {{n}} of {{total}} cases",
+      "sub": "Change in average-year profit from your plan's {{avg}} per acre, with the search re-run for each case.",
+      "how1": "Each row changes one input and re-runs the search. The bar shows how average-year profit moves: right is more, left is less.",
+      "how2": "A New mix tag means a different mix wins under that case. Our sample data only has profit, so price changes are applied to the profit of every crop rotation (a profit shock); fallow is unchanged.",
+      "axis": "Change in average-year profit ($/acre)",
+      "aria": "Bar chart of average-year profit under changed prices and costs. The suggested mix changes in {{n}} of {{total}} cases.",
+      "caption": "Suggested plan under changed prices and costs (per acre)",
+      "colCase": "Case",
+      "colMix": "Suggested mix",
+      "colChanged": "Mix changed?",
+      "yes": "Yes",
+      "no": "No",
+      "newMix": "New mix",
+      "noPlan": "No mix fits",
+      "baseLine": "Your plan today: worst 1-in-5 years {{worst}} per acre.",
+      "case": {
+        "profitDown": "Crop profit down 20% (profit shock)",
+        "profitUp": "Crop profit up 20% (profit shock)",
+        "waterCostDown": "Water cost down 20% ({{v}}/AF)",
+        "waterCostUp": "Water cost up 20% ({{v}}/AF)",
+        "efficiencyLow": "Irrigation efficiency {{v}}%",
+        "efficiencyHigh": "Irrigation efficiency {{v}}%"
+      }
+    }
   }
 }

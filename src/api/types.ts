@@ -57,6 +57,17 @@ export type PlanResponse = {
   // Optional additions (judging upgrades). The UI works without them.
   sources?: Partial<Record<DatasetId, SourceFlag>>; // per-dataset flag; a missing dataset counts as sample
   validation?: Validation;
+  sensitivity?: SensitivityRow[];   // suggested plan re-run under price and cost changes
+};
+
+export type SensitivityCase = "profitDown" | "profitUp" | "waterCostDown" | "waterCostUp" | "efficiencyLow" | "efficiencyHigh";
+export type SensitivityRow = {
+  case: SensitivityCase;
+  value: number;                     // the changed input: profit change (-0.2, 0.2), water cost $/AF, or efficiency (0.65, 0.85)
+  avgProfit: number | null;          // null when no mix fits under this case
+  worst1in5: number | null;
+  mix: Mix | null;
+  mixChanged: boolean;               // suggested mix differs from the base case
 };
 
 export type SourceFlag = "sample" | "real";

@@ -1,7 +1,7 @@
 // In-browser mirror of the backend's math. Same output shape as the API.
 
 import { InfeasibleError } from '../api/errors';
-import type { Metrics, Mix, PlanRequest, PlanResponse, RotationCard, RotationId } from '../api/types';
+import type { Metrics, Mix, PlanRequest, PlanResponse, RotationCard, RotationId, SensitivityRow } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
 import {
@@ -298,6 +298,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
   }));
 
   const backtest = runBacktest(req, adjust, c, risk, asFarmedMix);
+  const sensitivity = runSensitivity(adjust, c, risk, best);
 
   const correlations: PlanResponse['correlations'] = [];
   for (const a of ROTATION_IDS)
@@ -316,8 +317,36 @@ export function runPlan(req: PlanRequest): PlanResponse {
     correlations,
     context: getSampleContext(),
     assumptions: ASSUMPTIONS[lang],
+    sensitivity,
     sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample' },
   };
+}
+
+/** The suggested plan re-run with profits, water cost, and irrigation efficiency changed. */
+export function runSensitivity(adjust: Adjust, c: Constraints, risk: number, baseIndex: number): SensitivityRow[] {
+  const cases: { case: SensitivityRow['case']; value: number; adjust: Adjust }[] = [
+    { case: 'profitDown', value: -0.2, adjust: { ...adjust, profitShock: -0.2 } },
+    { case: 'profitUp', value: 0.2, adjust: { ...adjust, profitShock: 0.2 } },
+  ];
+  if (adjust.waterCostPerAf > 0) {
+    cases.push({ case: 'waterCostDown', value: round(adjust.waterCostPerAf * 0.8), adjust: { ...adjust, waterCostPerAf: adjust.waterCostPerAf * 0.8 } });
+    cases.push({ case: 'waterCostUp', value: round(adjust.waterCostPerAf * 1.2), adjust: { ...adjust, waterCostPerAf: adjust.waterCostPerAf * 1.2 } });
+  }
+  cases.push({ case: 'efficiencyLow', value: 0.65, adjust: { ...adjust, efficiency: 0.65 } });
+  cases.push({ case: 'efficiencyHigh', value: 0.85, adjust: { ...adjust, efficiency: 0.85 } });
+  return cases.map((x) => {
+    const stats = getMixStats(x.adjust);
+    const k = bestIndex(stats, feasibleIndices(stats, c), risk);
+    if (k < 0) return { case: x.case, value: x.value, avgProfit: null, worst1in5: null, mix: null, mixChanged: true };
+    return {
+      case: x.case,
+      value: x.value,
+      avgProfit: round(stats.avg[k]),
+      worst1in5: round(stats.worst[k]),
+      mix: cleanMix(mixAt(k)),
+      mixChanged: k !== baseIndex,
+    };
+  });
 }
 
 export const TRAIN_YEARS = Array.from({ length: 10 }, (_, i) => 2005 + i);

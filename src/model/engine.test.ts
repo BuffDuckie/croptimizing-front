@@ -199,3 +199,28 @@ describe('demo defaults', () => {
     expect(rotations.length).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe('sensitivity', () => {
+  it('re-runs the plan for each case and flags mix changes', () => {
+    const res = runPlan(base);
+    const rows = res.sensitivity!;
+    expect(rows.map((r) => r.case)).toEqual(['profitDown', 'profitUp', 'efficiencyLow', 'efficiencyHigh']);
+    for (const r of rows) if (r.mix) expect(sum(r.mix)).toBeCloseTo(1, 3);
+    const up = rows.find((r) => r.case === 'profitUp')!;
+    const down = rows.find((r) => r.case === 'profitDown')!;
+    expect(up.avgProfit!).toBeGreaterThan(res.recommended.metrics.avgProfitPerAcre);
+    expect(down.avgProfit!).toBeLessThan(res.recommended.metrics.avgProfitPerAcre);
+  });
+
+  it('adds water cost cases only when there is a water cost', () => {
+    const res = runPlan({ ...base, waterCostPerAf: 50 });
+    expect(res.sensitivity!.map((r) => r.case)).toContain('waterCostUp');
+  });
+
+  it('scales every rotation but fallow under a profit shock', () => {
+    const plain = seriesForMix({ alfalfa: 0.5, fallow: 0.5 });
+    const up = seriesForMix({ alfalfa: 0.5, fallow: 0.5 }, { ...DEFAULT_ADJUST, profitShock: 0.2 });
+    const data = getScenarioData();
+    plain.forEach((p, t) => expect(up[t].profit).toBeCloseTo(p.profit + 0.2 * 0.5 * data.profit.alfalfa[t], 6));
+  });
+});

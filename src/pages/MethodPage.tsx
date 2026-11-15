@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataTable } from '../components/charts/ChartCard';
 import { CorrelationHeatmap } from '../components/charts/CorrelationHeatmap';
+import { SensitivityChart } from '../components/charts/SensitivityChart';
 import { PageIntro } from '../components/layout/PageIntro';
 import type { DatasetId } from '../api/types';
 import { af, money, whole } from '../lib/format';
@@ -12,7 +13,7 @@ import { usePlanContext, useCurrentLabel } from '../state/PlanContext';
 /** Dataset behind each row of the sources table (null: used in text only). */
 const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', null];
 
-const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'current', 'scenarios', 'assumptions'] as const;
+const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'sensitivity', 'current', 'scenarios', 'assumptions'] as const;
 
 // Formulas (KaTeX) load after the page text so the page paints fast.
 const MathFormulas = lazy(() => import('../components/lazy/MathFormulas'));
@@ -122,6 +123,16 @@ export default function MethodPage() {
               </p>
             )}
           </section>
+
+          {data.sensitivity && data.sensitivity.length > 0 && (
+            <section id="sensitivity" className="scroll-mt-36">
+              <h2 className="text-3xl font-semibold">{t('method.sec.sensitivity')}</h2>
+              <p className="mt-3 max-w-3xl text-base text-text">{t('method.sens.intro')}</p>
+              <div className="mt-5">
+                <SensitivityChart rows={data.sensitivity} baseAvg={data.recommended.metrics.avgProfitPerAcre} baseWorst={data.recommended.metrics.worst1in5PerAcre} />
+              </div>
+            </section>
+          )}
 
           {data.currentAsFarmed && (
             <section id="current" className="scroll-mt-36">
