@@ -219,7 +219,16 @@
       "errWater": "Escriba entre 0.5 y 6.0 acre-pies por acre.",
       "defaultName": "Mi granja"
     },
-    "subSample": "Croptimizing prueba cada mezcla de rotaciones con {{n}} años pasados de clima y precios (por ahora, datos de muestra), como un inversionista pone a prueba un portafolio, y le muestra el plan que cabe en su agua en cada año."
+    "subSample": "Croptimizing prueba cada mezcla de rotaciones con {{n}} años pasados de clima y precios (por ahora, datos de muestra), como un inversionista pone a prueba un portafolio, y le muestra el plan que cabe en su agua en cada año.",
+    "quick": {
+      "title": "Tres preguntas para su plan",
+      "q1": "¿Con cuánta agua del canal puede contar este año?",
+      "q2": "¿Qué siembra ahora?",
+      "q2Demo": "Si no elige nada, usamos la granja de demostración: {{mix}}.",
+      "q2Even": "Repartimos sus acres por igual entre lo que elija. Cambie las proporciones en el formulario de abajo.",
+      "q3": "¿Qué importa más?",
+      "go": "Ver mi plan"
+    }
   },
   "plan": {
     "farm": "{{name}}, {{acres}} acres",

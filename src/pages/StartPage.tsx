@@ -6,6 +6,7 @@ import type { Mix, RotationId } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { ROT_BG } from '../components/charts/rotation';
 import { FieldsReplan } from '../components/hero/FieldsReplan';
+import { QuickStart } from '../components/plan/QuickStart';
 import { InfoTip } from '../components/ui/InfoTip';
 import { af, whole } from '../lib/format';
 import { isSample } from '../lib/sources';
@@ -15,6 +16,7 @@ export default function StartPage() {
   return (
     <div>
       <Hero />
+      <QuickStart />
       <Stats />
       <Steps />
       <SetupForm />

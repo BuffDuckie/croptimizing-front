@@ -218,7 +218,16 @@
       "errWater": "Enter between 0.5 and 6.0 acre-feet per acre.",
       "defaultName": "My farm"
     },
-    "subSample": "Croptimizing tests every mix of rotations against {{n}} past years of weather and prices (sample data for now), the way investors stress-test a portfolio, and shows the plan that fits your water in every year."
+    "subSample": "Croptimizing tests every mix of rotations against {{n}} past years of weather and prices (sample data for now), the way investors stress-test a portfolio, and shows the plan that fits your water in every year.",
+    "quick": {
+      "title": "Three questions to your plan",
+      "q1": "How much canal water can you count on this year?",
+      "q2": "What do you grow now?",
+      "q2Demo": "Pick none to use the demo farm: {{mix}}.",
+      "q2Even": "We split your acres evenly across what you pick. Change shares in the form below.",
+      "q3": "What matters most?",
+      "go": "See my plan"
+    }
   },
   "plan": {
     "farm": "{{name}}, {{acres}} acres",
