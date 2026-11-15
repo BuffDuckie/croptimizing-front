@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    /* Tier 1: feedback. Tier 2: entrances, panels, numbers. */
+    --dur-fast: 120ms;
+    --dur-base: 180ms;
+    --dur-slow: 320ms;
+    --dur-enter: 420ms;
+    color-scheme: light;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-padding-top: 88px;
+  }
+  body {
+    @apply bg-bg font-sans text-base text-text;
+    font-feature-settings: 'cv11', 'ss01';
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4 {
+    @apply text-primary;
+    font-weight: 650;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  /* All numbers line up. */
+  .num, table, input, output, svg text, [data-num] {
+    font-variant-numeric: tabular-nums;
+  }
+  a { @apply text-accent-strong underline decoration-1 underline-offset-[3px]; }
+  a:hover { @apply decoration-2; }
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 3px solid theme('colors.accent-strong');
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .on-dark :focus-visible { outline-color: theme('colors.accent'); }
+  ::selection { background: theme('colors.accent-tint'); color: theme('colors.text'); }
+}
+
+@layer components {
+  .container-content { @apply mx-auto w-full max-w-content px-4 sm:px-6; }
+  .card { @apply rounded-card bg-surface p-6 shadow-card ring-1 ring-border-soft; }
+  .eyebrow { @apply text-sm font-semibold uppercase tracking-[0.08em] text-text-muted; }
+
+  .btn {
+    @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 rounded-ctl px-5 text-base font-semibold no-underline;
+    transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { @apply bg-primary text-white shadow-sm hover:bg-primary-deep; }
+  .btn-secondary { @apply bg-surface text-primary ring-1 ring-inset ring-border hover:bg-primary-tint; }
+  .btn-ghost { @apply text-primary hover:bg-primary-tint; }
+  .btn-on-dark { @apply bg-white text-primary hover:bg-accent-tint; }
+  .btn-outline-dark { @apply text-white ring-1 ring-inset ring-white/40 hover:bg-white/10; }
+
+  .input {
+    @apply min-h-[44px] w-full rounded-ctl border border-border bg-surface px-3 text-base text-text;
+    transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+  }
+  .input:hover { @apply border-text-muted; }
+  .label { @apply mb-1.5 block text-sm font-semibold text-text; }
+}
+
+@layer utilities {
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .hatch {
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.55) 0 2px, transparent 2px 7px);
+  }
+  .hatch-dark {
+    background-image: repeating-linear-gradient(135deg, rgba(100,116,139,0.35) 0 1.5px, transparent 1.5px 6px);
+  }
+  .tnum { font-variant-numeric: tabular-nums; }
+}
+
+/* Native range slider, styled. Keeps native semantics and keyboard support. */
+.range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 44px; background: transparent; cursor: pointer;
+  --fill: 50%;
+  --track: theme('colors.border');
+  --tint: theme('colors.primary');
+}
+.range::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 999px;
+  background: linear-gradient(to right, var(--tint) 0 var(--fill), var(--track) var(--fill) 100%);
+}
+.range::-moz-range-track { height: 6px; border-radius: 999px; background: var(--track); }
+.range::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--tint); }
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 26px; height: 26px; margin-top: -10px; border-radius: 50%;
+  background: theme('colors.surface');
+  border: 2px solid var(--tint);
+  box-shadow: 0 1px 3px rgba(15,23,42,.2), 0 4px 10px -2px rgba(15,23,42,.15);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.range::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: theme('colors.surface'); border: 2px solid var(--tint);
+  box-shadow: 0 1px 3px rgba(15,23,42,.2);
+}
+.range:active::-webkit-slider-thumb { transform: scale(1.12); }
+.range:focus-visible { outline: none; }
+.range:focus-visible::-webkit-slider-thumb { outline: 3px solid theme('colors.accent-strong'); outline-offset: 2px; }
+.range:focus-visible::-moz-range-thumb { outline: 3px solid theme('colors.accent-strong'); outline-offset: 2px; }
+
+/* Page entrance (tier 2). */
+@keyframes page-in { from { opacity: 0; transform: translateY(6px); } }
+.page-enter { animation: page-in var(--dur-enter) var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .card { @apply ring-2 ring-text; }
+}
+
+/* Nav underline slides between tabs (tier 2). */
+.tab-indicator { transition: transform var(--dur-slow) var(--ease-out), width var(--dur-slow) var(--ease-out); }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.seg-thumb { transition: transform var(--dur-base) var(--ease-out); }
+
+/* Popovers grow out of their trigger. */
+@keyframes pop-in { from { opacity: 0; scale: 0.96; } }
+.popover-panel[data-state='open'] { animation: pop-in var(--dur-base) var(--ease-out); }
+@keyframes sheet-in { from { opacity: 0; transform: translateY(-8px); } }
+.mobile-sheet[data-state='open'] { animation: sheet-in var(--dur-slow) var(--ease-out); }

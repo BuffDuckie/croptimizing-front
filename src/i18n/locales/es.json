@@ -1,0 +1,79 @@
+{
+  "_review": "Borrador. Necesita revisión por una persona hablante nativa antes de publicar.",
+  "app": {
+    "name": "Croptimizing",
+    "skip": "Saltar al contenido principal",
+    "sampleBadge": "Datos de muestra",
+    "sampleBadgeHelp": "Estos números vienen de datos de prueba para construir la herramienta. No son estimaciones reales para ninguna granja.",
+    "language": "Idioma",
+    "menu": "Menú",
+    "closeMenu": "Cerrar menú",
+    "mainNav": "Principal",
+    "loading": "Calculando su plan",
+    "fallbackBanner": "No pudimos cargar los resultados más recientes, así que está viendo datos de muestra.",
+    "dismiss": "Cerrar"
+  },
+  "nav": {
+    "start": "Inicio",
+    "plan": "Mi plan",
+    "tradeoffs": "Compensaciones",
+    "compare": "Comparar",
+    "why": "Por qué esta región",
+    "stress": "Prueba de estrés",
+    "report": "Informe",
+    "method": "Ver los cálculos"
+  },
+  "footer": {
+    "disclaimer": "Esta herramienta apoya su criterio; no lo reemplaza. Revise sus planes con su agente de extensión local.",
+    "credits": "Clima: NASA POWER. Agua subterránea: NASA GRACE y GRACE-FO. Uso de agua de cultivos: OpenET y NASA ECOSTRESS.",
+    "built": "Hecho para el NASA Space Apps Challenge 2026, Field Shift.",
+    "notAffiliated": "No es un producto oficial de la NASA."
+  },
+  "pages": {
+    "start": { "title": "Inicio", "intro": "Empiece con la granja de demostración o cuéntenos sobre la suya." },
+    "plan": { "title": "Mi plan", "intro": "Mueva los tres controles. Su plan se actualiza al instante." },
+    "tradeoffs": { "title": "Compensaciones", "intro": "Vea qué cede a cambio de más seguridad y cuánto le cuesta tener menos agua." },
+    "compare": { "title": "Comparar rotaciones", "intro": "Vea cada rotación lado a lado, incluida la que siembra hoy." },
+    "why": { "title": "Por qué esta región", "intro": "Vea lo que dicen los satélites y registros de clima de la NASA sobre el agua aquí." },
+    "stress": { "title": "Prueba de estrés", "intro": "Elija un año difícil del pasado y vea cómo le habría ido a cada plan." },
+    "report": { "title": "Informe", "intro": "Imprima esta página o guárdela como PDF para compartirla con su agente de extensión." },
+    "method": { "title": "Ver los cálculos", "intro": "Cada número de esta herramienta, de dónde viene y cómo lo calculamos." }
+  },
+  "common": {
+    "showMath": "Ver los cálculos",
+    "hideMath": "Ocultar los cálculos",
+    "howToRead": "Cómo leer esto",
+    "perAcre": "por acre",
+    "acres": "acres",
+    "afPerAcre": "AF/acre",
+    "dollarsPerAcre": "$/acre",
+    "outOf100": "/100",
+    "current": "Su plan actual",
+    "recommended": "Plan sugerido",
+    "close": "Cerrar",
+    "more": "Más información",
+    "comingSoon": "próximamente"
+  },
+  "glossary": {
+    "acreFoot": { "term": "Acre-pie", "def": "El agua necesaria para cubrir un acre con un pie de profundidad, unos 326,000 galones." },
+    "et": { "term": "Evapotranspiración", "def": "El agua que sale de un campo como vapor, desde el suelo y a través de las hojas del cultivo." },
+    "et0": { "term": "ET de referencia", "def": "Cuánta agua usaría un pasto estándar con este clima; es el punto de partida para calcular el agua del cultivo." },
+    "worst1in5": { "term": "Peores años, 1 de cada 5", "def": "Su ganancia promedio en los 4 peores años de los últimos 20." },
+    "frontier": { "term": "Frontera eficiente", "def": "Los planes en los que no puede ganar más en promedio sin que le vaya peor en los años malos." },
+    "soilScore": { "term": "Puntaje de salud del suelo", "def": "Un puntaje de 0 a 100 de cuánto mejora el suelo una rotación: leguminosas, raíces vivas, residuos, poca labranza y variedad." },
+    "shadowPrice": { "term": "Valor del agua", "def": "Cuánto vale para usted un acre-pie más, en ganancia extra por acre." },
+    "grace": { "term": "GRACE", "def": "Satélites gemelos de la NASA que miden cambios en el agua subterránea a partir de pequeños cambios en la gravedad de la Tierra." },
+    "power": { "term": "NASA POWER", "def": "Registros diarios de clima de la NASA para cualquier punto de la Tierra, hechos con satélites y modelos." },
+    "fallow": { "term": "Barbecho", "def": "Tierra que se deja sin sembrar y sin regar por una temporada o un año." },
+    "rotation": { "term": "Rotación", "def": "El orden de los cultivos que siembra en el mismo campo a lo largo de las temporadas." }
+  },
+  "rotations": {
+    "alfalfa": "Alfalfa",
+    "cotton_barley": "Algodón y luego cebada",
+    "durum_sorghum": "Trigo duro y luego sorgo",
+    "barley_fallow": "Cebada y luego barbecho",
+    "fallow": "Barbecho"
+  },
+  "months": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+  "notFound": { "title": "No encontramos esa página", "back": "Ir al inicio" }
+}

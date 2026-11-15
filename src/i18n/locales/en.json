@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "Croptimizing",
+    "skip": "Skip to main content",
+    "sampleBadge": "Sample data",
+    "sampleBadgeHelp": "These numbers come from placeholder data for building and testing the tool. They are not real estimates for any farm.",
+    "language": "Language",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "mainNav": "Main",
+    "loading": "Working out your plan",
+    "fallbackBanner": "We could not load the latest results, so you are seeing sample data instead.",
+    "dismiss": "Dismiss"
+  },
+  "nav": {
+    "start": "Start",
+    "plan": "My plan",
+    "tradeoffs": "Trade-offs",
+    "compare": "Compare",
+    "why": "Why this region",
+    "stress": "Stress test",
+    "report": "Report",
+    "method": "Show the math"
+  },
+  "footer": {
+    "disclaimer": "This tool supports your judgment; it does not replace it. Check plans with your local extension agent.",
+    "credits": "Weather: NASA POWER. Groundwater: NASA GRACE and GRACE-FO. Crop water use: OpenET and NASA ECOSTRESS.",
+    "built": "Built for the NASA Space Apps Challenge 2026, Field Shift.",
+    "notAffiliated": "Not an official NASA product."
+  },
+  "pages": {
+    "start": { "title": "Start", "intro": "Start with the demo farm, or tell us about your own." },
+    "plan": { "title": "My plan", "intro": "Move the three sliders. Your plan updates as you go." },
+    "tradeoffs": { "title": "Trade-offs", "intro": "See what you give up for more safety, and what less water costs you." },
+    "compare": { "title": "Compare rotations", "intro": "Look at each rotation side by side, including what you grow today." },
+    "why": { "title": "Why this region", "intro": "See what NASA satellites and weather records say about water here." },
+    "stress": { "title": "Stress test", "intro": "Pick a hard year from the past and see how each plan would have done." },
+    "report": { "title": "Report", "intro": "Print this page or save it as a PDF to share with your extension agent." },
+    "method": { "title": "Show the math", "intro": "Every number in this tool, where it comes from, and how we got it." }
+  },
+  "common": {
+    "showMath": "Show the math",
+    "hideMath": "Hide the math",
+    "howToRead": "How to read this",
+    "perAcre": "per acre",
+    "acres": "acres",
+    "afPerAcre": "AF/acre",
+    "dollarsPerAcre": "$/acre",
+    "outOf100": "/100",
+    "current": "Your current plan",
+    "recommended": "Suggested plan",
+    "close": "Close",
+    "more": "Learn more",
+    "comingSoon": "coming soon"
+  },
+  "glossary": {
+    "acreFoot": { "term": "Acre-foot", "def": "The water it takes to cover one acre one foot deep, about 326,000 gallons." },
+    "et": { "term": "Evapotranspiration", "def": "Water that leaves a field as vapor, from the soil and through the crop's leaves." },
+    "et0": { "term": "Reference ET", "def": "How much water a standard grass field would use in this weather, the starting point for crop water needs." },
+    "worst1in5": { "term": "Worst 1-in-5 years", "def": "Your average profit in the 4 worst years out of the last 20." },
+    "frontier": { "term": "Efficient frontier", "def": "The set of plans where you cannot get more average profit without doing worse in bad years." },
+    "soilScore": { "term": "Soil-health score", "def": "A 0 to 100 score for how much a rotation builds soil: legumes, living roots, residue, low tillage, and variety." },
+    "shadowPrice": { "term": "Water value", "def": "What one more acre-foot is worth to you, in extra profit per acre." },
+    "grace": { "term": "GRACE", "def": "NASA twin satellites that weigh changes in water stored underground by measuring tiny shifts in Earth's gravity." },
+    "power": { "term": "NASA POWER", "def": "NASA's daily weather records for any spot on Earth, built from satellites and weather models." },
+    "fallow": { "term": "Fallow", "def": "Land left unplanted and unwatered for a season or a year." },
+    "rotation": { "term": "Rotation", "def": "The order of crops you grow on the same field over the seasons." }
+  },
+  "rotations": {
+    "alfalfa": "Alfalfa",
+    "cotton_barley": "Cotton then barley",
+    "durum_sorghum": "Durum wheat then sorghum",
+    "barley_fallow": "Barley then fallow",
+    "fallow": "Fallow"
+  },
+  "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  "notFound": { "title": "We could not find that page", "back": "Go to the start" }
+}
