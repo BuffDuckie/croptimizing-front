@@ -5,6 +5,7 @@ import { isInfeasible, type InfeasibleDetail } from '../api/errors';
 import type { Mix, PlanRequest, PlanResponse, RotationId, SoilPartId } from '../api/types';
 import { SOIL_PART_IDS } from '../api/types';
 import { DEMO_DEFAULTS, YEARS_BEFORE_DATA } from '../config/demo';
+import { presetBudget, presetFor } from '../config/waterPresets';
 import { usePlan } from '../hooks/usePlan';
 import { isSample, PLAN_DATASETS } from '../lib/sources';
 
@@ -84,6 +85,8 @@ type Ctx = {
   infeasible: InfeasibleDetail | null;
   /** Set when the settings have no plan and we show the nearest one that fits (soil minimum lowered). */
   softened: { soil: number } | null;
+  /** The plan for a zero-canal-water budget (same settings otherwise), for the worst-year headline. */
+  zeroCanal: { cap: number; fromData: boolean; data: PlanResponse | null; same: boolean };
   error: unknown;
   fellBack: boolean;
   dismissFallback: () => void;
@@ -138,6 +141,13 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   const lastGood = useRef<PlanResponse | null>(null);
   if (plan.data && !plan.error) lastGood.current = plan.data;
 
+  // Worst-year headline: the same settings at the zero-canal-water budget (from the data, or a TODO placeholder).
+  const zeroPreset = presetFor(plan.data ?? lastGood.current, 'zero2023');
+  const zeroCap = presetBudget(zeroPreset.afPerAcre);
+  const zeroSame = Math.abs(zeroCap - request.waterCapAfPerAcre) < 0.05;
+  const zeroRequest = useMemo(() => (zeroSame ? null : { ...request, waterCapAfPerAcre: zeroCap }), [request, zeroCap, zeroSame]);
+  const zero = usePlan(zeroRequest);
+
   // Mirror the three main settings and language into the URL so links and reports are shareable.
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -166,6 +176,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     isLoading: plan.isLoading || (softSoil !== null && soft.isLoading),
     infeasible,
     softened,
+    zeroCanal: { cap: zeroCap, fromData: zeroPreset.fromData, data: zeroSame ? (plan.error ? null : plan.data) : zero.error ? null : zero.data, same: zeroSame },
     error: isInfeasible(plan.error) ? null : plan.error,
     fellBack: plan.fellBack,
     dismissFallback: plan.dismissFallback,

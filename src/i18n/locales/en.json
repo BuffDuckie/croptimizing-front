@@ -377,6 +377,13 @@
       "savesFarm": "That is {{farm}} acre-feet on your {{acres}} acres ({{gal}} gallons).",
       "usesFarm": "That is {{farm}} more acre-feet on your {{acres}} acres ({{gal}} gallons).",
       "note": "Compared with your current plan as farmed today, before any cut. 1 acre-foot is {{g}} gallons."
+    },
+    "zero": {
+      "good": "In a zero-canal-water year like {{year}} ({{w}} AF/acre), the plan for that water keeps about {{x}} per acre more than your current plan cut back to fit, and keeps fields covered {{n}} more months.",
+      "goodThis": "In a zero-canal-water year like {{year}}, this plan keeps about {{x}} per acre more than your current plan cut back to fit, and keeps fields covered {{n}} more months.",
+      "neutralMore": "In a zero-canal-water year like {{year}} ({{w}} AF/acre), the plan for that water changes profit by {{xd}} per acre vs. your current plan cut back to fit, with fields covered {{nd}} more months.",
+      "neutralLess": "In a zero-canal-water year like {{year}} ({{w}} AF/acre), the plan for that water changes profit by {{xd}} per acre vs. your current plan cut back to fit, with fields covered {{nd}} fewer months.",
+      "note": "Uses {{year}} weather and prices with a {{w}} acre-feet per acre budget and your other settings."
     }
   },
   "strip": {

@@ -15,6 +15,7 @@ import { LeaseLine } from '../components/plan/LeaseLine';
 import { NasaDataStrip } from '../components/plan/NasaDataStrip';
 import { SoilPanel } from '../components/plan/SoilPanel';
 import { WaterSaved } from '../components/plan/WaterSaved';
+import { ZeroCanalLine } from '../components/plan/ZeroCanalLine';
 import { yearsFit } from '../lib/water';
 import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
@@ -81,6 +82,7 @@ function Results() {
           </p>
         </>
       )}
+      <ZeroCanalLine />
       {data.goals && (
         <section aria-labelledby="goal-title" className="space-y-3">
           <h2 id="goal-title" className="text-base font-semibold text-text">

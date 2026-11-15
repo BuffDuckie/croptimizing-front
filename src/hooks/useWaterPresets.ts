@@ -1,18 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import type { PlanResponse, WaterPresetId } from '../api/types';
 import { FALLBACK_WATER_PRESETS, WATER_PRESET_IDS } from '../config/waterPresets';
 import { usePlanContext } from '../state/PlanContext';
 
-export type Preset = { id: WaterPresetId; afPerAcre: number; label: string; source: string | null; fromData: boolean };
+export { presetBudget } from '../config/waterPresets';
 
-/** Slider-ready budget: 0.5 to 6.0 AF/acre in 0.1 steps. */
-export const presetBudget = (af: number) => Math.min(6, Math.max(0.5, Math.round(af * 10) / 10));
-
-/** One preset from the data, or the TODO placeholder. */
-export function presetFor(data: PlanResponse | null, id: WaterPresetId): { afPerAcre: number; fromData: boolean } {
-  const p = data?.waterPresets?.[id];
-  return p ? { afPerAcre: p.afPerAcre, fromData: true } : { afPerAcre: FALLBACK_WATER_PRESETS[id].afPerAcre, fromData: false };
-}
+export type Preset = { id: (typeof WATER_PRESET_IDS)[number]; afPerAcre: number; label: string; source: string | null; fromData: boolean };
 
 /** Water situation presets: from the data file when it has them, otherwise TODO placeholders. */
 export function useWaterPresets(): Preset[] {

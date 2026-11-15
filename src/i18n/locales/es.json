@@ -378,6 +378,13 @@
       "savesFarm": "Son {{farm}} acre-pies en sus {{acres}} acres ({{gal}} galones).",
       "usesFarm": "Son {{farm}} acre-pies más en sus {{acres}} acres ({{gal}} galones).",
       "note": "Comparado con su plan actual como lo siembra hoy, antes de cualquier recorte. 1 acre-pie son {{g}} galones."
+    },
+    "zero": {
+      "good": "En un año sin agua del canal como {{year}} ({{w}} AF/acre), el plan para esa agua conserva unos {{x}} por acre más que su plan actual recortado para caber, y mantiene los campos cubiertos {{n}} meses más.",
+      "goodThis": "En un año sin agua del canal como {{year}}, este plan conserva unos {{x}} por acre más que su plan actual recortado para caber, y mantiene los campos cubiertos {{n}} meses más.",
+      "neutralMore": "En un año sin agua del canal como {{year}} ({{w}} AF/acre), el plan para esa agua cambia la ganancia en {{xd}} por acre frente a su plan actual recortado para caber, con los campos cubiertos {{nd}} meses más.",
+      "neutralLess": "En un año sin agua del canal como {{year}} ({{w}} AF/acre), el plan para esa agua cambia la ganancia en {{xd}} por acre frente a su plan actual recortado para caber, con los campos cubiertos {{nd}} meses menos.",
+      "note": "Usa el clima y los precios de {{year}} con un presupuesto de {{w}} acre-pies por acre y sus otros ajustes."
     }
   },
   "strip": {
