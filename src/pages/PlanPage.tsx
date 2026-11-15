@@ -9,6 +9,7 @@ import { WaterMeter } from '../components/charts/WaterMeter';
 import { YearsDotStrip } from '../components/charts/YearsDotStrip';
 import { PageIntro } from '../components/layout/PageIntro';
 import { ControlsPanel } from '../components/plan/Controls';
+import { LeaseLine } from '../components/plan/LeaseLine';
 import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
@@ -161,6 +162,7 @@ function Results() {
             <p className="mt-2 max-w-2xl text-base text-white/85">
               {wv > 0 ? t('plan.waterValueBody', { tenth: money(wv / 10, lang) }) : t('plan.waterValueZeroBody')}
             </p>
+            <LeaseLine waterValue={wv} price={controls.lease} className="mt-3 max-w-2xl rounded-ctl bg-white/10 px-3 py-2 text-base font-semibold text-white" />
           </div>
         </div>
       </section>

@@ -24,6 +24,7 @@ export type Controls = {
   maxSharePct: Partial<Record<RotationId, number>>; // 0 to 100, missing = 100
   waterCost: number; // extra $/AF
   efficiency: number; // 0.5 to 0.95
+  lease: number | null; // what one more acre-foot would cost to lease or pump, $/AF (blank = not set)
 };
 
 export const DEMO_FARM: Farm = {
@@ -40,6 +41,7 @@ export const DEFAULT_CONTROLS: Controls = {
   maxSharePct: {},
   waterCost: 0,
   efficiency: 0.75,
+  lease: null,
 };
 
 const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
@@ -54,6 +56,8 @@ function readUrl(): Partial<Controls> {
   if (q.has('w') && Number.isFinite(w)) out.water = clamp(Math.round(w * 10) / 10, 0.5, 6);
   if (q.has('r') && Number.isFinite(r)) out.risk = clamp(Math.round(r), 0, 100);
   if (q.has('s') && Number.isFinite(s)) out.soil = clamp(Math.round(s), 0, 100);
+  const lease = Number(q.get('lease'));
+  if (q.get('lease') && Number.isFinite(lease)) out.lease = clamp(Math.round(lease), 0, 5000);
   return out;
 }
 
@@ -130,11 +134,13 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     q.set('r', String(controls.risk));
     q.set('s', String(controls.soil));
     q.set('lang', lang);
+    if (controls.lease === null) q.delete('lease');
+    else q.set('lease', String(controls.lease));
     const url = `${window.location.pathname}?${q.toString()}${window.location.hash}`;
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, '', url);
     }
-  }, [controls.water, controls.risk, controls.soil, lang, location.pathname]);
+  }, [controls.water, controls.risk, controls.soil, controls.lease, lang, location.pathname]);
 
   const value: Ctx = {
     farm,

@@ -131,6 +131,30 @@ function MoreOptions() {
             {t('plan.waterCostHelp')} {controls.waterCost > 0 && `(${money(controls.waterCost, lang)}/AF)`}
           </p>
         </div>
+        <div>
+          <label htmlFor="lease-price" className="label">
+            {t('plan.lease')}
+          </label>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-text-muted">$</span>
+            <input
+              id="lease-price"
+              type="number"
+              inputMode="numeric"
+              min={0}
+              max={5000}
+              step={10}
+              className="input tnum pl-7"
+              value={controls.lease ?? ''}
+              placeholder={t('plan.leasePh')}
+              onChange={(e) => setControl('lease', e.target.value === '' ? null : Math.max(0, Math.min(5000, Number(e.target.value) || 0)))}
+              aria-describedby="lease-help"
+            />
+          </div>
+          <p id="lease-help" className="mt-1.5 text-sm text-text-muted">
+            {t('plan.leaseHelp')}
+          </p>
+        </div>
         <Slider
           label={t('plan.efficiency')}
           tone="water"

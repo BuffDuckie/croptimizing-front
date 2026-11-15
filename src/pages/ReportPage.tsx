@@ -2,6 +2,7 @@ import { Printer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ROTATION_IDS } from '../api/types';
 import { MixBar } from '../components/charts/MixBar';
+import { LeaseLine } from '../components/plan/LeaseLine';
 import { PageIntro } from '../components/layout/PageIntro';
 import { LogoMark } from '../components/layout/Logo';
 import { acresSplit, af, money, pct, whole } from '../lib/format';
@@ -114,6 +115,7 @@ export default function ReportPage() {
             <p className="mt-3 text-sm text-text">
               {rec.waterValuePerAf > 0 ? t('plan.waterValueTitle', { v: money(rec.waterValuePerAf, lang) }) : t('plan.waterValueZero')}.
             </p>
+            <LeaseLine waterValue={rec.waterValuePerAf} price={controls.lease} className="mt-1 text-sm font-semibold text-text" />
           </div>
           <div>
             <h2 className="text-lg font-semibold">{t('report.questionsTitle')}</h2>

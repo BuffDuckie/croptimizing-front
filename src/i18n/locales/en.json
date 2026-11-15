@@ -283,7 +283,13 @@
     "colCurrent": "Current acres",
     "assumptions": "Assumptions",
     "trimNote": "As you farm today, this plan needs {{need}} AF per acre in its highest year; we left the acres your water can't cover fallow.",
-    "softened": "We lowered your soil minimum to {{y}} so a plan fits. Change it anytime."
+    "softened": "We lowered your soil minimum to {{y}} so a plan fits. Change it anytime.",
+    "lease": "What would one more acre-foot cost you to lease or pump? ($/AF)",
+    "leasePh": "Optional",
+    "leaseHelp": "We compare it with what one more acre-foot is worth to you.",
+    "leasePays": "Leasing pays: one more acre-foot earns about {{v}} and costs {{p}}.",
+    "leaseNo": "Leasing does not pay at {{p}}: one more acre-foot earns only about {{v}}.",
+    "leaseNotBinding": "More water would not change your plan right now."
   },
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",
