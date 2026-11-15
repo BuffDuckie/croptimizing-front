@@ -429,5 +429,134 @@
     "math1": "For each past year we replay both plans with that year's weather and prices. The suggested plan always fits your budget, because the model checks every year.",
     "math2": "When the current plan needs more water than the budget, we keep the share of each crop that the water covers and leave the rest fallow at the fallow cost. This is how a water cut usually plays out on a farm.",
     "allCaption": "Every past year, both plans"
+  },
+  "report": {
+    "print": "Print or save as PDF",
+    "stale": "Your current settings have no plan, so this report shows your last plan that worked.",
+    "heading": "Crop plan for {{name}}",
+    "meta": "{{acres}} acres · Water budget {{water}} AF/acre · Risk {{risk}}/100 · Soil minimum {{soil}}/100 · {{date}}",
+    "mix": "Suggested mix",
+    "numbers": "What it would have earned",
+    "today": "Today",
+    "questionsTitle": "Questions for your extension agent",
+    "questions": [
+      "Is my water budget right for the hottest years, not just an average year?",
+      "Do these rotations fit my soil, my equipment, and my buyers?",
+      "What will fallowed fields cost me in weed and dust control?",
+      "Are there programs that pay for conserved water in my district?"
+    ]
+  },
+  "method": {
+    "toc": "On this page",
+    "sec": {
+      "idea": "The idea",
+      "formulas": "The math",
+      "steps": "Step by step",
+      "sources": "Data sources",
+      "correlations": "How rotations move together",
+      "backtest": "Tested on years it never saw",
+      "scenarios": "Every past year",
+      "assumptions": "Assumptions and limits"
+    },
+    "idea": "We treat a farm like an investment portfolio. Each crop rotation is an asset. Water is a hard budget that must hold in every year, and soil health is a minimum standard, like an ESG screen. Using 20 past years as possible futures, we find the mix of rotations that best balances average profit against profit in the worst 1-in-5 years.",
+    "formulasIntro": "w_i is the share of your acres in rotation i. Each past year s gives every rotation a profit and a water need. ρ is your risk setting from 0 to 1.",
+    "f": {
+      "objective": "What we maximize: a blend of worst-years profit and average profit, weighted by your risk setting.",
+      "profit": "Profit of the whole farm in year s is the share-weighted profit of each rotation.",
+      "water": "The water budget must hold in every one of the 20 years, not just on average.",
+      "soil": "The soil score must meet your minimum, shares add up to your whole farm, and no rotation goes above your limit.",
+      "cvar": "Worst 1-in-5 years: the average of the 4 lowest years out of 20. In finance this is the negative of CVaR at 80%.",
+      "shadow": "Water value: how much the best plan improves if you had 0.1 more acre-feet per acre.",
+      "et": "Crop water need from NASA POWER weather (FAO-56), less effective rain, divided by irrigation efficiency."
+    },
+    "stepsList": [
+      "Build 20 scenarios, one per year from 2005 to 2024, each with that year's weather and prices.",
+      "For each rotation and year, compute profit per acre and applied water per acre.",
+      "List every mix of the 5 rotations in 5% steps: 10,626 mixes.",
+      "For each mix, compute its profit in every year, its average, its worst 1-in-5 years, its highest-year water, and its soil score.",
+      "Drop every mix that breaks your water budget in any year, falls below your soil minimum, or goes over a rotation limit.",
+      "From the mixes left, mark the efficient frontier: mixes no other mix beats on both average and worst years.",
+      "Pick the frontier mix with the best score for your risk setting. Repeat with 0.1 AF more water to price water."
+    ],
+    "sourcesCaption": "Where each number comes from",
+    "sourceHead": [
+      "Input",
+      "Source",
+      "Resolution",
+      "Status in this build"
+    ],
+    "sourceRows": [
+      [
+        "Weather and reference ET",
+        "NASA POWER (FAO-56 Penman-Monteith)",
+        "Daily, about 50 km",
+        "Sample series"
+      ],
+      [
+        "Groundwater storage trend",
+        "NASA GRACE / GRACE-FO",
+        "Monthly, about 300 km",
+        "Sample series"
+      ],
+      [
+        "Crop water use check",
+        "OpenET ensemble, NASA ECOSTRESS",
+        "30 to 70 m",
+        "Sample values"
+      ],
+      [
+        "Crop costs and returns",
+        "University of Arizona Cooperative Extension, Pinal County crop budgets",
+        "Per crop, per year",
+        "Placeholder"
+      ],
+      [
+        "Price and yield variation",
+        "USDA NASS Quick Stats",
+        "County and state, yearly",
+        "Placeholder"
+      ],
+      [
+        "Soil properties",
+        "USDA Web Soil Survey",
+        "Map unit",
+        "Placeholder scores"
+      ],
+      [
+        "Water cuts",
+        "ASU Arizona Water Innovation Initiative",
+        "District",
+        "Used in text"
+      ]
+    ],
+    "heatTitle": "{{a}} and {{b}} move together least (r = {{v}}), so mixing them spreads risk",
+    "heatSub": "How each pair of rotations' yearly profits moved together over 2005 to 2024.",
+    "heatHow1": "1 means two rotations always rose and fell together. 0 means no link. Below 0 means one tends to do well when the other does badly.",
+    "heatHow2": "Mixing rotations with low numbers is what protects you in bad years, just like a diversified investment portfolio.",
+    "heatCaption": "Profit correlations between rotations",
+    "heatNeg": "Move in opposite directions",
+    "heatPos": "Move together",
+    "short": {
+      "alfalfa": "Alfalfa",
+      "cotton_barley": "Cotton/barley",
+      "durum_sorghum": "Durum/sorghum",
+      "barley_fallow": "Barley/fallow",
+      "fallow": "Fallow"
+    },
+    "backtestIntro": "To check the method is not just fitting the past, we picked plans using only 2005 to 2014, then scored them on 2015 to 2024, which the model never saw. Same water and soil limits as your settings.",
+    "backtestCaption": "Out-of-sample results, 2015 to 2024 (per acre)",
+    "strategy": "Plan",
+    "avgWater": "Average water",
+    "scenariosIntro": "Every past year for your suggested plan and your current plan. Download it to check our math in a spreadsheet.",
+    "download": "Download the scenario table (CSV)",
+    "scenarioCaption": "Profit and water by year",
+    "limitsTitle": "What this tool does not do",
+    "limits": [
+      "It does not know your fields. Soil, wells, and contracts differ from farm to farm.",
+      "It assumes the next years look like some mix of the last 20. A new kind of year is possible.",
+      "It does not model pests, diseases, labor, or the cost of switching equipment.",
+      "Shares move in 5% steps, so the best plan between steps can differ slightly.",
+      "Every number in this build is sample data until the team's real data loads."
+    ]
   }
 }

@@ -430,5 +430,134 @@
     "math1": "Para cada año pasado repetimos ambos planes con el clima y los precios de ese año. El plan sugerido siempre cabe en su presupuesto, porque el modelo revisa cada año.",
     "math2": "Cuando el plan actual necesita más agua que el presupuesto, mantenemos la parte de cada cultivo que el agua alcanza y dejamos el resto en barbecho al costo del barbecho. Así suele pasar un recorte de agua en una granja.",
     "allCaption": "Cada año pasado, ambos planes"
+  },
+  "report": {
+    "print": "Imprimir o guardar como PDF",
+    "stale": "Sus ajustes actuales no tienen plan, así que este informe muestra su último plan que funcionó.",
+    "heading": "Plan de cultivos para {{name}}",
+    "meta": "{{acres}} acres · Presupuesto de agua {{water}} AF/acre · Riesgo {{risk}}/100 · Suelo mínimo {{soil}}/100 · {{date}}",
+    "mix": "Mezcla sugerida",
+    "numbers": "Lo que habría ganado",
+    "today": "Hoy",
+    "questionsTitle": "Preguntas para su agente de extensión",
+    "questions": [
+      "¿Mi presupuesto de agua es correcto para los años más calurosos, no solo para un año promedio?",
+      "¿Estas rotaciones le quedan a mi suelo, mi equipo y mis compradores?",
+      "¿Cuánto me costará el control de malezas y polvo en los campos en barbecho?",
+      "¿Hay programas que paguen por el agua conservada en mi distrito?"
+    ]
+  },
+  "method": {
+    "toc": "En esta página",
+    "sec": {
+      "idea": "La idea",
+      "formulas": "Las matemáticas",
+      "steps": "Paso a paso",
+      "sources": "Fuentes de datos",
+      "correlations": "Cómo se mueven juntas las rotaciones",
+      "backtest": "Probado en años que no vio",
+      "scenarios": "Cada año pasado",
+      "assumptions": "Supuestos y límites"
+    },
+    "idea": "Tratamos una granja como un portafolio de inversión. Cada rotación de cultivos es un activo. El agua es un presupuesto fijo que debe cumplirse cada año, y la salud del suelo es un mínimo, como un filtro ESG. Con 20 años pasados como futuros posibles, buscamos la mezcla de rotaciones que mejor equilibra la ganancia promedio y la ganancia en los peores años, 1 de cada 5.",
+    "formulasIntro": "w_i es la proporción de sus acres en la rotación i. Cada año pasado s da a cada rotación una ganancia y una necesidad de agua. ρ es su ajuste de riesgo de 0 a 1.",
+    "f": {
+      "objective": "Lo que maximizamos: una mezcla de la ganancia en los peores años y la ganancia promedio, según su ajuste de riesgo.",
+      "profit": "La ganancia de toda la granja en el año s es la ganancia de cada rotación ponderada por su proporción.",
+      "water": "El presupuesto de agua debe cumplirse en cada uno de los 20 años, no solo en promedio.",
+      "soil": "El puntaje de suelo debe llegar a su mínimo, las proporciones suman toda su granja y ninguna rotación pasa su límite.",
+      "cvar": "Peores años, 1 de cada 5: el promedio de los 4 años más bajos de 20. En finanzas es el negativo del CVaR al 80%.",
+      "shadow": "Valor del agua: cuánto mejora el mejor plan si tuviera 0.1 acre-pies más por acre.",
+      "et": "Necesidad de agua del cultivo con clima de NASA POWER (FAO-56), menos la lluvia efectiva, dividida entre la eficiencia de riego."
+    },
+    "stepsList": [
+      "Armar 20 escenarios, uno por año de 2005 a 2024, cada uno con el clima y los precios de ese año.",
+      "Para cada rotación y año, calcular la ganancia por acre y el agua aplicada por acre.",
+      "Listar cada mezcla de las 5 rotaciones en pasos de 5%: 10,626 mezclas.",
+      "Para cada mezcla, calcular su ganancia en cada año, su promedio, sus peores años 1 de cada 5, su agua en el año más alto y su puntaje de suelo.",
+      "Descartar cada mezcla que rompe su presupuesto de agua en algún año, queda debajo de su mínimo de suelo o pasa un límite de rotación.",
+      "De las mezclas que quedan, marcar la frontera eficiente: mezclas que ninguna otra supera en promedio y en peores años a la vez.",
+      "Elegir la mezcla de la frontera con mejor puntaje para su ajuste de riesgo. Repetir con 0.1 AF más de agua para ponerle precio al agua."
+    ],
+    "sourcesCaption": "De dónde viene cada número",
+    "sourceHead": [
+      "Dato",
+      "Fuente",
+      "Resolución",
+      "Estado en esta versión"
+    ],
+    "sourceRows": [
+      [
+        "Clima y ET de referencia",
+        "NASA POWER (FAO-56 Penman-Monteith)",
+        "Diario, unos 50 km",
+        "Serie de muestra"
+      ],
+      [
+        "Tendencia del agua subterránea",
+        "NASA GRACE / GRACE-FO",
+        "Mensual, unos 300 km",
+        "Serie de muestra"
+      ],
+      [
+        "Verificación del uso de agua",
+        "Conjunto OpenET, NASA ECOSTRESS",
+        "30 a 70 m",
+        "Valores de muestra"
+      ],
+      [
+        "Costos e ingresos de cultivos",
+        "Extensión Cooperativa de la Universidad de Arizona, presupuestos del condado de Pinal",
+        "Por cultivo, por año",
+        "Valor de prueba"
+      ],
+      [
+        "Variación de precios y rendimientos",
+        "USDA NASS Quick Stats",
+        "Condado y estado, anual",
+        "Valor de prueba"
+      ],
+      [
+        "Propiedades del suelo",
+        "USDA Web Soil Survey",
+        "Unidad de mapa",
+        "Puntajes de prueba"
+      ],
+      [
+        "Recortes de agua",
+        "ASU Arizona Water Innovation Initiative",
+        "Distrito",
+        "Usado en el texto"
+      ]
+    ],
+    "heatTitle": "{{a}} y {{b}} se mueven juntas lo menos (r = {{v}}), así que mezclarlas reparte el riesgo",
+    "heatSub": "Cómo se movieron juntas las ganancias anuales de cada par de rotaciones de 2005 a 2024.",
+    "heatHow1": "1 significa que dos rotaciones siempre subieron y bajaron juntas. 0 significa que no hay relación. Debajo de 0 significa que a una le suele ir bien cuando a la otra le va mal.",
+    "heatHow2": "Mezclar rotaciones con números bajos es lo que lo protege en los años malos, igual que un portafolio de inversión diversificado.",
+    "heatCaption": "Correlaciones de ganancia entre rotaciones",
+    "heatNeg": "Se mueven en sentido contrario",
+    "heatPos": "Se mueven juntas",
+    "short": {
+      "alfalfa": "Alfalfa",
+      "cotton_barley": "Algodón/cebada",
+      "durum_sorghum": "Trigo duro/sorgo",
+      "barley_fallow": "Cebada/barbecho",
+      "fallow": "Barbecho"
+    },
+    "backtestIntro": "Para comprobar que el método no solo se ajusta al pasado, elegimos planes usando solo 2005 a 2014 y los evaluamos en 2015 a 2024, años que el modelo nunca vio. Mismos límites de agua y suelo que sus ajustes.",
+    "backtestCaption": "Resultados fuera de muestra, 2015 a 2024 (por acre)",
+    "strategy": "Plan",
+    "avgWater": "Agua promedio",
+    "scenariosIntro": "Cada año pasado para su plan sugerido y su plan actual. Descárguelo para revisar nuestros cálculos en una hoja de cálculo.",
+    "download": "Descargar la tabla de escenarios (CSV)",
+    "scenarioCaption": "Ganancia y agua por año",
+    "limitsTitle": "Lo que esta herramienta no hace",
+    "limits": [
+      "No conoce sus campos. El suelo, los pozos y los contratos cambian de una granja a otra.",
+      "Supone que los próximos años se parecerán a alguna mezcla de los últimos 20. Puede llegar un tipo de año nuevo.",
+      "No modela plagas, enfermedades, mano de obra ni el costo de cambiar de equipo.",
+      "Las proporciones cambian en pasos de 5%, así que el mejor plan entre pasos puede variar un poco.",
+      "Cada número en esta versión son datos de muestra hasta que carguen los datos reales del equipo."
+    ]
   }
 }

@@ -172,3 +172,26 @@
   /* No motion, but keep the old line visible (static) for its 2 seconds. */
   .frontier-ghost { animation: none !important; opacity: 0.45; }
 }
+
+/* Print: one clean page for the report. */
+@media print {
+  @page { size: letter; margin: 11mm 12mm; }
+  html, body { background: #fff !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-enter { animation: none !important; }
+  .container-content { max-width: none; padding: 0; }
+  .report-sheet { font-size: 10.5pt; }
+  .report-sheet h1 { font-size: 18pt; }
+  .report-sheet h2 { font-size: 12pt; }
+  .report-sheet .text-sm, .report-sheet .text-base { font-size: 9.5pt; line-height: 1.35; }
+  .report-sheet section, .report-sheet table { break-inside: avoid; }
+}
+@media print {
+  .report-sheet header { padding-bottom: 8px; }
+  .report-sheet section { margin-top: 12px !important; }
+  .report-sheet [role='img'] { height: 30px !important; }
+  .report-sheet [role='img'] span { font-size: 11pt !important; }
+  .report-sheet td, .report-sheet th { padding-top: 2px !important; padding-bottom: 2px !important; }
+  .report-sheet li { margin-top: 2px !important; }
+  .report-sheet footer { margin-top: 12px !important; }
+}
