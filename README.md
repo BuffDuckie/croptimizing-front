@@ -8,6 +8,8 @@ a minimum standard. It finds the mix that best balances average profit against p
 1-in-5 years, shows the trade-offs on an efficient frontier, and tells farmers what one more acre-foot
 is worth to them. Case study: Pinal County, Arizona.
 
+Live demo: https://croptimizing.vercel.app
+
 Built for the NASA Space Apps Challenge 2026, "Field Shift: Adapting Farms with NASA Data."
 Data credits: NASA POWER, NASA GRACE and GRACE-FO, OpenET and NASA ECOSTRESS. Not an official NASA product.
 
@@ -66,7 +68,7 @@ No backend, login, database, or cookies.
 The build is static. Both configs rewrite every route to `index.html`.
 
 ```bash
-npx vercel --prod
+npx vercel --prod   # Vercel project: croptimizing (lowercase)
 ```
 
 or
