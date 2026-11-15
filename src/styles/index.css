@@ -11,6 +11,8 @@
     --dur-base: 180ms;
     --dur-slow: 320ms;
     --dur-enter: 420ms;
+    --duration-linear: 1.4s;   /* looping shimmer */
+    --dur-ghost: 2000ms;       /* brief: previous frontier stays visible for 2 s */
     color-scheme: light;
     --c-primary: theme('colors.primary');
     --c-secondary: theme('colors.secondary');
@@ -58,8 +60,8 @@
 
   .btn {
     @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 rounded-ctl px-5 text-base font-semibold no-underline;
-    transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-base) var(--ease-out),
-      box-shadow var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+    transition: transform var(--dur-fast) var(--ease-out, ease-out), background-color var(--dur-base) var(--ease-out, ease-out),
+      box-shadow var(--dur-base) var(--ease-out, ease-out), color var(--dur-base) var(--ease-out, ease-out);
   }
   .btn:active { transform: scale(0.97); }
   .btn-primary { @apply bg-primary text-white shadow-sm hover:bg-primary-deep; }
@@ -70,7 +72,7 @@
 
   .input {
     @apply min-h-[44px] w-full rounded-ctl border border-border bg-surface px-3 text-base text-text;
-    transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+    transition: border-color var(--dur-base) var(--ease-out, ease-out), box-shadow var(--dur-base) var(--ease-out, ease-out);
   }
   .input:hover { @apply border-text-muted; }
   .label { @apply mb-1.5 block text-sm font-semibold text-text; }
@@ -110,7 +112,7 @@
   background: theme('colors.surface');
   border: 2px solid var(--tint);
   box-shadow: 0 1px 3px rgba(15,23,42,.2), 0 4px 10px -2px rgba(15,23,42,.15);
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-out, ease-out);
 }
 .range::-moz-range-thumb {
   width: 22px; height: 22px; border-radius: 50%;
@@ -124,7 +126,7 @@
 
 /* Page entrance (tier 2). */
 @keyframes page-in { from { opacity: 0; transform: translateY(6px); } }
-.page-enter { animation: page-in var(--dur-enter) var(--ease-out) both; }
+.page-enter { animation: page-in var(--dur-enter) var(--ease-out, ease-out) both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -140,19 +142,19 @@
 }
 
 /* Nav underline slides between tabs (tier 2). */
-.tab-indicator { transition: transform var(--dur-slow) var(--ease-out), width var(--dur-slow) var(--ease-out); }
+.tab-indicator { transition: transform var(--dur-slow) var(--ease-out, ease-out), width var(--dur-slow) var(--ease-out, ease-out); }
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
-.seg-thumb { transition: transform var(--dur-base) var(--ease-out); }
+.seg-thumb { transition: transform var(--dur-base) var(--ease-out, ease-out); }
 
 /* Popovers grow out of their trigger. */
 @keyframes pop-in { from { opacity: 0; scale: 0.96; } }
-.popover-panel[data-state='open'] { animation: pop-in var(--dur-base) var(--ease-out); }
+.popover-panel[data-state='open'] { animation: pop-in var(--dur-base) var(--ease-out, ease-out); }
 @keyframes sheet-in { from { opacity: 0; transform: translateY(-8px); } }
-.mobile-sheet[data-state='open'] { animation: sheet-in var(--dur-slow) var(--ease-out); }
+.mobile-sheet[data-state='open'] { animation: sheet-in var(--dur-slow) var(--ease-out, ease-out); }
 
 /* Disclosure panels open by animating grid rows (tier 2). */
-.disclosure-body { grid-template-rows: 0fr; transition: grid-template-rows var(--dur-slow) var(--ease-out); }
+.disclosure-body { grid-template-rows: 0fr; transition: grid-template-rows var(--dur-slow) var(--ease-out, ease-out); }
 .disclosure-body[data-open='true'] { grid-template-rows: 1fr; }
 
 /* Loading placeholders. */
@@ -160,14 +162,14 @@
 .skeleton {
   background: linear-gradient(90deg, theme('colors.border-soft') 0, theme('colors.bg') 50%, theme('colors.border-soft') 100%);
   background-size: 800px 100%;
-  animation: shimmer 1.4s linear infinite;
+  animation: shimmer var(--duration-linear, 1.4s) linear infinite;
 }
 /* Mix segments and meters glide to new values (tier 2). */
-.mix-seg, .meter-fill { transition: width var(--dur-slow) var(--ease-out); }
+.mix-seg, .meter-fill { transition: width var(--dur-slow) var(--ease-out, ease-out); }
 
 /* Frontier: the previous line fades out over 2 s; the new line draws in. */
 @keyframes ghost-out { 0% { opacity: 0.55; } 70% { opacity: 0.4; } 100% { opacity: 0; } }
-.frontier-ghost { animation: ghost-out 2000ms linear forwards; }
+.frontier-ghost { animation: ghost-out var(--dur-ghost, 2000ms) linear forwards; }
 @media (prefers-reduced-motion: reduce) {
   /* No motion, but keep the old line visible (static) for its 2 seconds. */
   .frontier-ghost { animation: none !important; opacity: 0.45; }

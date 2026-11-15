@@ -54,6 +54,7 @@ export function FrontierChart({
   const [active, setActive] = useState<number | 'cur' | 'rec' | null>(null);
   const [ghost, setGhost] = useState<{ pts: Point[]; id: number } | null>(null);
   const prev = useRef<{ pts: Point[]; water: number } | null>(null);
+  const ghostTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const before = prev.current;
@@ -61,9 +62,13 @@ export function FrontierChart({
     if (!before || before.water === waterKey) return;
     const id = Date.now();
     setGhost({ pts: before.pts, id });
-    const tmr = window.setTimeout(() => setGhost((g) => (g?.id === id ? null : g)), GHOST_MS);
-    return () => window.clearTimeout(tmr);
+    // The timer lives in a ref: the new frontier arrives after the water change and re-runs
+    // this effect, which must not cancel the pending removal.
+    window.clearTimeout(ghostTimer.current);
+    ghostTimer.current = window.setTimeout(() => setGhost((g) => (g?.id === id ? null : g)), GHOST_MS);
   }, [frontier, waterKey]);
+
+  useEffect(() => () => window.clearTimeout(ghostTimer.current), []);
 
   const H = Math.max(320, Math.min(460, width * 0.62));
   const m = { l: 64, r: 24, t: 24, b: 56 };
