@@ -55,7 +55,7 @@ function Shell() {
       <Header showSample={showSample} />
       <FallbackBanner />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-        <Suspense fallback={<div className="container-content min-h-[60vh] py-16" aria-busy="true" />}>
+        <Suspense fallback={<div className="container-content min-h-[110vh] py-16" aria-busy="true" />}>
           <Routes>
             <Route path="/" element={<StartPage />} />
             <Route path="/plan" element={<PlanPage />} />

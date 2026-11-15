@@ -31,6 +31,7 @@ export default function TradeoffsPage() {
       <PageIntro title={t('pages.tradeoffs.title')} intro={t('pages.tradeoffs.intro')} />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-6">
+          {!data && <div className="min-h-[110vh]" aria-busy="true" />}
           {data && (
             <ChartCard
               title={title}
@@ -107,7 +108,7 @@ export default function TradeoffsPage() {
                   <div className="space-y-3 text-base">
                     <p>{t('trade.math1')}</p>
                     <p>{t('trade.math2')}</p>
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto" tabIndex={0}>
                       <DataTable
                         caption={t('trade.tableCaption')}
                         head={[t('trade.colPlan'), t('trade.tipWorst'), t('trade.tipAvg')]}

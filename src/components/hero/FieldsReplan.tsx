@@ -1,5 +1,5 @@
 import { RotateCcw } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Mix, RotationId } from '../../api/types';
 import { ROTATION_IDS } from '../../api/types';
@@ -16,6 +16,10 @@ import { colors, rotationColors } from '../../theme/tokens';
  *   3.1-3.8 s  parcels flag over budget
  *   3.8-5.0 s  parcels re-plan into the suggested mix
  *   4.9-5.8 s  results count up
+ *
+ * React renders the structure once. A requestAnimationFrame loop then writes
+ * attributes straight to the SVG through refs, so each frame costs a few
+ * attribute writes instead of a full re-render.
  */
 const T = { appear: 0, fill: 900, note: 1600, drain: 1900, flag: 3100, replan: 3800, numbers: 4900, end: 5900 };
 
@@ -29,6 +33,9 @@ const ROWS: { h: number; cols: number[]; pivot?: number[] }[] = [
   { h: 66, cols: [134, 62, 108, 75] },
   { h: 77, cols: [92, 100, 70, 117], pivot: [3] },
 ];
+const G = { x: 470, y: MAP.y + 10, w: 44, h: MAP.h - 20 };
+const SCALE_MAX = 6;
+const yFor = (v: number) => G.y + G.h - (Math.max(0, v) / SCALE_MAX) * G.h;
 
 type Parcel = { x: number; y: number; w: number; h: number; area: number; pivot: boolean; order: number };
 
@@ -46,7 +53,7 @@ function buildParcels(): Parcel[] {
   return out;
 }
 
-/** Assign parcels to rotations so areas roughly match the shares. Largest-share rotations take parcels first. */
+/** Assign parcels to rotations so areas roughly match the shares. */
 function assign(parcels: Parcel[], mix: Mix): RotationId[] {
   const total = parcels.reduce((s, p) => s + p.area, 0);
   const targets = ROTATION_IDS.map((id) => ({ id, left: (mix[id] ?? 0) * total }));
@@ -57,13 +64,14 @@ function assign(parcels: Parcel[], mix: Mix): RotationId[] {
     result[i] = best.id;
     best.left -= parcels[i].area;
   }
-  // Keep spatial grouping: sort by rotation order along the reading order.
   return result;
 }
 
 const ease = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : 1 - Math.pow(1 - t, 3));
 const easeInOut = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const span = (now: number, a: number, b: number) => (now - a) / (b - a);
+
+type ParcelRefs = { g: SVGGElement | null; soil: SVGRectElement | null; body: SVGRectElement | null; circle: SVGCircleElement | null; overlay: SVGElement | null; flag: SVGRectElement | null };
 
 export function FieldsReplan({
   currentMix,
@@ -83,51 +91,146 @@ export function FieldsReplan({
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const reduced = useReducedMotion();
-  const [now, setNow] = useState(reduced ? T.end : 0);
-  const raf = useRef(0);
-  const start = useRef(0);
   const parcels = useMemo(buildParcels, []);
   const before = useMemo(() => assign(parcels, currentMix), [parcels, currentMix]);
   const after = useMemo(() => (suggestedMix ? assign(parcels, suggestedMix) : null), [parcels, suggestedMix]);
   const ready = after !== null && avg !== null && worst !== null;
+  const [done, setDone] = useState(reduced);
+
+  const raf = useRef(0);
+  const start = useRef(0);
+  const timeRef = useRef(reduced ? T.end : 0);
+  const pRefs = useRef<ParcelRefs[]>(parcels.map(() => ({ g: null, soil: null, body: null, circle: null, overlay: null, flag: null })));
+  const water = useRef<SVGRectElement>(null);
+  const overSlice = useRef<SVGRectElement>(null);
+  const budgetMark = useRef<SVGGElement>(null);
+  const levelText = useRef<SVGTextElement>(null);
+  const gaugeCaption = useRef<SVGTextElement>(null);
+  const note = useRef<HTMLDivElement>(null);
+  const legendBefore = useRef<HTMLUListElement>(null);
+  const legendAfter = useRef<HTMLUListElement>(null);
+  const statAvg = useRef<HTMLDivElement>(null);
+  const statWorst = useRef<HTMLDivElement>(null);
+  const statFits = useRef<HTMLDivElement>(null);
+  const avgText = useRef<HTMLSpanElement>(null);
+  const worstText = useRef<HTMLSpanElement>(null);
+
+  // Everything the loop needs, kept current without restarting the loop.
+  const live = useRef({ before, after, need, budget, avg, worst, ready, lang, needs: '', budgetLabel: '' });
+  live.current = { before, after, need, budget, avg, worst, ready, lang, needs: t('start.hero.needsShort'), budgetLabel: t('start.hero.budgetShort') };
+
+  const draw = useCallback((now: number) => {
+    const L = live.current;
+    const time = !L.ready && now > T.flag + 600 ? T.flag + 600 : now;
+    const fillP = easeInOut(span(time, T.fill, T.fill + 600));
+    const drainP = easeInOut(span(time, T.drain, T.drain + 1200));
+    const level = L.need * fillP - (L.need - L.budget) * drainP;
+    const flagP = span(time, T.flag, T.flag + 700);
+    const flagged = flagP > 0 && time < T.replan + 200;
+    const flagPulse = flagged ? Math.sin(Math.min(1, flagP) * Math.PI) : 0;
+    const over = time > T.drain + 400 && time < T.replan + 600;
+    const noteO = ease(span(time, T.note, T.note + 400)) * (1 - ease(span(time, T.replan + 400, T.replan + 800)));
+    const numP = ease(span(time, T.numbers, T.numbers + 900));
+    const fitsO = ease(span(time, T.replan + 900, T.replan + 1300));
+
+    parcels.forEach((p, i) => {
+      const r = pRefs.current[i];
+      if (!r.g) return;
+      const appear = ease(span(time, T.appear + p.order * 45, T.appear + p.order * 45 + 450));
+      const replanP = ease(span(time, T.replan + p.order * 60, T.replan + p.order * 60 + 420));
+      const fromId = L.before[i];
+      const toId = L.after?.[i] ?? fromId;
+      const id = replanP > 0.5 ? toId : fromId;
+      const flip = replanP > 0.5 ? (replanP - 0.5) * 2 : 1 - replanP * 2;
+      const s = (0.92 + 0.08 * appear) * (0.35 + 0.65 * Math.max(0, Math.min(1, flip)));
+      const cx = p.x + p.w / 2;
+      const cy = p.y + p.h / 2;
+      const isFallow = id === 'fallow';
+      const usePivot = p.pivot && !isFallow;
+      r.g.setAttribute('transform', `translate(${cx} ${cy}) scale(1 ${s.toFixed(3)}) translate(${-cx} ${-cy})`);
+      r.g.setAttribute('opacity', appear.toFixed(3));
+      r.soil?.setAttribute('display', usePivot ? 'inline' : 'none');
+      r.circle?.setAttribute('display', usePivot ? 'inline' : 'none');
+      r.circle?.setAttribute('fill', rotationColors[id]);
+      r.body?.setAttribute('display', usePivot ? 'none' : 'inline');
+      r.body?.setAttribute('fill', rotationColors[id]);
+      r.body?.setAttribute('opacity', isFallow ? '0.75' : '1');
+      r.overlay?.setAttribute('fill', isFallow ? 'url(#hero-hatch)' : 'url(#hero-rows)');
+      r.overlay?.setAttribute('display', usePivot ? 'none' : 'inline');
+      if (r.flag) {
+        const show = flagged && fromId !== 'fallow';
+        r.flag.setAttribute('display', show ? 'inline' : 'none');
+        r.flag.setAttribute('opacity', (0.35 + 0.65 * flagPulse).toFixed(3));
+      }
+    });
+
+    water.current?.setAttribute('y', yFor(level).toFixed(1));
+    if (overSlice.current) {
+      const show = over && level > L.budget;
+      overSlice.current.setAttribute('display', show ? 'inline' : 'none');
+      overSlice.current.setAttribute('y', yFor(level).toFixed(1));
+      overSlice.current.setAttribute('height', Math.max(0, yFor(L.budget) - yFor(level)).toFixed(1));
+    }
+    budgetMark.current?.setAttribute('opacity', ease(span(time, T.drain, T.drain + 300)).toFixed(3));
+    if (levelText.current) levelText.current.textContent = af(Math.max(0, level), L.lang as 'en' | 'es');
+    if (gaugeCaption.current) gaugeCaption.current.textContent = time < T.drain + 200 ? L.needs : L.budgetLabel;
+    if (note.current) {
+      note.current.style.opacity = noteO.toFixed(3);
+      note.current.style.transform = `translateY(${((1 - noteO) * 8).toFixed(1)}px)`;
+    }
+    const showAfter = time > T.replan + 500 && L.after !== null;
+    if (legendBefore.current) legendBefore.current.style.display = showAfter ? 'none' : 'flex';
+    if (legendAfter.current) legendAfter.current.style.display = showAfter ? 'flex' : 'none';
+    for (const [el, o] of [
+      [statAvg.current, Math.max(0.25, numP)],
+      [statWorst.current, Math.max(0.25, numP)],
+      [statFits.current, fitsO],
+    ] as const) {
+      if (!el) continue;
+      el.style.opacity = o.toFixed(3);
+      el.style.transform = `translateY(${((1 - o) * 6).toFixed(1)}px)`;
+    }
+    if (avgText.current) avgText.current.textContent = L.avg !== null ? money(L.avg * numP, L.lang as 'en' | 'es') : '';
+    if (worstText.current) worstText.current.textContent = L.worst !== null ? money(L.worst * numP, L.lang as 'en' | 'es') : '';
+  }, [parcels]);
 
   const play = useCallback(() => {
     cancelAnimationFrame(raf.current);
+    setDone(false);
     start.current = performance.now();
     const tick = (ts: number) => {
       const el = ts - start.current;
-      setNow(el);
-      if (el < T.end) raf.current = requestAnimationFrame(tick);
+      timeRef.current = el;
+      draw(el);
+      if (el < T.end || !live.current.ready) raf.current = requestAnimationFrame(tick);
+      else setDone(true);
     };
     raf.current = requestAnimationFrame(tick);
-  }, []);
+  }, [draw]);
 
   useEffect(() => {
     if (reduced) {
-      setNow(T.end);
+      timeRef.current = T.end;
+      draw(T.end);
+      setDone(true);
       return;
     }
     play();
     return () => cancelAnimationFrame(raf.current);
-  }, [reduced, play]);
+  }, [reduced, play, draw]);
 
-  // Hold before the re-plan step until the plan has loaded.
-  const time = !ready && now > T.flag + 600 ? T.flag + 600 : now;
+  // Redraw the current frame when inputs change (language, data arriving, settings).
+  useLayoutEffect(() => {
+    draw(timeRef.current);
+  });
 
-  // Gauge
-  const scaleMax = 6;
-  const fillP = easeInOut(span(time, T.fill, T.fill + 600));
-  const drainP = easeInOut(span(time, T.drain, T.drain + 1200));
-  const level = need * fillP - (need - budget) * drainP;
-  const G = { x: 470, y: MAP.y + 10, w: 44, h: MAP.h - 20 };
-  const yFor = (v: number) => G.y + G.h - (v / scaleMax) * G.h;
-  const flagP = span(time, T.flag, T.flag + 700);
-  const flagged = flagP > 0 && time < T.replan + 200;
-  const flagPulse = flagged ? Math.sin(Math.min(1, flagP) * Math.PI) : 0;
-  const over = time > T.drain + 400 && time < T.replan + 600;
-  const noteO = ease(span(time, T.note, T.note + 400)) * (1 - ease(span(time, T.replan + 400, T.replan + 800)));
-  const numP = ease(span(time, T.numbers, T.numbers + 900));
-  const fitsO = ease(span(time, T.replan + 900, T.replan + 1300));
+  const legend = (mix: Mix) =>
+    ROTATION_IDS.filter((id) => (mix[id] ?? 0) > 0).map((id) => (
+      <li key={id} className="flex items-center gap-1.5">
+        <span className={`h-3 w-3 rounded-[3px] ${id === 'fallow' ? 'hatch' : ''}`} style={{ backgroundColor: rotationColors[id] }} />
+        {t(`rotations.${id}`)}
+      </li>
+    ));
 
   return (
     <div className="relative">
@@ -149,10 +252,6 @@ export function FieldsReplan({
           <pattern id="hero-rows" patternUnits="userSpaceOnUse" width="6" height="6">
             <rect width="6" height="1.4" fill="rgba(255,255,255,0.10)" />
           </pattern>
-          <filter id="hero-grain" x="0" y="0" width="100%" height="100%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
-            <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0" />
-          </filter>
           <linearGradient id="hero-water" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor={colors.accent} />
             <stop offset="1" stopColor={colors['accent-strong']} />
@@ -164,81 +263,55 @@ export function FieldsReplan({
 
         {/* Ground */}
         <rect x={MAP.x - 10} y={MAP.y - 10} width={MAP.w + 20} height={MAP.h + 20} rx={18} fill={colors['primary-ink']} />
-        <rect x={MAP.x - 10} y={MAP.y - 10} width={MAP.w + 20} height={MAP.h + 20} rx={18} filter="url(#hero-grain)" />
 
         {parcels.map((p, i) => {
-          const appear = ease(span(time, T.appear + p.order * 45, T.appear + p.order * 45 + 450));
-          const replanP = ease(span(time, T.replan + p.order * 60, T.replan + p.order * 60 + 420));
-          const fromId = before[i];
-          const toId = after?.[i] ?? fromId;
-          const showTo = replanP > 0.5;
-          const id = showTo ? toId : fromId;
-          const flip = showTo ? (replanP - 0.5) * 2 : 1 - replanP * 2;
-          const fill = rotationColors[id];
-          const cx = p.x + p.w / 2;
-          const cy = p.y + p.h / 2;
-          const s = (0.92 + 0.08 * appear) * (0.35 + 0.65 * Math.max(0, Math.min(1, flip)));
-          const isFallow = id === 'fallow';
-          const fallowSoft = isFallow ? 0.75 : 1;
+          const r = Math.min(p.w, p.h) / 2 - 3;
           return (
-            <g key={i} transform={`translate(${cx} ${cy}) scale(1 ${s}) translate(${-cx} ${-cy})`} opacity={appear}>
-              {p.pivot && !isFallow ? (
+            <g key={i} ref={(el) => void (pRefs.current[i].g = el)} opacity={0}>
+              {p.pivot && (
                 <>
-                  <rect x={p.x} y={p.y} width={p.w} height={p.h} rx={5} fill={colors['field-soil']} />
-                  <circle cx={cx} cy={cy} r={Math.min(p.w, p.h) / 2 - 3} fill={fill} />
-                  <circle cx={cx} cy={cy} r={Math.min(p.w, p.h) / 2 - 3} fill="url(#hero-rows)" />
-                </>
-              ) : (
-                <>
-                  <rect x={p.x} y={p.y} width={p.w} height={p.h} rx={5} fill={fill} opacity={fallowSoft} />
-                  <rect x={p.x} y={p.y} width={p.w} height={p.h} rx={5} fill={isFallow ? 'url(#hero-hatch)' : 'url(#hero-rows)'} />
+                  <rect ref={(el) => void (pRefs.current[i].soil = el)} x={p.x} y={p.y} width={p.w} height={p.h} rx={5} fill={colors['field-soil']} />
+                  <circle ref={(el) => void (pRefs.current[i].circle = el)} cx={p.x + p.w / 2} cy={p.y + p.h / 2} r={r} fill={rotationColors.alfalfa} />
                 </>
               )}
-              {flagged && fromId !== 'fallow' && (
-                <rect
-                  x={p.x + 1.5}
-                  y={p.y + 1.5}
-                  width={p.w - 3}
-                  height={p.h - 3}
-                  rx={4}
-                  fill="none"
-                  stroke={colors['danger-bright']}
-                  strokeWidth={2.5}
-                  opacity={0.35 + 0.65 * flagPulse}
-                />
-              )}
+              <rect ref={(el) => void (pRefs.current[i].body = el)} x={p.x} y={p.y} width={p.w} height={p.h} rx={5} fill={rotationColors.alfalfa} />
+              <rect ref={(el) => void (pRefs.current[i].overlay = el)} x={p.x} y={p.y} width={p.w} height={p.h} rx={5} fill="url(#hero-rows)" />
+              <rect
+                ref={(el) => void (pRefs.current[i].flag = el)}
+                x={p.x + 1.5}
+                y={p.y + 1.5}
+                width={p.w - 3}
+                height={p.h - 3}
+                rx={4}
+                fill="none"
+                stroke={colors['danger-bright']}
+                strokeWidth={2.5}
+                display="none"
+              />
             </g>
           );
         })}
 
         {/* Water gauge */}
         <g>
+          <text ref={gaugeCaption} x={G.x + G.w / 2} y={G.y - 10} textAnchor="middle" className="fill-white/75 text-[12px] font-semibold" />
           <rect x={G.x} y={G.y} width={G.w} height={G.h} rx={12} fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.18)" />
           <g clipPath="url(#hero-gauge)">
-            <rect x={G.x} y={yFor(Math.max(0, level))} width={G.w} height={G.h} fill="url(#hero-water)" />
-            {/* Over-budget slice */}
-            {over && level > budget && (
-              <rect x={G.x} y={yFor(level)} width={G.w} height={yFor(budget) - yFor(level)} fill={colors['danger-bright']} opacity={0.85} />
-            )}
+            <rect ref={water} x={G.x} y={yFor(0)} width={G.w} height={G.h} fill="url(#hero-water)" />
+            <rect ref={overSlice} x={G.x} y={yFor(0)} width={G.w} height={0} fill={colors['danger-bright']} opacity={0.85} display="none" />
           </g>
-          <text x={G.x + G.w / 2} y={G.y - 10} textAnchor="middle" className="fill-white/75 text-[12px] font-semibold">
-            {time < T.drain + 200 ? t('start.hero.needsShort') : t('start.hero.budgetShort')}
-          </text>
           {[0, 2, 4, 6].map((v) => (
             <g key={v}>
               <line x1={G.x - 6} x2={G.x} y1={yFor(v)} y2={yFor(v)} stroke="rgba(255,255,255,0.35)" />
-              <text x={G.x - 10} y={yFor(v) + 4} textAnchor="end" className="fill-white/60 text-[11px] tnum">
+              <text x={G.x - 10} y={yFor(v) + 4} textAnchor="end" className="tnum fill-white/60 text-[11px]">
                 {v}
               </text>
             </g>
           ))}
-          {/* Budget marker */}
-          <g opacity={ease(span(time, T.drain, T.drain + 300))}>
+          <g ref={budgetMark} opacity={0}>
             <line x1={G.x - 4} x2={G.x + G.w + 4} y1={yFor(budget)} y2={yFor(budget)} stroke="#fff" strokeWidth={2.5} />
           </g>
-          <text x={G.x + G.w / 2} y={G.y + G.h + 22} textAnchor="middle" className="fill-white text-[17px] font-semibold tnum">
-            {af(Math.max(0, level), lang)}
-          </text>
+          <text ref={levelText} x={G.x + G.w / 2} y={G.y + G.h + 22} textAnchor="middle" className="tnum fill-white text-[17px] font-semibold" />
           <text x={G.x + G.w / 2} y={G.y + G.h + 40} textAnchor="middle" className="fill-white/65 text-[11px]">
             AF/acre
           </text>
@@ -247,9 +320,10 @@ export function FieldsReplan({
 
       {/* Note about the cut (HTML so it wraps) */}
       <div
+        ref={note}
         aria-hidden="true"
         className="pointer-events-none absolute left-[6%] right-[22%] top-[66%] flex items-start gap-2.5 rounded-ctl bg-primary-ink/95 px-3.5 py-2.5 text-sm font-medium leading-snug text-white shadow-lift ring-1 ring-inset ring-white/15"
-        style={{ opacity: noteO, transform: `translateY(${(1 - noteO) * 8}px)` }}
+        style={{ opacity: 0 }}
       >
         <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-danger-bright" />
         {t('start.hero.cut')}
@@ -257,21 +331,21 @@ export function FieldsReplan({
 
       {/* Legend: color is never the only cue */}
       <div className="mt-2 flex min-h-[44px] items-center justify-between gap-3">
-      <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-white/80" aria-hidden="true">
-        {ROTATION_IDS.filter((id) => ((time > T.replan + 500 && suggestedMix ? suggestedMix : currentMix)[id] ?? 0) > 0).map((id) => (
-          <li key={id} className="flex items-center gap-1.5">
-            <span className={`h-3 w-3 rounded-[3px] ${id === 'fallow' ? 'hatch' : ''}`} style={{ backgroundColor: rotationColors[id] }} />
-            {t(`rotations.${id}`)}
-          </li>
-        ))}
-      </ul>
+        <div className="text-sm text-white/80" aria-hidden="true">
+          <ul ref={legendBefore} className="flex flex-wrap gap-x-4 gap-y-1.5">
+            {legend(currentMix)}
+          </ul>
+          <ul ref={legendAfter} className="hidden flex-wrap gap-x-4 gap-y-1.5">
+            {suggestedMix && legend(suggestedMix)}
+          </ul>
+        </div>
         {!reduced && (
           <button
             type="button"
             onClick={play}
-            className="-mr-2 inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-ctl px-2 text-sm font-medium text-white/70 transition-colors duration-fast hover:bg-white/10 hover:text-white"
-            style={{ opacity: now >= T.end ? 1 : 0, pointerEvents: now >= T.end ? 'auto' : 'none' }}
-            tabIndex={now >= T.end ? 0 : -1}
+            className="-mr-2 inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-ctl px-2 text-sm font-medium text-white/70 transition-[opacity,background-color,color] duration-base hover:bg-white/10 hover:text-white"
+            style={{ opacity: done ? 1 : 0, pointerEvents: done ? 'auto' : 'none' }}
+            tabIndex={done ? 0 : -1}
           >
             <RotateCcw aria-hidden="true" className="h-4 w-4" />
             {t('start.hero.replay')}
@@ -281,27 +355,26 @@ export function FieldsReplan({
 
       {/* Results row: HTML for crisp type */}
       <div className="mt-2 grid grid-cols-2 gap-2 text-white sm:grid-cols-[1fr_1fr_1.1fr] sm:gap-3" aria-hidden="true">
-        <HeroStat label={t('start.hero.avg')} value={avg !== null ? money(avg * numP, lang) : ' '} o={numP} perAcre={t('start.hero.perAcre')} />
-        <HeroStat label={t('start.hero.worst')} value={worst !== null ? money(worst * numP, lang) : ' '} o={numP} perAcre={t('start.hero.perAcre')} />
-        <div className="col-span-2 rounded-ctl bg-white/[0.06] px-3 py-2.5 ring-1 ring-inset ring-white/10 sm:col-span-1" style={{ opacity: fitsO, transform: `translateY(${(1 - fitsO) * 6}px)` }}>
+        <div ref={statAvg} className="rounded-ctl bg-white/[0.06] px-3 py-2.5 ring-1 ring-inset ring-white/10" style={{ opacity: 0.25 }}>
+          <p className="text-sm text-white/70">{t('start.hero.avg')}</p>
+          <p className="tnum mt-0.5 text-xl font-semibold text-white">
+            <span ref={avgText} />
+            <span className="text-sm font-medium text-white/60">{t('start.hero.perAcre')}</span>
+          </p>
+        </div>
+        <div ref={statWorst} className="rounded-ctl bg-white/[0.06] px-3 py-2.5 ring-1 ring-inset ring-white/10" style={{ opacity: 0.25 }}>
+          <p className="text-sm text-white/70">{t('start.hero.worst')}</p>
+          <p className="tnum mt-0.5 text-xl font-semibold text-white">
+            <span ref={worstText} />
+            <span className="text-sm font-medium text-white/60">{t('start.hero.perAcre')}</span>
+          </p>
+        </div>
+        <div ref={statFits} className="col-span-2 rounded-ctl bg-white/[0.06] px-3 py-2.5 ring-1 ring-inset ring-white/10 sm:col-span-1" style={{ opacity: 0 }}>
           <p className="text-sm text-white/70">{t('start.hero.budget')}</p>
           <p className="tnum mt-0.5 text-xl font-semibold text-accent">{af(budget, lang)} AF</p>
           <p className="text-sm font-medium text-white/80">{t('start.hero.fits')}</p>
         </div>
       </div>
-
-    </div>
-  );
-}
-
-function HeroStat({ label, value, o, perAcre }: { label: string; value: string; o: number; perAcre: string }) {
-  return (
-    <div className="rounded-ctl bg-white/[0.06] px-3 py-2.5 ring-1 ring-inset ring-white/10" style={{ opacity: Math.max(0.25, o), transform: `translateY(${(1 - o) * 6}px)` }}>
-      <p className="text-sm text-white/70">{label}</p>
-      <p className="tnum mt-0.5 text-xl font-semibold text-white">
-        {value}
-        <span className="text-sm font-medium text-white/60">{perAcre}</span>
-      </p>
     </div>
   );
 }

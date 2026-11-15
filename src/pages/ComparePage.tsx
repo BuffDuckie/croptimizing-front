@@ -24,7 +24,7 @@ export default function ComparePage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data } = usePlanContext();
-  if (!data) return <div className="container-content min-h-[60vh]" />;
+  if (!data) return <div className="container-content min-h-[110vh]" />;
 
   const cards = order(data);
   const best = [...data.rotations].filter((r) => r.stats.avgWaterAf > 0).sort((a, b) => b.stats.profitPerAf - a.stats.profitPerAf)[0];
@@ -47,7 +47,7 @@ export default function ComparePage() {
         <Disclosure>
           <div className="space-y-4 text-base">
             <p>{t('compare.math')}</p>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0}>
               <DataTable
                 caption={t('compare.tableCaption')}
                 head={[t('plan.colRotation'), t('compare.stat.avg'), t('compare.stat.perAf'), t('compare.stat.worst'), t('compare.stat.water'), t('compare.stat.soil')]}

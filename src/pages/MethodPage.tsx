@@ -1,38 +1,28 @@
-import 'katex/dist/katex.min.css';
 import { Download } from 'lucide-react';
-import { BlockMath } from 'react-katex';
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataTable } from '../components/charts/ChartCard';
 import { CorrelationHeatmap } from '../components/charts/CorrelationHeatmap';
 import { PageIntro } from '../components/layout/PageIntro';
 import { af, money } from '../lib/format';
 import { usePlanContext } from '../state/PlanContext';
-import { F } from './formulas';
 
 const SECTIONS = ['idea', 'formulas', 'steps', 'sources', 'correlations', 'backtest', 'scenarios', 'assumptions'] as const;
 
-function Formula({ tex, label }: { tex: string; label: string }) {
-  return (
-    <figure className="m-0 min-w-0 rounded-ctl bg-bg px-4 py-3 ring-1 ring-inset ring-border-soft">
-      <div className="overflow-x-auto text-text">
-        <BlockMath math={tex} />
-      </div>
-      <figcaption className="text-sm text-text-muted">{label}</figcaption>
-    </figure>
-  );
-}
+// Formulas (KaTeX) load after the page text so the page paints fast.
+const MathFormulas = lazy(() => import('../components/lazy/MathFormulas'));
 
 export default function MethodPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, controls } = usePlanContext();
-  if (!data) return <div className="container-content min-h-[60vh]" />;
 
   const steps = t('method.stepsList', { returnObjects: true }) as string[];
   const limits = t('method.limits', { returnObjects: true }) as string[];
   const sources = t('method.sourceRows', { returnObjects: true }) as string[][];
 
   const downloadCsv = () => {
+    if (!data) return;
     const head = ['year', 'suggested_profit_usd_per_acre', 'current_profit_usd_per_acre', 'current_profit_if_short_acres_fallowed', 'suggested_water_af_per_acre', 'current_water_af_per_acre', 'water_budget_af_per_acre', 'data_source'];
     const rows = data.stressTests.map((s) => {
       const rec = data.recommended.metrics.yearlyProfit.find((y) => y.year === s.year)?.profit ?? '';
@@ -73,15 +63,9 @@ export default function MethodPage() {
           <section id="formulas" className="scroll-mt-36">
             <h2 className="text-3xl font-semibold">{t('method.sec.formulas')}</h2>
             <p className="mt-3 max-w-3xl text-base text-text-muted">{t('method.formulasIntro')}</p>
-            <div className="mt-5 grid gap-3">
-              <Formula tex={F.objective} label={t('method.f.objective')} />
-              <Formula tex={F.profit} label={t('method.f.profit')} />
-              <Formula tex={F.water} label={t('method.f.water')} />
-              <Formula tex={F.soil} label={t('method.f.soil')} />
-              <Formula tex={F.cvar} label={t('method.f.cvar')} />
-              <Formula tex={F.shadow} label={t('method.f.shadow')} />
-              <Formula tex={F.et} label={t('method.f.et')} />
-            </div>
+            <Suspense fallback={<div className="skeleton mt-5 h-[760px] rounded-ctl" aria-busy="true" />}>
+              <MathFormulas />
+            </Suspense>
           </section>
 
           <section id="steps" className="scroll-mt-36">
@@ -98,11 +82,13 @@ export default function MethodPage() {
 
           <section id="sources" className="scroll-mt-36">
             <h2 className="text-3xl font-semibold">{t('method.sec.sources')}</h2>
-            <div className="card mt-5 overflow-x-auto">
+            <div className="card mt-5 overflow-x-auto" tabIndex={0}>
               <DataTable caption={t('method.sourcesCaption')} head={t('method.sourceHead', { returnObjects: true }) as string[]} rows={sources} className="min-w-[640px] [&_td]:text-left [&_th]:text-left" />
             </div>
           </section>
 
+          {data ? (
+            <>
           <section id="correlations" className="scroll-mt-36">
             <h2 className="mb-5 text-3xl font-semibold">{t('method.sec.correlations')}</h2>
             <CorrelationHeatmap correlations={data.correlations} />
@@ -111,7 +97,7 @@ export default function MethodPage() {
           <section id="backtest" className="scroll-mt-36">
             <h2 className="text-3xl font-semibold">{t('method.sec.backtest')}</h2>
             <p className="mt-3 max-w-3xl text-base text-text">{t('method.backtestIntro')}</p>
-            <div className="card mt-5 overflow-x-auto">
+            <div className="card mt-5 overflow-x-auto" tabIndex={0}>
               <DataTable
                 caption={t('method.backtestCaption')}
                 head={[t('method.strategy'), t('compare.stat.avg'), t('compare.stat.worst'), t('method.avgWater')]}
@@ -128,7 +114,7 @@ export default function MethodPage() {
               <Download aria-hidden="true" className="h-5 w-5" />
               {t('method.download')}
             </button>
-            <div className="card mt-5 max-h-[480px] overflow-auto">
+            <div className="card mt-5 max-h-[480px] overflow-auto" tabIndex={0} role="region" aria-label={t('method.scenarioCaption')}>
               <DataTable
                 caption={t('method.scenarioCaption')}
                 head={[t('why.year'), `${t('common.recommended')} $/acre`, `${t('common.current')} $/acre`, `${t('common.recommended')} AF`, `${t('common.current')} AF`]}
@@ -165,6 +151,10 @@ export default function MethodPage() {
               </div>
             </div>
           </section>
+            </>
+          ) : (
+            <div className="skeleton h-[1600px] rounded-card" aria-busy="true" />
+          )}
         </div>
       </div>
     </div>

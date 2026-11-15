@@ -11,7 +11,7 @@ export default function ReportPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { data, farm, controls, infeasible } = usePlanContext();
-  if (!data) return <div className="container-content min-h-[60vh]" />;
+  if (!data) return <div className="container-content min-h-[110vh]" />;
 
   const rec = data.recommended.metrics;
   const cur = data.current.metrics;

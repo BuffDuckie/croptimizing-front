@@ -180,7 +180,7 @@ function Results() {
                 {t('plan.mathSteps', { water: af(budget, lang), soil: controls.soil, risk: controls.risk })}
               </p>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0}>
               <DataTable
                 caption={t('plan.mathTable')}
                 head={[t('plan.colRotation'), t('plan.colShare'), t('plan.colAcres'), t('plan.colCurrent')]}

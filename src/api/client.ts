@@ -1,6 +1,5 @@
-import { InfeasibleError, isInfeasible } from './errors';
+import { InfeasibleError, isInfeasible, type InfeasibleDetail } from './errors';
 import { nearest, STATIC_GRID, staticPath } from './grid';
-import { infeasibleSchema, planRequestSchema, planResponseSchema } from './schemas';
 import type { PlanRequest, PlanResponse } from './types';
 
 export type DataMode = 'sample' | 'static' | 'live';
@@ -13,14 +12,47 @@ function mode(): DataMode {
 /** Fired on window when a static or live request fails and the client falls back to sample data. */
 export const FALLBACK_EVENT = 'croptimizing:fallback';
 
+type WorkerReply = { id: number; ok: true; res: PlanResponse } | { id: number; ok: false; infeasible: InfeasibleDetail | null; message: string };
+
+let worker: Worker | null = null;
+let nextId = 0;
+const pending = new Map<number, { resolve: (r: PlanResponse) => void; reject: (e: unknown) => void }>();
+
+function getWorker(): Worker | null {
+  if (worker || typeof Worker === 'undefined') return worker;
+  try {
+    worker = new Worker(new URL('./sampleWorker.ts', import.meta.url), { type: 'module' });
+    worker.onmessage = (e: MessageEvent<WorkerReply>) => {
+      const p = pending.get(e.data.id);
+      if (!p) return;
+      pending.delete(e.data.id);
+      if (e.data.ok) p.resolve(e.data.res);
+      else p.reject(e.data.infeasible ? new InfeasibleError(e.data.infeasible) : new Error(e.data.message));
+    };
+  } catch {
+    worker = null;
+  }
+  return worker;
+}
+
+/** Sample model: in a Web Worker when available (browsers), inline otherwise (tests, scripts). */
 async function runSample(req: PlanRequest): Promise<PlanResponse> {
-  const { runPlan } = await import('../model/engine');
-  return runPlan(req);
+  const w = getWorker();
+  if (w) {
+    const id = ++nextId;
+    return new Promise<PlanResponse>((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      w.postMessage({ id, req });
+    });
+  }
+  const [{ runPlan }, { planRequestSchema, planResponseSchema }] = await Promise.all([import('../model/engine'), import('./schemas')]);
+  return planResponseSchema.parse(runPlan(planRequestSchema.parse(req) as PlanRequest)) as PlanResponse;
 }
 
 async function fetchJson(url: string, init?: RequestInit): Promise<unknown> {
   const res = await fetch(url, init);
   if (res.status === 422) {
+    const { infeasibleSchema } = await import('./schemas');
     const body = infeasibleSchema.safeParse(await res.json());
     if (body.success) throw new InfeasibleError(body.data);
   }
@@ -41,7 +73,18 @@ async function fetchStatic(req: PlanRequest): Promise<unknown> {
       // No Spanish file for this point; the English one has the same numbers.
     }
   }
-  return fetchJson(base + path);
+  try {
+    return await fetchJson(base + path);
+  } catch (e) {
+    // The export script writes an .infeasible.json note where no plan fits.
+    const note = await fetch(base + path.replace(/\.json$/, '.infeasible.json')).catch(() => null);
+    if (note?.ok) {
+      const { infeasibleSchema } = await import('./schemas');
+      const body = infeasibleSchema.safeParse(await note.json());
+      if (body.success) throw new InfeasibleError(body.data);
+    }
+    throw e;
+  }
 }
 
 async function fetchLive(req: PlanRequest): Promise<unknown> {
@@ -59,9 +102,11 @@ async function fetchLive(req: PlanRequest): Promise<unknown> {
  * FALLBACK_EVENT so the UI can show a friendly banner.
  */
 export async function getPlan(req: PlanRequest): Promise<PlanResponse> {
-  const valid = planRequestSchema.parse(req) as PlanRequest;
   const m = mode();
-  if (m === 'sample') return runSample(valid);
+  // Sample mode validates request and response inside the worker, so zod stays off the main thread.
+  if (m === 'sample') return runSample(req);
+  const { planRequestSchema, planResponseSchema } = await import('./schemas');
+  const valid = planRequestSchema.parse(req) as PlanRequest;
   try {
     const raw = m === 'static' ? await fetchStatic(valid) : await fetchLive(valid);
     return planResponseSchema.parse(raw) as PlanResponse;
