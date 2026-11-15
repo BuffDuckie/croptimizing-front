@@ -9,6 +9,7 @@ import { PageIntro } from '../components/layout/PageIntro';
 import { SamplePill } from '../components/layout/SampleBadge';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
+import { SoilScoreInfo } from '../components/ui/SoilScoreInfo';
 import { af, money, pct, whole } from '../lib/format';
 import { FROST_DAYS_MIN, HEAT_DAYS_MIN, riskMonths } from '../lib/risk';
 import { isSample } from '../lib/sources';
@@ -171,7 +172,7 @@ function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: Rot
       <section aria-label={t('compare.soilTitle')}>
         <h3 className="mb-2 flex items-center gap-1 text-sm font-semibold text-text-muted">
           {t('compare.soilTitle')}
-          <InfoTip term="soilScore" />
+          <SoilScoreInfo parts={card.soil} score={card.soil.total} />
         </h3>
         <SoilBreakdown soil={card.soil} selected={controls.soilParts} />
       </section>

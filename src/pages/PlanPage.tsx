@@ -21,6 +21,8 @@ import { DeltaChip } from '../components/ui/DeltaChip';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { Segmented } from '../components/ui/Segmented';
+import { SoilScoreInfo } from '../components/ui/SoilScoreInfo';
+import { mixSoilParts } from '../lib/soil';
 import { useUrlParam } from '../hooks/useUrlParam';
 import { acresSplit, af, afDelta, money, moneyDelta, pct, whole, wholeDelta } from '../lib/format';
 import { currentTrim, useCurrentLabel, usePlanContext, useYears } from '../state/PlanContext';
@@ -164,7 +166,7 @@ function Results() {
         <MetricCard
           label={t('plan.soilCard')}
           tone="soil"
-          term="soilScore"
+          info={<SoilScoreInfo parts={mixSoilParts(plan.mix, data.rotations)} score={rec.soilScore} />}
           value={whole(rec.soilScore, lang)}
           unit="/100"
           delta={

@@ -9,6 +9,8 @@ import { WaterSlider } from '../components/plan/Controls';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { Segmented } from '../components/ui/Segmented';
+import { SoilScoreInfo } from '../components/ui/SoilScoreInfo';
+import { mixSoilParts } from '../lib/soil';
 import { useUrlParam } from '../hooks/useUrlParam';
 import { af, mixEntries, money, pct, whole } from '../lib/format';
 import { usePlanContext, useCurrentLabel, usePlanSample } from '../state/PlanContext';
@@ -232,7 +234,7 @@ function SoilView() {
         subtitle={
           <span className="flex items-center gap-1">
             {t('trade.soil.subtitle', { water: af(controls.water, lang), soil: controls.soil })}
-            <InfoTip term="soilScore" />
+            <SoilScoreInfo parts={mixSoilParts(data.recommended.mix, data.rotations)} score={rec.soilScore} />
           </span>
         }
         howTo={

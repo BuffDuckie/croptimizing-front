@@ -10,6 +10,7 @@ export function MetricCard({
   sub,
   tone = 'money',
   term,
+  info,
   children,
 }: {
   label: string;
@@ -19,6 +20,8 @@ export function MetricCard({
   sub?: ReactNode;
   tone?: 'money' | 'water' | 'soil';
   term?: GlossaryKey;
+  /** Replaces the glossary tip with a custom info button. */
+  info?: ReactNode;
   children?: ReactNode;
 }) {
   const color = tone === 'water' ? 'text-accent-strong' : tone === 'soil' ? 'text-secondary' : 'text-primary';
@@ -28,7 +31,7 @@ export function MetricCard({
       <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${bar}`} />
       <div className="flex items-center gap-1">
         <h3 className="text-base font-semibold text-text">{label}</h3>
-        {term && <InfoTip term={term} />}
+        {info ?? (term && <InfoTip term={term} />)}
       </div>
       <p className={`mt-2 flex items-baseline gap-1.5 ${color}`}>
         <span className="metric-value tnum text-metric font-semibold">{value}</span>

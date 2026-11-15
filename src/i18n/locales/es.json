@@ -902,5 +902,13 @@
     "diversity": "Maximizar la biodiversidad, que además rompe los ciclos de plagas",
     "source": "USDA NRCS, Principios para suelos de alto funcionamiento (hoja informativa, en inglés)",
     "sourceUrl": "https://www.nrcs.usda.gov/sites/default/files/2023-07/NRCS-Principles-for-High-Functioning-Soils-Factsheet.pdf"
+  },
+  "soilInfo": {
+    "label": "Qué forma un puntaje de suelo de {{v}}",
+    "title": "Puntaje de suelo: {{v}} de 100",
+    "points": "{{v}} de 20",
+    "sum": "El puntaje es la suma de las cinco partes.",
+    "rescaled": "El puntaje cuenta solo sus metas de suelo, ajustado a 0 a 100.",
+    "source": "Principios de salud del suelo del USDA NRCS"
   }
 }

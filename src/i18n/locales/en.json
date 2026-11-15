@@ -899,5 +899,13 @@
     "diversity": "Maximize biodiversity, which also breaks pest cycles",
     "source": "USDA NRCS, Principles for High Functioning Soils (fact sheet)",
     "sourceUrl": "https://www.nrcs.usda.gov/sites/default/files/2023-07/NRCS-Principles-for-High-Functioning-Soils-Factsheet.pdf"
+  },
+  "soilInfo": {
+    "label": "What makes up a soil score of {{v}}",
+    "title": "Soil score: {{v}} out of 100",
+    "points": "{{v}} of 20",
+    "sum": "The score is the sum of the five parts.",
+    "rescaled": "The score counts only your soil goals, rescaled to 0 to 100.",
+    "source": "USDA NRCS soil-health principles"
   }
 }
