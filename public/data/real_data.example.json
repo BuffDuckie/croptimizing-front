@@ -1265,7 +1265,7 @@
     "otherRegions": [
       {
         "id": "region_a",
-        "label": "Sample Region A",
+        "label": "Sample region A",
         "series": [
           {
             "date": "2005-01",
@@ -1592,7 +1592,7 @@
       },
       {
         "id": "region_b",
-        "label": "Sample Region B",
+        "label": "Sample region B",
         "series": [
           {
             "date": "2005-01",
@@ -1919,7 +1919,7 @@
       },
       {
         "id": "region_c",
-        "label": "Sample Region C",
+        "label": "Sample region C",
         "series": [
           {
             "date": "2005-01",

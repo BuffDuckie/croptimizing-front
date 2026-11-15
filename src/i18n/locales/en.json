@@ -567,7 +567,8 @@
       "dropped": "Down about {{v}} cm since {{from}}",
       "flat": "No clear decline since {{from}}",
       "noData": "Not enough data yet",
-      "aria": "Line chart of groundwater storage in {{name}} from {{from}} to {{to}}, dropping about {{v}} centimeters."
+      "aria": "Line chart of groundwater storage in {{name}} from {{from}} to {{to}}, dropping about {{v}} centimeters.",
+      "sampleLabel": "Sample region {{x}}"
     },
     "risk": {
       "title": "{{m}} brings the most extreme heat, about {{v}} days at 110°F or above",

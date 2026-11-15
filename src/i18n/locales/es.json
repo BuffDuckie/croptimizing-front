@@ -568,7 +568,8 @@
       "dropped": "Bajó unos {{v}} cm desde {{from}}",
       "flat": "Sin una baja clara desde {{from}}",
       "noData": "Aún no hay datos suficientes",
-      "aria": "Gráfica de línea del agua subterránea en {{name}} de {{from}} a {{to}}, que baja unos {{v}} centímetros."
+      "aria": "Gráfica de línea del agua subterránea en {{name}} de {{from}} a {{to}}, que baja unos {{v}} centímetros.",
+      "sampleLabel": "Región de muestra {{x}}"
     },
     "risk": {
       "title": "{{m}} trae el calor más extremo, unos {{v}} días a 110°F o más",

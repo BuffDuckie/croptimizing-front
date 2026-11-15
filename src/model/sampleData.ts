@@ -134,12 +134,12 @@ export function getSampleContext() {
     { crop: 'sorghum', modeledMm: 565, satelliteMm: 611 },
     { crop: 'barley', modeledMm: 515, satelliteMm: 478 },
   ];
-  // Three other farm regions, sample only. Labels are placeholders for the team to confirm.
+  // Three other farm regions, sample only. The real labels come from real_data.json (context.otherRegions).
   const other = mulberry32(SEED + 2);
   const otherRegions = [
-    { id: 'region_a', label: 'Sample Region A', slope: -0.6 },
-    { id: 'region_b', label: 'Sample Region B', slope: -0.45 },
-    { id: 'region_c', label: 'Sample Region C', slope: -0.7 },
+    { id: 'region_a', label: 'Sample region A', slope: -0.6 },
+    { id: 'region_b', label: 'Sample region B', slope: -0.45 },
+    { id: 'region_c', label: 'Sample region C', slope: -0.7 },
   ].map((r) => {
     const series: { date: string; value: number }[] = [];
     // Quarterly points keep the static example files small; the real series can be monthly.

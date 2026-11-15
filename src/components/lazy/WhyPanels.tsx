@@ -197,7 +197,9 @@ function OtherRegions({ regions }: { regions: Region[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const nf = (n: number, d = 0) => new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { maximumFractionDigits: d, minimumFractionDigits: d }).format(n);
-  const rows = regions.map((r) => ({ r, drop: graceDropCm(r.series) }));
+  // Labels come from the data file. The sample's placeholder regions get a translated label.
+  const labelOf = (r: Region) => (r.source === 'sample' && /^region_[a-z]$/.test(r.id) ? t('why.other.sampleLabel', { x: r.id.slice(-1).toUpperCase() }) : r.label);
+  const rows = regions.map((r) => ({ r: { ...r, label: labelOf(r) }, drop: graceDropCm(r.series) }));
   const declining = rows.filter((x) => x.drop !== null && x.drop.cm >= DECLINE_CM).length;
   const total = regions.length;
   const title =
