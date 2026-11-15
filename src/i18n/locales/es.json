@@ -913,7 +913,8 @@
     "realTitle": "Qué es real y qué es supuesto",
     "realIntro": "Cada conjunto de datos tiene su propia etiqueta. Esta lista se actualiza sola cuando los datos reales reemplacen a los de muestra.",
     "teamTitle": "Equipo",
-    "siTitle": "Declaración de uso de SI"
+    "siTitle": "Declaración de uso de SI",
+    "siText": "Nuestro equipo usó SI para ayudar a diseñar, depurar y modificar la aplicación. La SI nos ayudó a crear prototipos rápidamente e iterar sobre nuestras ideas."
   },
   "_reviewFieldShift": "Textos nuevos de Field Shift (datos reales, suelo, metas): necesitan revisión.",
   "soilPrinciple": {

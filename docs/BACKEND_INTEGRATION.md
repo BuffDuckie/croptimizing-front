@@ -58,11 +58,27 @@ fills every one, so `public/results/` has exact examples.
 | --- | --- |
 | `currentAsFarmed` | `{ mix, metrics }` for the current plan before the cut. Shown only on Show the math. |
 | `sources` | Per-dataset flag, `"sample"` or `"real"`, for `weather`, `grace`, `etCheck`, `cropBudgets`, `prices`, `soil`, `otherRegions`. A missing dataset counts as sample. Drives every Sample tag and the Status column. |
-| `validation.lpCrossCheck` | `{ method, maxShareDifference (0 to 1), note }` from an exact solver run on the same data. Shown under the backtest. |
+| `validation.lpCrossCheck` | `{ method, maxShareDifference (0 to 1), note }` from an exact solver run on the same data. Shown in "How we checked our work" (Pass when within one 5% grid step). |
 | `sensitivity[]` | `{ case, value, avgProfit, worst1in5, mix, mixChanged }` for `profitDown`/`profitUp` (profit of every rotation but fallow x0.8/x1.2), `waterCostDown`/`waterCostUp` (only when a water cost is set), `efficiencyLow`/`efficiencyHigh` (0.65/0.85). Null numbers and mix when nothing fits. |
 | `classic` | `{ points[], atSuggested, largestGap }`: the mean-variance efficient set among feasible mixes (no mix has both higher average and lower standard deviation) and the worst-years gap vs. our best plan at the same or higher average. |
 | `riskMetrics` | `{ recommended, current, fallowAvg }`, each `{ sd, sharpe, sortino, diversification }`. Benchmark is the fallow average; Sortino uses downside deviation below it. Nulls when undefined. |
 | `context.otherRegions[]` | `{ id, label, series: { date, value }[], source }`: GRACE storage (cm) for other farm regions. |
+
+### Optional fields (Field Shift additions)
+
+| Field | What it is |
+| --- | --- |
+| `PlanRequest.soilParts` | Soil goals to count, any of `legume`, `livingRoots`, `residue`, `lowTillage`, `diversity`. Omitted = all five. The soil score (minimum, metrics, card `soil.total`, soil frontier, goals) becomes the selected parts rescaled to 0 to 100: `sum(selected) * 100 / (20 * count)`. Static mode runs the browser engine when it is set. |
+| `goals` | `{ income, water, soil }`, each `{ mix, metrics }`: the feasible mix (same grid, water cap, soil minimum, share limits) with the highest average profit, the lowest highest-year water, and the highest soil score. |
+| `soilFrontier[]` | `{ soilScore, avgProfit, mix }`: feasible mixes no other feasible mix beats on both soil score and average profit, sorted by soil. |
+| `waterPresets` | `{ full?, cut2022?, zero2023? }`, each `{ afPerAcre, label, source }` (same as in real_data.json). Without it the UI shows TODO placeholders with a Sample badge. |
+| `validation.checks[]` | `{ id, label, result: "pass" \| "partial" \| "fail", detail, source? }`. List the checks you fail too. |
+| `context.monthlyRisk[]` | 12 entries `{ month, heatDays, frostDays }`: average days per calendar month with max >= 43.3 C and min <= 0 C. |
+| `Metrics.yearlyWater[]` | `{ year, water }`: applied AF/acre each year (fits-your-water counts and water saved). |
+| `RotationCard.yearlyWaterAf[]` | Applied AF/acre each year for the rotation on every acre, same order as the years. |
+| `RotationCard.families[]` | Botanical families grown (e.g. `Fabaceae`), for counting crop families. |
+| `RotationCard.pests`, `.infiltration` | One plain sentence each, in the requested language. |
+
 
 ### When no mix fits
 

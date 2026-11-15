@@ -6,7 +6,7 @@ import { PageIntro } from '../components/layout/PageIntro';
 import { useSourceRows } from '../hooks/useSourceRows';
 import { usePlanContext, useYears } from '../state/PlanContext';
 
-/** TODO(team): replace with first names only, no photos. */
+/** Team: first names only, no photos. */
 const TEAM = ['Nick', 'Isaac', 'Aarav', 'Lohit'];
 
 const TOUR = [
@@ -165,8 +165,7 @@ export default function AboutPage() {
           </div>
           <div className="card">
             <h2 className="text-2xl font-semibold">{t('about.siTitle')}</h2>
-            {/* TODO(team): SI-use statement. */}
-            <p className="mt-4 text-base text-text">Our team used SI to help design, debug, and modify the application. SI helped us rapidly prototype and iterate on our ideas.</p>
+            <p className="mt-4 text-base text-text">{t('about.siText')}</p>
           </div>
         </section>
       </div>

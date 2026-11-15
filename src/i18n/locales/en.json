@@ -911,7 +911,8 @@
     "realTitle": "What's real and what's assumed",
     "realIntro": "Each dataset carries its own flag. This list updates by itself when real data replaces the sample data.",
     "teamTitle": "Team",
-    "siTitle": "SI-use statement"
+    "siTitle": "SI-use statement",
+    "siText": "Our team used SI to help design, debug, and modify the application. SI helped us rapidly prototype and iterate on our ideas."
   },
   "soilPrinciple": {
     "legume": "Nutrient cycling: legumes add their own nitrogen",
