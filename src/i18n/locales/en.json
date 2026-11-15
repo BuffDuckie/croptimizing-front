@@ -293,5 +293,30 @@
     "band": "Worst 1-in-5 years",
     "avgMark": "Average of those 4 years",
     "axis": "Profit per acre in each of the 20 years ($/acre)"
+  },
+  "trade": {
+    "title": "Playing it safe adds {{gain}} per acre in your worst years and costs {{cost}} in an average year",
+    "titleOne": "At this water budget, one plan beats every other mix",
+    "subtitle": "Every dot on the line is a mix that fits {{water}} AF per acre and cannot be beaten on both numbers at once.",
+    "how1": "Further right is safer: more profit in your worst 1-in-5 years. Higher up is more profit in an average year.",
+    "how2": "The navy line is the efficient frontier. The cyan star is the plan we suggest for your risk setting. The hollow circle is what you grow today.",
+    "how3": "Move the water slider. The old line stays for 2 seconds as a dashed line so you can see how much the choices shrink.",
+    "keyboard": "Efficient frontier chart. Use the arrow keys to step through the plans.",
+    "aria": "Efficient frontier with {{n}} plans. Suggested plan: {{recAvg}} average, {{recWorst}} in the worst years. Current plan: {{curAvg}} average, {{curWorst}} in the worst years.",
+    "xAxis": "Safer: worst 1-in-5 years ($/acre) →",
+    "yAxis": "More profit ↑ average year ($/acre)",
+    "frontierPoint": "A plan on the frontier",
+    "tipAvg": "Average year",
+    "tipWorst": "Worst 1-in-5 years",
+    "legendFrontier": "Best plans at this water budget",
+    "legendGhost": "Before you moved the water slider",
+    "tableCaption": "Plans on the efficient frontier",
+    "colPlan": "Plan",
+    "captionTitle": "What this means for you",
+    "caption": "Your current plan sits outside the line because it needs more water than your budget. Every plan on the line fits your water. Moving along the line trades average profit for protection in bad years. Less water pulls the whole line down and to the left.",
+    "math1": "For each of the 10,626 mixes that fit your water and soil limits, we compute two numbers over 2005 to 2024: the average profit and the average of the 4 worst years.",
+    "math2": "A mix is on the frontier if no other mix beats it on both numbers. Your risk setting picks one point: it maximizes (1 minus risk) times worst-years profit plus risk times average profit.",
+    "sliderTitle": "Try less or more water",
+    "sliderHelp": "Watch the line move. This is the same water budget as on My plan."
   }
 }

@@ -294,5 +294,30 @@
     "band": "Peores años, 1 de cada 5",
     "avgMark": "Promedio de esos 4 años",
     "axis": "Ganancia por acre en cada uno de los 20 años ($/acre)"
+  },
+  "trade": {
+    "title": "Ir a lo seguro suma {{gain}} por acre en sus peores años y cuesta {{cost}} en un año promedio",
+    "titleOne": "Con este presupuesto de agua, un plan supera a todas las demás mezclas",
+    "subtitle": "Cada punto de la línea es una mezcla que cabe en {{water}} AF por acre y que no se puede mejorar en ambos números a la vez.",
+    "how1": "Más a la derecha es más seguro: más ganancia en sus peores años, 1 de cada 5. Más arriba es más ganancia en un año promedio.",
+    "how2": "La línea azul es la frontera eficiente. La estrella cian es el plan que sugerimos para su ajuste de riesgo. El círculo vacío es lo que siembra hoy.",
+    "how3": "Mueva el control de agua. La línea anterior queda 2 segundos como línea punteada para que vea cuánto se reducen las opciones.",
+    "keyboard": "Gráfica de frontera eficiente. Use las flechas para recorrer los planes.",
+    "aria": "Frontera eficiente con {{n}} planes. Plan sugerido: {{recAvg}} en promedio, {{recWorst}} en los peores años. Plan actual: {{curAvg}} en promedio, {{curWorst}} en los peores años.",
+    "xAxis": "Más seguro: peores años, 1 de cada 5 ($/acre) →",
+    "yAxis": "Más ganancia ↑ año promedio ($/acre)",
+    "frontierPoint": "Un plan en la frontera",
+    "tipAvg": "Año promedio",
+    "tipWorst": "Peores años, 1 de cada 5",
+    "legendFrontier": "Mejores planes con este presupuesto de agua",
+    "legendGhost": "Antes de mover el control de agua",
+    "tableCaption": "Planes en la frontera eficiente",
+    "colPlan": "Plan",
+    "captionTitle": "Qué significa para usted",
+    "caption": "Su plan actual queda fuera de la línea porque necesita más agua que su presupuesto. Todos los planes de la línea caben en su agua. Moverse por la línea cambia ganancia promedio por protección en los años malos. Menos agua baja toda la línea y la mueve a la izquierda.",
+    "math1": "Para cada una de las 10,626 mezclas que caben en sus límites de agua y suelo, calculamos dos números de 2005 a 2024: la ganancia promedio y el promedio de los 4 peores años.",
+    "math2": "Una mezcla está en la frontera si ninguna otra la supera en ambos números. Su ajuste de riesgo elige un punto: maximiza (1 menos riesgo) por la ganancia de los peores años más riesgo por la ganancia promedio.",
+    "sliderTitle": "Pruebe con menos o más agua",
+    "sliderHelp": "Vea cómo se mueve la línea. Es el mismo presupuesto de agua que en Mi plan."
   }
 }

@@ -164,3 +164,11 @@
 }
 /* Mix segments and meters glide to new values (tier 2). */
 .mix-seg, .meter-fill { transition: width var(--dur-slow) var(--ease-out); }
+
+/* Frontier: the previous line fades out over 2 s; the new line draws in. */
+@keyframes ghost-out { 0% { opacity: 0.55; } 70% { opacity: 0.4; } 100% { opacity: 0; } }
+.frontier-ghost { animation: ghost-out 2000ms linear forwards; }
+@media (prefers-reduced-motion: reduce) {
+  /* No motion, but keep the old line visible (static) for its 2 seconds. */
+  .frontier-ghost { animation: none !important; opacity: 0.45; }
+}
