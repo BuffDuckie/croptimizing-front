@@ -678,7 +678,8 @@
         "optimizer": "Optimizador",
         "plan": "Su plan"
       }
-    }
+    },
+    "unitsNote": "La ganancia no incluye el costo de comprar agua (agréguelo en Más opciones). El agua es agua de riego aplicada con 75% de eficiencia."
   },
   "_reviewJudging": "Textos nuevos de las mejoras para el jurado: necesitan revisión.",
   "about": {
@@ -701,5 +702,6 @@
     "realIntro": "Cada conjunto de datos tiene su propia etiqueta. Esta lista se actualiza sola cuando los datos reales reemplacen a los de muestra.",
     "teamTitle": "Equipo",
     "siTitle": "Declaración de uso de SI"
-  }
+  },
+  "_reviewFieldShift": "Textos nuevos de Field Shift (datos reales, suelo, metas): necesitan revisión."
 }

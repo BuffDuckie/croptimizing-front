@@ -90,6 +90,7 @@ export default function MethodPage() {
             <div className="card mt-5 overflow-x-auto" tabIndex={0}>
               <DataTable caption={t('method.sourcesCaption')} head={t('method.sourceHead', { returnObjects: true }) as string[]} rows={sources} className="min-w-[640px] [&_td]:text-left [&_th]:text-left" />
             </div>
+            <p className="mt-3 max-w-3xl text-base text-text-muted">{t('method.unitsNote')}</p>
           </section>
 
           <section id="flow" className="scroll-mt-36">

@@ -5,18 +5,30 @@
 //
 // Usage: npm run export-sample            (English and Spanish)
 //        npm run export-sample -- --en    (English only)
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isInfeasible } from '../src/api/errors';
 import { STATIC_GRID, staticPath } from '../src/api/grid';
 import { planResponseSchema } from '../src/api/schemas';
 import type { PlanRequest } from '../src/api/types';
+import { setDataset } from '../src/model/dataset';
 import { runPlan } from '../src/model/engine';
+import { buildDataset } from '../src/model/realData';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const region = 'pinal';
 const langs: ('en' | 'es')[] = process.argv.includes('--en') ? ['en'] : ['en', 'es'];
+
+// Use the real data file when it is there, exactly as the site does.
+const realPath = join(root, 'data', 'real_data.json');
+if (existsSync(realPath)) {
+  const ds = buildDataset(JSON.parse(readFileSync(realPath, 'utf8')));
+  if (ds) {
+    setDataset(ds);
+    console.log('Using public/data/real_data.json');
+  }
+}
 
 rmSync(join(root, 'results', region), { recursive: true, force: true });
 
@@ -43,7 +55,7 @@ for (const lang of langs) {
         const file = join(root, rel);
         mkdirSync(dirname(file), { recursive: true });
         try {
-          // These are sample numbers, so they stay labeled "sample". A real backend export says "static".
+          // Sample numbers stay labeled "sample"; with real data the engine says "static".
           const res = runPlan(req);
           planResponseSchema.parse(res);
           const json = JSON.stringify(res);

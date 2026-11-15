@@ -149,42 +149,45 @@ export const STRESS_LABELS: Record<Lang, Record<number, string>> = {
   },
 };
 
-export const BACKTEST_LABELS: Record<Lang, { suggested: string; current: string; currentFits: string; maxProfit: string; safest: string }> = {
-  en: {
-    suggested: 'Suggested plan, picked using 2005 to 2014',
+type Range = { n: number; from: number; to: number; trainTo: number; testFrom: number };
+
+export const BACKTEST_LABELS: Record<Lang, (y: Range) => { suggested: string; current: string; currentFits: string; maxProfit: string; safest: string }> = {
+  en: (y) => ({
+    suggested: `Suggested plan, picked using ${y.from} to ${y.trainTo}`,
     current: 'Your current plan, cut back to fit your water',
     currentFits: 'Your current plan',
-    maxProfit: 'Highest average, picked using 2005 to 2014',
-    safest: 'Safest, picked using 2005 to 2014',
-  },
-  es: {
-    suggested: 'Plan sugerido, elegido con 2005 a 2014',
+    maxProfit: `Highest average, picked using ${y.from} to ${y.trainTo}`,
+    safest: `Safest, picked using ${y.from} to ${y.trainTo}`,
+  }),
+  es: (y) => ({
+    suggested: `Plan sugerido, elegido con ${y.from} a ${y.trainTo}`,
     current: 'Su plan actual, recortado para caber en su agua',
     currentFits: 'Su plan actual',
-    maxProfit: 'Mayor promedio, elegido con 2005 a 2014',
-    safest: 'El más seguro, elegido con 2005 a 2014',
-  },
+    maxProfit: `Mayor promedio, elegido con ${y.from} a ${y.trainTo}`,
+    safest: `El más seguro, elegido con ${y.from} a ${y.trainTo}`,
+  }),
 };
 
-export const ASSUMPTIONS: Record<Lang, string[]> = {
-  en: [
+/** The first line is the sample warning; the engine drops it once the plan's inputs are real. */
+export const ASSUMPTIONS: Record<Lang, (y: Range) => string[]> = {
+  en: (y) => [
     'SAMPLE DATA: every profit, water, and soil number here is a placeholder for building the tool, not an estimate for any farm.',
-    'Each of the 20 past years (2005 to 2024) is treated as one possible next year, with its own weather and prices.',
+    `Each of the ${y.n} past years (${y.from} to ${y.to}) is treated as one possible next year, with its own weather and prices.`,
     'Your water budget must hold in every one of those years, including the hottest.',
-    'Profits are per acre in 2025 dollars and already include the cost of your water unless you add an extra cost.',
+    'Profits are per acre in 2025 dollars and leave out the cost of buying water. Add a water cost under More options.',
     'Applied water assumes 75% irrigation efficiency unless you change it under More options.',
     'Alfalfa is modeled as a 4-year stand, averaged per year. Pests, diseases, and hay quality are not modeled.',
     'Shares move in 5% steps, so the suggested plan is the best of 10,626 possible mixes.',
-    'Soil-health scores are illustrative and will be reviewed by the soil science lead on our team.',
+    'Soil scores follow the four USDA NRCS soil-health principles (maximize soil cover, maximize continuous living roots, minimize disturbance, maximize biodiversity) plus nitrogen from legumes. An agronomist has not reviewed them yet; check them with a local expert.',
   ],
-  es: [
+  es: (y) => [
     'DATOS DE MUESTRA: cada número de ganancia, agua y suelo aquí es un valor de prueba para construir la herramienta, no una estimación para ninguna granja.',
-    'Cada uno de los 20 años pasados (2005 a 2024) se trata como un posible próximo año, con su propio clima y precios.',
+    `Cada uno de los ${y.n} años pasados (${y.from} a ${y.to}) se trata como un posible próximo año, con su propio clima y precios.`,
     'Su presupuesto de agua debe cumplirse en cada uno de esos años, incluido el más caluroso.',
-    'Las ganancias son por acre en dólares de 2025 e incluyen el costo del agua, salvo que agregue un costo extra.',
+    'Las ganancias son por acre en dólares de 2025 y no incluyen el costo de comprar agua. Agregue un costo de agua en Más opciones.',
     'El agua aplicada supone 75% de eficiencia de riego, salvo que la cambie en Más opciones.',
     'La alfalfa se modela como un cultivo de 4 años promediado por año. No se modelan plagas, enfermedades ni calidad del heno.',
     'Las proporciones cambian en pasos de 5%, así que el plan sugerido es el mejor de 10,626 mezclas posibles.',
-    'Los puntajes de salud del suelo son ilustrativos y los revisará el equipo de ciencia del suelo.',
+    'Los puntajes de suelo siguen los cuatro principios de salud del suelo del USDA NRCS (maximizar la cobertura del suelo, maximizar las raíces vivas continuas, minimizar la alteración, maximizar la biodiversidad) más el nitrógeno de las leguminosas. Un agrónomo todavía no los ha revisado; revíselos con un experto local.',
   ],
 };

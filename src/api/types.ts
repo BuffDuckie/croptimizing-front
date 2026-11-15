@@ -16,7 +16,11 @@ export type PlanRequest = {
   irrigationEfficiency?: number;    // 0.5-0.95
   currentMix: Mix;
   lang: "en" | "es";
+  soilParts?: SoilPartId[];         // soil goals to count (B5); omitted = all five. Score = selected parts rescaled to 0-100
 };
+
+export type SoilPartId = "legume" | "livingRoots" | "residue" | "lowTillage" | "diversity";
+export const SOIL_PART_IDS: SoilPartId[] = ["legume", "livingRoots", "residue", "lowTillage", "diversity"];
 
 export type Metrics = {
   avgProfitPerAcre: number;         // USD, 2025 dollars
@@ -25,6 +29,7 @@ export type Metrics = {
   soilScore: number;                // 0-100
   waterValuePerAf: number;          // shadow price, USD per AF per acre
   yearlyProfit: { year: number; profit: number }[];
+  yearlyWater?: { year: number; water: number }[]; // applied AF per acre in each year (optional)
 };
 
 export type RotationCard = {
@@ -34,6 +39,11 @@ export type RotationCard = {
   soil: { legume: number; livingRoots: number; residue: number; lowTillage: number; diversity: number; total: number };
   stats: { avgProfit: number; profitPerAf: number; worst1in5: number; avgWaterAf: number };
   why: string; evidence: string; benefits: string; gaps: string; checkLocally: string;
+  // Optional additions. The UI works without them.
+  yearlyWaterAf?: number[];         // applied AF per acre in each scenario year, same order as the years
+  families?: string[];              // botanical families grown, e.g. ["Fabaceae"]
+  pests?: string;                   // plain words: how this rotation affects pest cycles
+  infiltration?: string;            // plain words: how it affects water soaking in
 };
 
 export type PlanResponse = {
@@ -53,6 +63,7 @@ export type PlanResponse = {
     et0MonthlyMm: { month: number; mm: number }[];
     etCheck: { crop: string; modeledMm: number; satelliteMm: number }[];
     otherRegions?: { id: string; label: string; series: { date: string; value: number }[]; source: SourceFlag }[]; // GRACE storage, cm
+    monthlyRisk?: { month: number; heatDays: number; frostDays: number }[]; // average days per calendar month: max >= 43.3 C, min <= 0 C
   };
   assumptions: string[];
   // Optional additions (judging upgrades). The UI works without them.
@@ -61,7 +72,16 @@ export type PlanResponse = {
   sensitivity?: SensitivityRow[];   // suggested plan re-run under price and cost changes
   classic?: Classic;                // classic mean-variance efficient set, for comparison
   riskMetrics?: { recommended: RiskStats; current: RiskStats; fallowAvg: number }; // current = cut back to fit
+  goals?: { income: GoalPlan; water: GoalPlan; soil: GoalPlan }; // best mix for each goal, same limits as the suggested plan
+  soilFrontier?: { soilScore: number; avgProfit: number; mix: Mix }[]; // feasible mixes no other beats on both soil and average profit, by soil
+  waterPresets?: Partial<Record<WaterPresetId, WaterPreset>>;
 };
+
+export type GoalId = "suggested" | "income" | "water" | "soil";
+export type GoalPlan = { mix: Mix; metrics: Metrics };
+
+export type WaterPresetId = "full" | "cut2022" | "zero2023";
+export type WaterPreset = { afPerAcre: number; label: string; source: string };
 
 export type RiskStats = {
   sd: number;                       // standard deviation of yearly profit, $/acre
@@ -95,7 +115,9 @@ export type DatasetId = "weather" | "grace" | "etCheck" | "cropBudgets" | "price
 
 export type Validation = {
   lpCrossCheck?: { method: string; maxShareDifference: number; note: string }; // maxShareDifference: 0-1 share of acres
+  checks?: ValidationCheck[];
 };
+export type ValidationCheck = { id: string; label: string; result: "pass" | "partial" | "fail"; detail: string; source?: string };
 
 /** Display order used everywhere in the UI. */
 export const ROTATION_IDS: RotationId[] = ["alfalfa", "cotton_barley", "durum_sorghum", "barley_fallow", "fallow"];

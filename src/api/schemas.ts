@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const rotationIdSchema = z.enum(['alfalfa', 'cotton_barley', 'durum_sorghum', 'barley_fallow', 'fallow']);
 
+export const soilPartIdSchema = z.enum(['legume', 'livingRoots', 'residue', 'lowTillage', 'diversity']);
+
 const share = z.number().min(0).max(1);
 export const mixSchema = z
   .object({
@@ -26,6 +28,7 @@ export const planRequestSchema = z.object({
   irrigationEfficiency: z.number().min(0.5).max(0.95).optional(),
   currentMix: mixSchema,
   lang: z.enum(['en', 'es']),
+  soilParts: z.array(soilPartIdSchema).min(1).optional(),
 });
 
 const finite = z.number().finite();
@@ -37,9 +40,22 @@ export const metricsSchema = z.object({
   soilScore: finite.min(0).max(100),
   waterValuePerAf: finite,
   yearlyProfit: z.array(z.object({ year: z.number().int(), profit: finite })),
+  yearlyWater: z.array(z.object({ year: z.number().int(), water: finite.min(0) })).optional(),
 });
 
 const month = z.number().int().min(1).max(12);
+
+export const validationCheckSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  result: z.enum(['pass', 'partial', 'fail']),
+  detail: z.string(),
+  source: z.string().optional(),
+});
+
+export const waterPresetSchema = z.object({ afPerAcre: finite.min(0).max(6), label: z.string(), source: z.string() });
+
+const goalPlanSchema = z.object({ mix: mixSchema, metrics: metricsSchema });
 
 export const rotationCardSchema = z.object({
   id: rotationIdSchema,
@@ -61,6 +77,10 @@ export const rotationCardSchema = z.object({
   benefits: z.string(),
   gaps: z.string(),
   checkLocally: z.string(),
+  yearlyWaterAf: z.array(finite.min(0)).optional(),
+  families: z.array(z.string()).optional(),
+  pests: z.string().optional(),
+  infiltration: z.string().optional(),
 });
 
 export const planResponseSchema = z.object({
@@ -98,6 +118,7 @@ export const planResponseSchema = z.object({
         }),
       )
       .optional(),
+    monthlyRisk: z.array(z.object({ month, heatDays: finite.min(0), frostDays: finite.min(0) })).optional(),
   }),
   assumptions: z.array(z.string()),
   sources: z.record(z.enum(['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', 'otherRegions']), z.enum(['sample', 'real'])).optional(),
@@ -130,7 +151,13 @@ export const planResponseSchema = z.object({
   validation: z
     .object({
       lpCrossCheck: z.object({ method: z.string(), maxShareDifference: finite.min(0).max(1), note: z.string() }).optional(),
+      checks: z.array(validationCheckSchema).optional(),
     })
+    .optional(),
+  goals: z.object({ income: goalPlanSchema, water: goalPlanSchema, soil: goalPlanSchema }).optional(),
+  soilFrontier: z.array(z.object({ soilScore: finite.min(0).max(100), avgProfit: finite, mix: mixSchema })).optional(),
+  waterPresets: z
+    .object({ full: waterPresetSchema.optional(), cut2022: waterPresetSchema.optional(), zero2023: waterPresetSchema.optional() })
     .optional(),
 });
 

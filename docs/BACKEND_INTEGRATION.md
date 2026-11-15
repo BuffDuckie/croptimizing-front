@@ -5,6 +5,13 @@ The front end gets every number through one function, `getPlan(req)` in
 results from the `usePlan` hook (`src/hooks/usePlan.ts`), which debounces slider
 changes by 150 ms and exposes `{ data, isLoading, error }`.
 
+## Real data without a backend server
+
+The fastest way to get real numbers on the site: put the 20-year scenario table
+and context series in `public/data/real_data.json`. The in-browser engine (used
+by `sample` mode, and as the fallback in the others) then runs on it. Format,
+checker, and fallback rules: [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md).
+
 ## The three data modes
 
 Set `VITE_DATA_MODE` at build time (see `.env.example`).

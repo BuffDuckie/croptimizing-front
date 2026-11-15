@@ -1,6 +1,7 @@
 import type { Mix, RotationId } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
-import { BASE_EFFICIENCY, getScenarioData, type ScenarioData } from './sampleData';
+import { datasetVersion, getDataset, type Scenario } from './dataset';
+import { BASE_EFFICIENCY } from './sampleData';
 
 export const UNITS = 20; // 5% steps
 const R = ROTATION_IDS.length;
@@ -35,12 +36,14 @@ export function shareVector(mix: Mix): number[] {
   return ROTATION_IDS.map((id) => mix[id] ?? 0);
 }
 
-type Base = { profit: Float64Array; water: Float64Array; soil: Float64Array; n: number; years: number };
+type Base = { profit: Float64Array; water: Float64Array; soil: Float64Array; n: number; years: number; version: number };
 let base: Base | null = null;
 
 /** Yearly profit and applied water for every mix, at base efficiency, no extra water cost. */
-export function getBaseMatrices(data: ScenarioData = getScenarioData()): Base {
-  if (base) return base;
+export function getBaseMatrices(): Base {
+  const version = datasetVersion();
+  if (base && base.version === version) return base;
+  const data = getDataset().scenario;
   const u = enumerateMixes();
   const n = u.length / R;
   const Y = data.years.length;
@@ -67,7 +70,7 @@ export function getBaseMatrices(data: ScenarioData = getScenarioData()): Base {
       water[k * Y + t] = w;
     }
   }
-  base = { profit, water, soil, n, years: Y };
+  base = { profit, water, soil, n, years: Y, version };
   return base;
 }
 
@@ -114,13 +117,13 @@ export function getMixStats(adjust: Adjust = DEFAULT_ADJUST, yearIdx?: number[])
   const b = getBaseMatrices();
   const idx = yearIdx ?? Array.from({ length: b.years }, (_, i) => i);
   const shock = adjust.profitShock ?? 0;
-  const key = `${adjust.waterCostPerAf}|${adjust.efficiency}|${shock}|${idx.join(',')}`;
+  const key = `${b.version}|${adjust.waterCostPerAf}|${adjust.efficiency}|${shock}|${idx.join(',')}`;
   const hit = statsCache.get(key);
   if (hit) return hit;
 
   const scale = waterScale(adjust.efficiency);
   const u = enumerateMixes();
-  const fallowProfit = getScenarioData().profit.fallow;
+  const fallowProfit = getDataset().scenario.profit.fallow;
   const fallowCol = ROTATION_IDS.indexOf('fallow');
   const avg = new Float64Array(b.n);
   const worst = new Float64Array(b.n);
@@ -153,7 +156,7 @@ export function getMixStats(adjust: Adjust = DEFAULT_ADJUST, yearIdx?: number[])
 }
 
 /** Yearly profit and water for any mix (need not be on the 5% grid). */
-export function seriesForMix(mix: Mix, adjust: Adjust = DEFAULT_ADJUST, data: ScenarioData = getScenarioData()) {
+export function seriesForMix(mix: Mix, adjust: Adjust = DEFAULT_ADJUST, data: Scenario = getDataset().scenario) {
   const shares = shareVector(mix);
   const scale = waterScale(adjust.efficiency);
   const shock = adjust.profitShock ?? 0;
@@ -168,8 +171,8 @@ export function seriesForMix(mix: Mix, adjust: Adjust = DEFAULT_ADJUST, data: Sc
   });
 }
 
-export function soilForMix(mix: Mix, data: ScenarioData = getScenarioData()): number {
-  return ROTATION_IDS.reduce((s, id) => s + (mix[id] ?? 0) * data.soil[id], 0);
+export function soilForMix(mix: Mix, soil: Record<RotationId, number> = getDataset().scenario.soil): number {
+  return ROTATION_IDS.reduce((s, id) => s + (mix[id] ?? 0) * soil[id], 0);
 }
 
 export function correlation(a: number[], b: number[]): number {

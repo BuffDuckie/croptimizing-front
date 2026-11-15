@@ -1,6 +1,8 @@
 import { InfeasibleError, isInfeasible, type InfeasibleDetail } from './errors';
 import { nearest, STATIC_GRID, staticPath } from './grid';
+import { realDataset } from './realData';
 import type { PlanRequest, PlanResponse } from './types';
+import type { Dataset } from '../model/dataset';
 
 export type DataMode = 'sample' | 'static' | 'live';
 
@@ -18,10 +20,12 @@ let worker: Worker | null = null;
 let nextId = 0;
 const pending = new Map<number, { resolve: (r: PlanResponse) => void; reject: (e: unknown) => void }>();
 
-function getWorker(): Worker | null {
+function getWorker(dataset: Dataset | null): Worker | null {
   if (worker || typeof Worker === 'undefined') return worker;
   try {
     worker = new Worker(new URL('./sampleWorker.ts', import.meta.url), { type: 'module' });
+    // Messages arrive in order, so the dataset is in place before the first plan request.
+    if (dataset) worker.postMessage({ type: 'data', dataset });
     worker.onmessage = (e: MessageEvent<WorkerReply>) => {
       const p = pending.get(e.data.id);
       if (!p) return;
@@ -37,12 +41,13 @@ function getWorker(): Worker | null {
 
 /** Sample model: in a Web Worker when available (browsers), inline otherwise (tests, scripts). */
 async function runSample(req: PlanRequest): Promise<PlanResponse> {
-  const w = getWorker();
+  const dataset = await realDataset();
+  const w = getWorker(dataset);
   if (w) {
     const id = ++nextId;
     return new Promise<PlanResponse>((resolve, reject) => {
       pending.set(id, { resolve, reject });
-      w.postMessage({ id, req });
+      w.postMessage({ type: 'plan', id, req });
     });
   }
   const [{ runPlan }, { planRequestSchema, planResponseSchema }] = await Promise.all([import('../model/engine'), import('./schemas')]);

@@ -18,14 +18,8 @@ import {
   type Adjust,
   type MixStats,
 } from './metrics';
-import {
-  BASE_EFFICIENCY,
-  CALENDARS,
-  getSampleContext,
-  getScenarioData,
-  HEAT_RISK_MONTHS,
-  SOIL_PARTS,
-} from './sampleData';
+import { getDataset } from './dataset';
+import { BASE_EFFICIENCY, CALENDARS, HEAT_RISK_MONTHS } from './sampleData';
 
 const EPS = 1e-9;
 const R = ROTATION_IDS.length;
@@ -230,7 +224,7 @@ export type WaterYear = Record<RotationId, number>;
 
 /** Water need of every rotation in each scenario year (optionally a subset of years). */
 export function waterScenario(adjust: Adjust, yearIdx?: number[]): WaterYear[] {
-  const data = getScenarioData();
+  const data = getDataset().scenario;
   const scale = BASE_EFFICIENCY / adjust.efficiency;
   const idx = yearIdx ?? data.years.map((_, t) => t);
   return idx.map((t) => {
@@ -278,7 +272,8 @@ export function fitToBudget(mix: Mix, scenario: WaterYear[], waterCap: number): 
 }
 
 function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust: Adjust): RotationCard[] {
-  const data = getScenarioData();
+  const ds = getDataset();
+  const data = ds.scenario;
   const scale = BASE_EFFICIENCY / adjust.efficiency;
   return ROTATION_IDS.map((id) => {
     const txt = ROTATION_TEXT[lang][id];
@@ -286,7 +281,7 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
     const profits = data.profit[id].map((p, t) => p - adjust.waterCostPerAf * water[t]);
     const avgWater = mean(water);
     const avgProfit = mean(profits);
-    const parts = SOIL_PARTS[id];
+    const parts = ds.soilParts[id];
     return {
       id,
       name: txt.name,
@@ -319,7 +314,8 @@ export function normalizeMix(mix: Mix): Mix {
 
 /** Run the full plan. Throws InfeasibleError when no mix fits. */
 export function runPlan(req: PlanRequest): PlanResponse {
-  const data = getScenarioData();
+  const ds = getDataset();
+  const data = ds.scenario;
   const adjust: Adjust = {
     waterCostPerAf: req.waterCostPerAf ?? 0,
     efficiency: req.irrigationEfficiency ?? BASE_EFFICIENCY,
@@ -375,7 +371,8 @@ export function runPlan(req: PlanRequest): PlanResponse {
 
   return {
     schemaVersion: '1.0',
-    dataSource: 'sample',
+    // Real data in the engine reads as "static" (precomputed inputs, not a live backend).
+    dataSource: ds.fromFile ? 'static' : 'sample',
     recommended,
     current,
     currentAsFarmed,
@@ -384,13 +381,28 @@ export function runPlan(req: PlanRequest): PlanResponse {
     stressTests,
     backtest,
     correlations,
-    context: getSampleContext(),
-    assumptions: ASSUMPTIONS[lang],
+    context: ds.context,
+    assumptions: assumptionsFor(lang, ds),
     sensitivity,
     classic,
     riskMetrics,
-    sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample', otherRegions: 'sample' },
+    sources: { ...ds.sources },
+    ...(ds.validation ? { validation: ds.validation } : {}),
+    ...(ds.waterPresets ? { waterPresets: ds.waterPresets } : {}),
   };
+}
+
+/** The sample warning shows only while the optimizer's inputs include sample data. */
+function assumptionsFor(lang: 'en' | 'es', ds: ReturnType<typeof getDataset>): string[] {
+  const planReal = (['weather', 'cropBudgets', 'prices', 'soil'] as const).every((id) => ds.sources[id] === 'real');
+  const list = ASSUMPTIONS[lang](yearRange(ds.scenario.years));
+  return planReal ? list.slice(1) : list;
+}
+
+/** First and last scenario year, and the split used by the backtest. */
+export function yearRange(years: number[]) {
+  const half = Math.floor(years.length / 2);
+  return { n: years.length, from: years[0], to: years[years.length - 1], trainTo: years[half - 1], testFrom: years[half] };
 }
 
 /** The suggested plan re-run with profits, water cost, and irrigation efficiency changed. */
@@ -420,16 +432,15 @@ export function runSensitivity(adjust: Adjust, c: Constraints, risk: number, bas
   });
 }
 
-export const TRAIN_YEARS = Array.from({ length: 10 }, (_, i) => 2005 + i);
-export const TEST_YEARS = Array.from({ length: 10 }, (_, i) => 2015 + i);
-
-/** Pick a plan using 2005 to 2014 only, then score it on 2015 to 2024. */
+/** Pick a plan using the first half of the years only (2005 to 2014), then score it on the second half. */
 function runBacktest(req: PlanRequest, adjust: Adjust, c: Constraints, risk: number, currentMix: Mix): PlanResponse['backtest'] {
-  const data = getScenarioData();
-  const trainIdx = TRAIN_YEARS.map((y) => data.years.indexOf(y));
+  const data = getDataset().scenario;
+  const half = Math.floor(data.years.length / 2);
+  const trainIdx = data.years.slice(0, half).map((_, i) => i);
+  const TEST_YEARS = data.years.slice(half);
   const train = getMixStats(adjust, trainIdx);
   const feasible = feasibleIndices(train, c);
-  const L = BACKTEST_LABELS[req.lang];
+  const L = BACKTEST_LABELS[req.lang](yearRange(data.years));
 
   const score = (mix: Mix) => {
     const s = seriesForMix(mix, adjust).filter((x) => TEST_YEARS.includes(x.year));

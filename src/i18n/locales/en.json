@@ -677,7 +677,8 @@
         "optimizer": "Optimizer",
         "plan": "Your plan"
       }
-    }
+    },
+    "unitsNote": "Profit leaves out the cost of buying water (add it under More options). Water is applied irrigation water at 75% efficiency."
   },
   "about": {
     "tourTitle": "Take the 3-minute tour",
