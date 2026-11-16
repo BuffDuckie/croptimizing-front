@@ -200,22 +200,22 @@ export const BACKTEST_LABELS: Record<Lang, (y: Range) => { suggested: string; cu
 };
 
 /** The first line is the sample warning; the engine drops it once the plan's inputs are real. */
-export const ASSUMPTIONS: Record<Lang, (y: Range) => string[]> = {
-  en: (y) => [
+export const ASSUMPTIONS: Record<Lang, (y: Range, waterCost: string) => string[]> = {
+  en: (y, waterCost) => [
     'SAMPLE DATA: every profit, water, and soil number here is a placeholder for building the tool, not an estimate for any farm.',
     `Each of the ${y.n} past years (${y.from} to ${y.to}) is treated as one possible next year, with its own weather and prices.`,
     'Your water budget must hold in every one of those years, including the hottest.',
-    'Profits are per acre in 2025 dollars and leave out the cost of buying water. Add a water cost under More options.',
+    `Profits are per acre in 2025 dollars. Water is charged at ${waterCost} per acre-foot of applied water; change the price under More options.`,
     'Applied water assumes 75% irrigation efficiency unless you change it under More options.',
     'Alfalfa is modeled as a 4-year stand, averaged per year. Pests, diseases, and hay quality are not modeled.',
     'Shares move in 5% steps, so the suggested plan is the best of 10,626 possible mixes.',
     'Soil scores follow the four USDA NRCS soil-health principles (maximize soil cover, maximize continuous living roots, minimize disturbance, maximize biodiversity) plus nitrogen from legumes. An agronomist has not reviewed them yet; check them with a local expert.',
   ],
-  es: (y) => [
+  es: (y, waterCost) => [
     'DATOS DE MUESTRA: cada número de ganancia, agua y suelo aquí es un valor de prueba para construir la herramienta, no una estimación para ninguna granja.',
     `Cada uno de los ${y.n} años pasados (${y.from} a ${y.to}) se trata como un posible próximo año, con su propio clima y precios.`,
     'Su presupuesto de agua debe cumplirse en cada uno de esos años, incluido el más caluroso.',
-    'Las ganancias son por acre en dólares de 2025 y no incluyen el costo de comprar agua. Agregue un costo de agua en Más opciones.',
+    `Las ganancias son por acre en dólares de 2025. El agua se cobra a ${waterCost} por acre-pie de agua aplicada; cambie el precio en Más opciones.`,
     'El agua aplicada supone 75% de eficiencia de riego, salvo que la cambie en Más opciones.',
     'La alfalfa se modela como un cultivo de 4 años promediado por año. No se modelan plagas, enfermedades ni calidad del heno.',
     'Las proporciones cambian en pasos de 5%, así que el plan sugerido es el mejor de 10,626 mezclas posibles.',

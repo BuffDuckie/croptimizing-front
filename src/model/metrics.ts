@@ -1,7 +1,7 @@
 import type { Mix, RotationId } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { datasetVersion, getDataset, type Scenario } from './dataset';
-import { BASE_EFFICIENCY } from './sampleData';
+import { BASE_EFFICIENCY, SAMPLE_WATER_PRICE } from './sampleData';
 
 export const UNITS = 20; // 5% steps
 const R = ROTATION_IDS.length;
@@ -115,7 +115,8 @@ export function mean(values: ArrayLike<number>): number {
  * rotation except fallow (0.2 = +20%), used by the sensitivity check.
  */
 export type Adjust = { waterCostPerAf: number; efficiency: number; profitShock?: number };
-export const DEFAULT_ADJUST: Adjust = { waterCostPerAf: 0, efficiency: BASE_EFFICIENCY };
+/** The app's default: the sample water price, base efficiency. */
+export const DEFAULT_ADJUST: Adjust = { waterCostPerAf: SAMPLE_WATER_PRICE, efficiency: BASE_EFFICIENCY };
 
 /** Better irrigation needs less applied water for the same crop. */
 export function waterScale(efficiency: number): number {

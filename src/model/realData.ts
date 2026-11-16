@@ -3,7 +3,9 @@
 // its datasets keep their "Sample data" badge.
 
 import {
+  calendarsSchema,
   CONTEXT_KEYS,
+  waterCostSchema,
   contextSchemas,
   issuesOf,
   rotationsSchema,
@@ -109,6 +111,24 @@ export function buildDataset(raw: unknown, log: Logger = defaultLog): Dataset | 
     } else fellBack(log, 'waterPresets', issuesOf(p.error, ['waterPresets']));
   }
 
+  let calendars = sample.calendars;
+  if (file.calendars !== undefined) {
+    const p = calendarsSchema.safeParse(file.calendars);
+    if (p.success) {
+      calendars = p.data;
+      any = true;
+    } else fellBack(log, 'calendars', issuesOf(p.error, ['calendars']));
+  }
+
+  let waterCost: Dataset['waterCost'];
+  if (file.waterCost !== undefined) {
+    const p = waterCostSchema.safeParse(file.waterCost);
+    if (p.success) {
+      waterCost = p.data;
+      any = true;
+    } else fellBack(log, 'waterCost', issuesOf(p.error, ['waterCost']));
+  }
+
   let validation: Dataset['validation'];
   if (file.validation !== undefined) {
     const p = validationSchema.safeParse(file.validation);
@@ -141,5 +161,5 @@ export function buildDataset(raw: unknown, log: Logger = defaultLog): Dataset | 
   };
 
   const scenario: Scenario = { years, profit, water, soil };
-  return { scenario, soilParts, context, waterPresets, validation, sources, fromFile: true };
+  return { scenario, soilParts, context, calendars, waterCost, waterPresets, validation, sources, fromFile: true };
 }

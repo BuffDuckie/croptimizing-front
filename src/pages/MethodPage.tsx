@@ -22,7 +22,7 @@ export default function MethodPage() {
   const { t, i18n } = useTranslation();
   const curLabel = useCurrentLabel(true);
   const lang = i18n.language === 'es' ? 'es' : 'en';
-  const { data, controls } = usePlanContext();
+  const { data, controls, request } = usePlanContext();
 
   const steps = t('method.stepsList', { returnObjects: true }) as string[];
   const limits = t('method.limits', { returnObjects: true }) as string[];
@@ -92,7 +92,7 @@ export default function MethodPage() {
             <div className="card mt-5 overflow-x-auto" tabIndex={0}>
               <DataTable caption={t('method.sourcesCaption')} head={t('method.sourceHead', { returnObjects: true }) as string[]} rows={sources} className="min-w-[640px] [&_td]:text-left [&_th]:text-left" />
             </div>
-            <p className="mt-3 max-w-3xl text-base text-text-muted">{t('method.unitsNote')}</p>
+            <p className="mt-3 max-w-3xl text-base text-text-muted">{t('method.unitsNote', { c: money(request.waterCostPerAf ?? 0, lang) })}</p>
           </section>
 
           <section id="flow" className="scroll-mt-36">

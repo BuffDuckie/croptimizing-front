@@ -11,7 +11,8 @@ import { CROP_INITIALS, ROT_BG } from './rotation';
 export function CalendarStrip({ card, risk }: { card: RotationCard; risk: RiskMonths }) {
   const { t } = useTranslation();
   const months = t('months', { returnObjects: true }) as string[];
-  const initials = CROP_INITIALS[card.id];
+  // Letters come from the crop names in the data when it has them.
+  const initials = card.calendarCrops ? card.calendarCrops.map((c) => (c ? c.charAt(0).toUpperCase() : '')) : CROP_INITIALS[card.id];
   const grow = card.calendar.filter((c) => c === 'grow').length;
   const names = (ms: number[]) => ms.map((m) => months[m - 1]).join(', ');
   const label = [

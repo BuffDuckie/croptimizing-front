@@ -9,6 +9,7 @@ const req: PlanRequest = {
   minSoilScore: 30,
   currentMix: { alfalfa: 0.7, cotton_barley: 0.3 },
   lang: 'en',
+  waterCostPerAf: 200,
 };
 
 function realFile() {

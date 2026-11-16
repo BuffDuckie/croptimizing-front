@@ -180,7 +180,8 @@ function SoilGoals() {
 function MoreOptions() {
   const { t } = useTranslation();
   const lang = useLang();
-  const { controls, setControl } = usePlanContext();
+  const { controls, setControl, waterCostDefault } = usePlanContext();
+  const cost = controls.waterCost ?? waterCostDefault.perAf;
   return (
     <Disclosure title={t('plan.more')} icon="none">
       <div className="space-y-6">
@@ -220,14 +221,22 @@ function MoreOptions() {
               max={1000}
               step={5}
               className="input tnum pl-7"
-              value={controls.waterCost}
+              value={cost}
               onChange={(e) => setControl('waterCost', Math.max(0, Math.min(1000, Number(e.target.value) || 0)))}
               aria-describedby="water-cost-help"
             />
           </div>
           <p id="water-cost-help" className="mt-1.5 text-sm text-text-muted">
-            {t('plan.waterCostHelp')} {controls.waterCost > 0 && `(${money(controls.waterCost, lang)}/AF)`}
+            {t('plan.waterCostHelp', { v: money(cost, lang) })}{' '}
+            {waterCostDefault.fromData
+              ? t('plan.waterCostDefault', { v: money(waterCostDefault.perAf, lang), source: waterCostDefault.source })
+              : t('plan.waterCostPlaceholder', { v: money(waterCostDefault.perAf, lang) })}
           </p>
+          {controls.waterCost !== null && controls.waterCost !== waterCostDefault.perAf && (
+            <button type="button" onClick={() => setControl('waterCost', null)} className="btn btn-ghost -ml-2 mt-1 min-h-[44px] px-2 text-sm font-semibold">
+              {t('plan.waterCostReset', { v: money(waterCostDefault.perAf, lang) })}
+            </button>
+          )}
         </div>
         <div>
           <label htmlFor="lease-price" className="label">

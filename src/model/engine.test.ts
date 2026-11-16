@@ -5,7 +5,7 @@ import type { PlanRequest } from '../api/types';
 import { ROTATION_IDS } from '../api/types';
 import { bestIndex, feasibleIndices, fitToBudget, meanVarianceSet, objective, paretoFrontier, riskStats, runPlan, waterScenario } from './engine';
 import { DEFAULT_ADJUST, getMixStats, mixCount, seriesForMix } from './metrics';
-import { getScenarioData } from './sampleData';
+import { getScenarioData, SAMPLE_WATER_PRICE } from './sampleData';
 
 const base: PlanRequest = {
   region: 'pinal',
@@ -15,6 +15,7 @@ const base: PlanRequest = {
   minSoilScore: 30,
   currentMix: { alfalfa: 0.7, cotton_barley: 0.3 },
   lang: 'en',
+  waterCostPerAf: 200,
 };
 
 const sum = (m: Record<string, number | undefined>) => Object.values(m).reduce<number>((s, v) => s + (v ?? 0), 0);
@@ -110,7 +111,8 @@ describe('sample engine', () => {
   it('matches the placeholder means', () => {
     const d = getScenarioData();
     const m = (xs: number[]) => xs.reduce((s, x) => s + x, 0) / xs.length;
-    expect(m(d.profit.alfalfa)).toBeCloseTo(450, 6);
+    // Stored before buying water; at the sample price the net mean is the placeholder.
+    expect(m(d.profit.alfalfa.map((p, t) => p - SAMPLE_WATER_PRICE * d.water.alfalfa[t]))).toBeCloseTo(450, 6);
     expect(m(d.water.durum_sorghum)).toBeCloseTo(3.6, 6);
     expect(d.water.fallow.every((w) => w === 0)).toBe(true);
   });
@@ -204,7 +206,7 @@ describe('sensitivity', () => {
   it('re-runs the plan for each case and flags mix changes', () => {
     const res = runPlan(base);
     const rows = res.sensitivity!;
-    expect(rows.map((r) => r.case)).toEqual(['profitDown', 'profitUp', 'efficiencyLow', 'efficiencyHigh']);
+    expect(rows.map((r) => r.case)).toEqual(['profitDown', 'profitUp', 'waterCostDown', 'waterCostUp', 'efficiencyLow', 'efficiencyHigh']);
     for (const r of rows) if (r.mix) expect(sum(r.mix)).toBeCloseTo(1, 3);
     const up = rows.find((r) => r.case === 'profitUp')!;
     const down = rows.find((r) => r.case === 'profitDown')!;
@@ -215,6 +217,7 @@ describe('sensitivity', () => {
   it('adds water cost cases only when there is a water cost', () => {
     const res = runPlan({ ...base, waterCostPerAf: 50 });
     expect(res.sensitivity!.map((r) => r.case)).toContain('waterCostUp');
+    expect(runPlan({ ...base, waterCostPerAf: 0 }).sensitivity!.map((r) => r.case)).not.toContain('waterCostUp');
   });
 
   it('scales every rotation but fallow under a profit shock', () => {

@@ -23,6 +23,7 @@ const req: PlanRequest = {
   minSoilScore: 30,
   currentMix: { alfalfa: 0.7, cotton_barley: 0.3 },
   lang: 'en',
+  waterCostPerAf: 200,
 };
 
 afterEach(() => setDataset(null));
@@ -118,5 +119,34 @@ describe('real data loader', () => {
     const log = vi.fn();
     expect(buildDataset({ ...realFile(), schemaVersion: '0.1' }, log)).toBeNull();
     expect(log).toHaveBeenCalled();
+  });
+});
+
+describe('calendars and water price from the file', () => {
+  it('uses the calendars and the default water price when the file has them', () => {
+    const f = realFile();
+    f.calendars = {
+      alfalfa: Array(12).fill('alfalfa'),
+      cotton_barley: ['barley', 'barley', null, 'cotton', 'cotton', 'cotton', 'cotton', 'cotton', 'cotton', 'cotton', null, null],
+      durum_sorghum: Array(12).fill('durum'),
+      barley_fallow: Array(12).fill(null),
+      fallow: Array(12).fill(null),
+    };
+    f.waterCost = { perAf: 75, source: 'Test budget' };
+    const ds = buildDataset(f, () => {})!;
+    expect(ds.waterCost).toEqual({ perAf: 75, source: 'Test budget' });
+    setDataset(ds);
+    const card = runPlan(req).rotations.find((r) => r.id === 'cotton_barley')!;
+    expect(card.calendar.filter((c) => c === 'bare')).toHaveLength(3);
+    expect(card.calendarCrops?.[3]).toBe('cotton');
+  });
+
+  it('rejects a fallow calendar with a crop in it, and keeps the illustrative calendars', () => {
+    const f = realFile();
+    f.calendars = { alfalfa: Array(12).fill('alfalfa'), cotton_barley: Array(12).fill('cotton'), durum_sorghum: Array(12).fill('durum'), barley_fallow: Array(12).fill('barley'), fallow: Array(12).fill('weeds') };
+    const log = vi.fn();
+    const ds = buildDataset(f, log)!;
+    expect(log.mock.calls[0][0]).toMatch(/fell back to sample for calendars/);
+    expect(ds.calendars).toEqual(sampleDataset().calendars);
   });
 });

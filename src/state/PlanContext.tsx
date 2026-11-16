@@ -6,6 +6,8 @@ import type { Mix, PlanRequest, PlanResponse, RotationId, SoilPartId } from '../
 import { SOIL_PART_IDS } from '../api/types';
 import { DEMO_DEFAULTS, YEARS_BEFORE_DATA } from '../config/demo';
 import { presetBudget, presetFor } from '../config/waterPresets';
+import { FALLBACK_WATER_COST_PER_AF } from '../config/waterCost';
+import { realDataset } from '../api/realData';
 import { usePlan } from '../hooks/usePlan';
 import { isSample, PLAN_DATASETS } from '../lib/sources';
 
@@ -24,7 +26,7 @@ export type Controls = {
   risk: number; // slider 0 to 100
   soil: number; // 0 to 100
   maxSharePct: Partial<Record<RotationId, number>>; // 0 to 100, missing = 100
-  waterCost: number; // extra $/AF
+  waterCost: number | null; // $ per acre-foot of applied water; null = the default (from the data file, or the placeholder)
   efficiency: number; // 0.5 to 0.95
   lease: number | null; // what one more acre-foot would cost to lease or pump, $/AF (blank = not set)
   soilParts: SoilPartId[]; // soil goals that count toward the soil score (all five by default)
@@ -42,7 +44,7 @@ export const DEFAULT_CONTROLS: Controls = {
   risk: DEMO_DEFAULTS.risk,
   soil: DEMO_DEFAULTS.soil,
   maxSharePct: {},
-  waterCost: 0,
+  waterCost: null,
   efficiency: 0.75,
   lease: null,
   soilParts: [...SOIL_PART_IDS],
@@ -62,6 +64,8 @@ function readUrl(): Partial<Controls> {
   if (q.has('w') && Number.isFinite(w)) out.water = clamp(Math.round(w * 10) / 10, 0.5, 6);
   if (q.has('r') && Number.isFinite(r)) out.risk = clamp(Math.round(r), 0, 100);
   if (q.has('s') && Number.isFinite(s)) out.soil = clamp(Math.round(s), 0, 100);
+  const wc = Number(q.get('wc'));
+  if (q.get('wc') && Number.isFinite(wc)) out.waterCost = clamp(Math.round(wc), 0, 1000);
   const lease = Number(q.get('lease'));
   if (q.get('lease') && Number.isFinite(lease)) out.lease = clamp(Math.round(lease), 0, 5000);
   const soilw = q.get('soilw');
@@ -85,6 +89,8 @@ type Ctx = {
   infeasible: InfeasibleDetail | null;
   /** Set when the settings have no plan and we show the nearest one that fits (soil minimum lowered). */
   softened: { soil: number } | null;
+  /** Default water price: from the data file (with its source), or the TODO placeholder. */
+  waterCostDefault: { perAf: number; source: string | null; fromData: boolean };
   /** The plan for a zero-canal-water budget (same settings otherwise), for the worst-year headline. */
   zeroCanal: { cap: number; fromData: boolean; data: PlanResponse | null; same: boolean };
   error: unknown;
@@ -100,6 +106,19 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   const [farm, setFarm] = useState<Farm>(DEMO_FARM);
   const [controls, setControls] = useState<Controls>(() => ({ ...DEFAULT_CONTROLS, ...readUrl() }));
   const lang = i18n.language === 'es' ? 'es' : 'en';
+  // The default water price comes with the real data file; plans wait for it so the first plan is not redone.
+  const [costDefault, setCostDefault] = useState<Ctx['waterCostDefault'] | null>(null);
+  useEffect(() => {
+    let live = true;
+    realDataset().then(
+      (ds) => live && setCostDefault(ds?.waterCost ? { perAf: ds.waterCost.perAf, source: ds.waterCost.source, fromData: true } : { perAf: FALLBACK_WATER_COST_PER_AF, source: null, fromData: false }),
+      () => live && setCostDefault({ perAf: FALLBACK_WATER_COST_PER_AF, source: null, fromData: false }),
+    );
+    return () => {
+      live = false;
+    };
+  }, []);
+  const waterCostDefault = costDefault ?? { perAf: FALLBACK_WATER_COST_PER_AF, source: null, fromData: false };
 
   const setControl = useCallback(<K extends keyof Controls>(k: K, v: Controls[K]) => {
     setControls((c) => ({ ...c, [k]: v }));
@@ -116,15 +135,15 @@ export function PlanProvider({ children }: { children: ReactNode }) {
       riskLevel: controls.risk / 100,
       minSoilScore: controls.soil,
       ...(Object.keys(maxShare).length ? { maxShare } : {}),
-      ...(controls.waterCost > 0 ? { waterCostPerAf: controls.waterCost } : {}),
+      waterCostPerAf: controls.waterCost ?? waterCostDefault.perAf,
       ...(controls.efficiency !== DEFAULT_CONTROLS.efficiency ? { irrigationEfficiency: controls.efficiency } : {}),
       currentMix: farm.currentMix,
       lang,
       ...(allSoil(controls.soilParts) ? {} : { soilParts: SOIL_PART_IDS.filter((p) => controls.soilParts.includes(p)) }),
     };
-  }, [farm, controls, lang]);
+  }, [farm, controls, lang, waterCostDefault.perAf]);
 
-  const plan = usePlan(request);
+  const plan = usePlan(costDefault ? request : null);
   const infeasible = isInfeasible(plan.error) ? plan.error.detail : null;
 
   // No dead ends: when the soil minimum is out of reach, also fetch the nearest plan
@@ -145,7 +164,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   const zeroPreset = presetFor(plan.data ?? lastGood.current, 'zero2023');
   const zeroCap = presetBudget(zeroPreset.afPerAcre);
   const zeroSame = Math.abs(zeroCap - request.waterCapAfPerAcre) < 0.05;
-  const zeroRequest = useMemo(() => (zeroSame ? null : { ...request, waterCapAfPerAcre: zeroCap }), [request, zeroCap, zeroSame]);
+  const zeroRequest = useMemo(() => (zeroSame || !costDefault ? null : { ...request, waterCapAfPerAcre: zeroCap }), [request, zeroCap, zeroSame, costDefault]);
   const zero = usePlan(zeroRequest);
 
   // Mirror the three main settings and language into the URL so links and reports are shareable.
@@ -155,6 +174,8 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     q.set('r', String(controls.risk));
     q.set('s', String(controls.soil));
     q.set('lang', lang);
+    if (controls.waterCost === null) q.delete('wc');
+    else q.set('wc', String(controls.waterCost));
     if (controls.lease === null) q.delete('lease');
     else q.set('lease', String(controls.lease));
     if (allSoil(controls.soilParts)) q.delete('soilw');
@@ -163,7 +184,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, '', url);
     }
-  }, [controls.water, controls.risk, controls.soil, controls.lease, controls.soilParts, lang, location.pathname]);
+  }, [controls.water, controls.risk, controls.soil, controls.lease, controls.soilParts, controls.waterCost, lang, location.pathname]);
 
   const value: Ctx = {
     farm,
@@ -173,9 +194,10 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     resetControls,
     request,
     data: softened ? soft.data : plan.data ?? lastGood.current,
-    isLoading: plan.isLoading || (softSoil !== null && soft.isLoading),
+    isLoading: !costDefault || plan.isLoading || (softSoil !== null && soft.isLoading),
     infeasible,
     softened,
+    waterCostDefault,
     zeroCanal: { cap: zeroCap, fromData: zeroPreset.fromData, data: zeroSame ? (plan.error ? null : plan.data) : zero.error ? null : zero.data, same: zeroSame },
     error: isInfeasible(plan.error) ? null : plan.error,
     fellBack: plan.fellBack,

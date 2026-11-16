@@ -79,6 +79,7 @@ export const rotationCardSchema = z.object({
   checkLocally: z.string(),
   yearlyWaterAf: z.array(finite.min(0)).optional(),
   families: z.array(z.string()).optional(),
+  calendarCrops: z.array(z.union([z.string(), z.null()])).length(12).optional(),
   pests: z.string().optional(),
   infiltration: z.string().optional(),
 });

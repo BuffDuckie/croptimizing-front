@@ -20,7 +20,7 @@ import {
   type MixStats,
 } from './metrics';
 import { getDataset } from './dataset';
-import { BASE_EFFICIENCY, CALENDARS, HEAT_RISK_MONTHS } from './sampleData';
+import { BASE_EFFICIENCY, HEAT_RISK_MONTHS } from './sampleData';
 
 const EPS = 1e-9;
 const R = ROTATION_IDS.length;
@@ -336,7 +336,8 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
       id,
       name: txt.name,
       seasons: txt.seasons,
-      calendar: CALENDARS[id],
+      calendar: ds.calendars[id].map((c) => (c ? 'grow' : 'bare')),
+      calendarCrops: ds.calendars[id],
       heatRiskMonths: id === 'fallow' ? [] : HEAT_RISK_MONTHS,
       // total follows the selected soil goals; the five parts are always shown as they are.
       soil: { ...parts, total: round(rotSoil[id], 1) },
@@ -435,9 +436,11 @@ export function runPlan(req: PlanRequest): PlanResponse {
   const ratios = (r: typeof recRisk): RiskStats => ({ sd: r.sd, sharpe: r.sharpe, sortino: r.sortino, diversification: r.diversification });
   const riskMetrics = { recommended: ratios(recRisk), current: ratios(curRisk), fallowAvg: recRisk.fallowAvg };
 
+  // Correlations of each rotation's profit after the water price, like every other number.
+  const netProfit = Object.fromEntries(ROTATION_IDS.map((id) => [id, seriesForMix({ [id]: 1 }, adjust).map((x) => x.profit)])) as Record<RotationId, number[]>;
   const correlations: PlanResponse['correlations'] = [];
   for (const a of ROTATION_IDS)
-    for (const b of ROTATION_IDS) correlations.push({ a, b, r: round(correlation(data.profit[a], data.profit[b]), 3) });
+    for (const b of ROTATION_IDS) correlations.push({ a, b, r: round(correlation(netProfit[a], netProfit[b]), 3) });
 
   return {
     schemaVersion: '1.0',
@@ -452,7 +455,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
     backtest,
     correlations,
     context: ds.context,
-    assumptions: assumptionsFor(lang, ds),
+    assumptions: assumptionsFor(lang, ds, adjust.waterCostPerAf),
     sensitivity,
     classic,
     soilFrontier: soilPareto,
@@ -465,9 +468,9 @@ export function runPlan(req: PlanRequest): PlanResponse {
 }
 
 /** The sample warning shows only while the optimizer's inputs include sample data. */
-function assumptionsFor(lang: 'en' | 'es', ds: ReturnType<typeof getDataset>): string[] {
+function assumptionsFor(lang: 'en' | 'es', ds: ReturnType<typeof getDataset>, waterCost: number): string[] {
   const planReal = (['weather', 'cropBudgets', 'prices', 'soil'] as const).every((id) => ds.sources[id] === 'real');
-  const list = ASSUMPTIONS[lang](yearRange(ds.scenario.years));
+  const list = ASSUMPTIONS[lang](yearRange(ds.scenario.years), `$${Math.round(waterCost)}`);
   return planReal ? list.slice(1) : list;
 }
 

@@ -15,6 +15,8 @@ import type { PlanRequest } from '../src/api/types';
 import { setDataset } from '../src/model/dataset';
 import { runPlan } from '../src/model/engine';
 import { buildDataset } from '../src/model/realData';
+import { getDataset } from '../src/model/dataset';
+import { FALLBACK_WATER_COST_PER_AF } from '../src/config/waterCost';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const region = 'pinal';
@@ -49,6 +51,8 @@ for (const lang of langs) {
           minSoilScore: soil,
           currentMix: { alfalfa: 0.7, cotton_barley: 0.3 },
           lang,
+          // Static files use the default water price; other prices run in the browser engine.
+          waterCostPerAf: getDataset().waterCost?.perAf ?? FALLBACK_WATER_COST_PER_AF,
         };
         let rel = staticPath(region, water, risk, soil).slice(1);
         if (lang === 'es') rel = rel.replace(`results/${region}/`, `results/${region}/es/`);

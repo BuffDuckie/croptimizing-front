@@ -252,8 +252,8 @@
     "more": "Más opciones",
     "maxShare": "Lo máximo que sembraría de cada rotación",
     "maxShareText": "{{n}} por ciento como máximo",
-    "waterCost": "Costo extra por acre-pie",
-    "waterCostHelp": "Déjelo en $0 si sus presupuestos de cultivo ya cuentan el agua.",
+    "waterCost": "Precio del agua por acre-pie",
+    "waterCostHelp": "Se resta {{v}} de la ganancia por cada acre-pie de agua aplicada.",
     "efficiency": "Eficiencia de riego",
     "efficiencyHelp": "El goteo y una buena programación la suben. Más alta significa menos agua por acre para el mismo cultivo.",
     "efficiencyText": "{{n}} por ciento",
@@ -394,7 +394,10 @@
       "neutralMore": "En un año sin agua del canal como {{year}} ({{w}} AF/acre), el plan para esa agua cambia la ganancia en {{xd}} por acre frente a su plan actual recortado para caber, con los campos cubiertos {{nd}} meses más.",
       "neutralLess": "En un año sin agua del canal como {{year}} ({{w}} AF/acre), el plan para esa agua cambia la ganancia en {{xd}} por acre frente a su plan actual recortado para caber, con los campos cubiertos {{nd}} meses menos.",
       "note": "Usa el clima y los precios de {{year}} con un presupuesto de {{w}} acre-pies por acre y sus otros ajustes."
-    }
+    },
+    "waterCostDefault": "El valor predeterminado, {{v}}, sale de {{source}}. Escriba su propio precio.",
+    "waterCostPlaceholder": "El valor predeterminado, {{v}}, es de prueba hasta que se agregue el precio del agua del presupuesto de cultivo (TODO). Escriba su propio precio.",
+    "waterCostReset": "Volver al predeterminado ({{v}})"
   },
   "strip": {
     "titleBetter": "Su plan sugerido aguanta mejor los años malos",
@@ -827,7 +830,7 @@
         "plan": "Su plan"
       }
     },
-    "unitsNote": "La ganancia no incluye el costo de comprar agua (agréguelo en Más opciones). El agua es agua de riego aplicada con 75% de eficiencia.",
+    "unitsNote": "La ganancia en los datos no incluye la compra de agua; la herramienta resta su precio del agua ({{c}} por acre-pie) por el agua aplicada. El agua es agua de riego aplicada con 75% de eficiencia.",
     "soilRubric": {
       "intro": "Cada rotación recibe hasta 20 puntos en cinco partes, y el puntaje de suelo es su suma (0 a 100). Cuatro partes siguen los principios de salud del suelo del USDA NRCS; la quinta cuenta el nitrógeno de las leguminosas.",
       "caption": "Rúbrica del puntaje de suelo: cada parte, el principio del NRCS que sigue, y los puntos de cada rotación con su razón.",

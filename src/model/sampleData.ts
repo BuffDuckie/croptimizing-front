@@ -10,6 +10,11 @@ export const SEED = 2026;
 export const YEARS = Array.from({ length: 20 }, (_, i) => 2005 + i);
 /** Applied water in the sample data assumes this irrigation efficiency. */
 export const BASE_EFFICIENCY = 0.75;
+/**
+ * Sample profits are stored before buying water (as in real_data.json), so at
+ * this price per acre-foot (the app's default) the net numbers match PARAMS.
+ */
+export const SAMPLE_WATER_PRICE = 200;
 
 type RotationParams = {
   profitMean: number;
@@ -43,7 +48,7 @@ export type ScenarioData = {
   years: number[];
   heat: number[];
   price: number[];
-  /** profit[rotation][yearIndex], USD per acre */
+  /** profit[rotation][yearIndex], USD per acre, before buying water */
   profit: Record<RotationId, number[]>;
   /** water[rotation][yearIndex], applied AF per acre at BASE_EFFICIENCY */
   water: Record<RotationId, number[]>;
@@ -76,8 +81,10 @@ export function getScenarioData(): ScenarioData {
     // Exact moments: standardize the composite so the 20-year mean and sd match the parameters.
     const zP = standardize(epsP.map((e, t) => p.priceLoad * price[t] - p.heatLoad * heat[t] + idioP * e));
     const zW = standardize(epsW.map((e, t) => p.waterHeatLoad * heat[t] + idioW * e));
-    profit[id] = zP.map((z) => p.profitMean + p.profitSd * z);
     water[id] = zW.map((z) => Math.max(0, p.waterMean + p.waterSd * z));
+    // Profit before buying water, like the real data format: the net profit the
+    // parameters describe, plus what the year's water costs at the sample price.
+    profit[id] = zP.map((z, t) => p.profitMean + p.profitSd * z + SAMPLE_WATER_PRICE * water[id][t]);
     soil[id] = p.soil;
   }
 
@@ -94,20 +101,22 @@ export const SOIL_PARTS: Record<RotationId, { legume: number; livingRoots: numbe
   fallow: { legume: 0, livingRoots: 0, residue: 5, lowTillage: 10, diversity: 0 },
 };
 
-const G = 'grow' as const;
-const B = 'bare' as const;
-/** Illustrative calendars, Jan to Dec. The science teammate will confirm. */
-export const CALENDARS: Record<RotationId, ('grow' | 'bare')[]> = {
-  alfalfa: [G, G, G, G, G, G, G, G, G, G, G, G],
-  // Barley Dec to Mar, cotton Apr to Oct, bare Nov.
-  cotton_barley: [G, G, G, G, G, G, G, G, G, G, B, G],
-  // Durum Dec to May, bare Jun, sorghum Jul to Oct, bare Nov.
-  durum_sorghum: [G, G, G, G, G, B, G, G, G, G, B, G],
-  // Barley Dec to May, bare Jun to Nov.
-  barley_fallow: [G, G, G, G, G, B, B, B, B, B, B, G],
-  fallow: [B, B, B, B, B, B, B, B, B, B, B, B],
-};
 export const HEAT_RISK_MONTHS = [6, 7, 8];
+
+const A = 'alfalfa';
+const C = 'cotton';
+const Ba = 'barley';
+const D = 'durum';
+const S = 'sorghum';
+const _ = null;
+/** Illustrative calendars (the science teammate will confirm), with the crop in the field each month (null = bare). */
+export const SAMPLE_CALENDARS: Record<RotationId, (string | null)[]> = {
+  alfalfa: [A, A, A, A, A, A, A, A, A, A, A, A],
+  cotton_barley: [Ba, Ba, Ba, C, C, C, C, C, C, C, _, Ba],
+  durum_sorghum: [D, D, D, D, D, _, S, S, S, S, _, D],
+  barley_fallow: [Ba, Ba, Ba, Ba, Ba, _, _, _, _, _, _, Ba],
+  fallow: [_, _, _, _, _, _, _, _, _, _, _, _],
+};
 
 /** Sample context series for the Why page (all labeled sample in the UI). */
 export function getSampleContext() {

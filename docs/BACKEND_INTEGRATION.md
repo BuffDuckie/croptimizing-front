@@ -1,125 +1,180 @@
 # Backend integration
 
-The front end gets every number through one function, `getPlan(req)` in
-`src/api/client.ts`. Components never call `fetch` or import the model; they read
-results from the `usePlan` hook (`src/hooks/usePlan.ts`), which debounces slider
-changes by 150 ms and exposes `{ data, isLoading, error }`.
+**One file, `public/data/real_data.json`, carries the real numbers.** The live site runs the
+optimizer in the browser on that file; no server is needed. Every chart, number, and
+"Sample data" badge follows the file. Anything missing from it falls back to placeholder
+data and keeps its Sample badge.
 
-## Real data without a backend server
+- Format, field by field: [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md)
+- A complete example with every field: [`public/data/real_data.example.json`](../public/data/real_data.example.json)
+- Checker: `npm run check:data` (prints `OK`, or each bad field and why)
 
-The fastest way to get real numbers on the site: put the 20-year scenario table
-and context series in `public/data/real_data.json`. The in-browser engine (used
-by `sample` mode, and as the fallback in the others) then runs on it. Format,
-checker, and fallback rules: [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md).
+---
 
-## The three data modes
+## 1. What is still needed (to-do list)
 
-Set `VITE_DATA_MODE` at build time (see `.env.example`).
+Status of the `real_data.json` committed on Nov 15, 2026. Work top to bottom; the first
+item changes every number on the site.
 
-| Mode | What happens | Use it for |
+### Data the backend team adds to `real_data.json`
+
+| # | Field | Status now | What to do |
+| --- | --- | --- | --- |
+| 1 | `waterCost` **(add first)** | Missing. The site uses a **$200/AF placeholder** marked TODO. At $200, every rotation loses money in this data and the suggested plan is about 75% fallow at any water budget. | Add `"waterCost": { "perAf": <price>, "source": "<budget name and link>" }`, using the water price in the UA AZ2168 Pinal budget's water-purchase line (the line `nonWaterCost` leaves out). Farmers can still type their own price. |
+| 2 | `prices` flag | `"sample"`: cotton and durum/sorghum years are imputed (the `cotton_barley` and `durum_sorghum` rotations are flagged `"sample"`). | Fill the missing years from another source, or keep the imputation and explain it in `notes`. Once you trust it, set `sources.prices` and both rotations' `source` to `"real"`. |
+| 3 | `soil` | Copied from the placeholders, flagged `"sample"`. | The science teammate scores each rotation on the five parts (0 to 20 each, NRCS principles) and sets `sources.soil` to `"real"`. |
+| 4 | `context.etCheck` | Missing (the /why panel shows sample bars). | Modeled vs. OpenET/ECOSTRESS crop water use, mm per year, for each crop. Then set `sources.etCheck` to `"real"`. |
+| 5 | `waterPresets` | Missing. The chips show TODO values (4.5 / 3.2 / 2.0 AF/acre). | `full`, `cut2022`, `zero2023`: AF/acre with a source link each. **The water slider stops at 6.0 AF/acre**, so a larger value shows as 6.0. |
+| 6 | `calendars` | Missing. The site uses illustrative growing calendars. | Crop in the field each month, Jan to Dec, `null` for bare (see the format). These drive the calendar strips, heat and frost marks, bare-ground months, and the soil panel. |
+| 7 | `validation.checks`, `validation.lpCrossCheck` | Missing. "How we checked our work" shows "Not run yet". | List every check you ran, **including the ones you fail**, and the exact-solver comparison. |
+
+Already real in the file: `weather` (FAO-56 water from NASA POWER, heat days, ET0,
+monthly heat and frost), `grace`, `cropBudgets`, and `otherRegions` (Central Valley,
+High Plains, NW India).
+
+**Worth a sanity check:** in the file, alfalfa needs 7.8 AF/acre of applied water on
+average (8.5 in the highest year), above the slider's 6.0 maximum. If that is right, the
+farmer's current plan as farmed can never fit, and the tool always compares against it
+cut back.
+
+### Words the team writes (front-end files, not the data file)
+
+| What | Where | Count |
 | --- | --- | --- |
-| `sample` (default) | Runs the in-browser model in `src/model/` (seeded placeholder data). | Building and demoing the UI with no backend. |
-| `static` | Loads `/results/{region}/w{cap}_r{risk}_s{soil}.json` from `public/`. Inputs are rounded to the nearest grid point. | Shipping precomputed backend results as plain files on Vercel or Netlify. |
-| `live` | `POST {VITE_API_BASE_URL}/api/plan` with the `PlanRequest` as JSON. | The running FastAPI backend. |
+| One-line reason for each soil score | `method.soilRubric.reason.<rotation>.<part>` in `src/i18n/locales/en.json` and `es.json` | 25 per language |
+| "Pest cycles" and "Water soaking in" lines | `pests`, `infiltration` in `src/model/content.ts` (English and Spanish) | 10 per language |
+| Nitrogen carryover line | `compare.seq.carryTodo` in both locale files | 1 per language |
+| Spanish review | every Spanish string; new ones are marked by `_reviewJudging` and `_reviewFieldShift` in `es.json` | all |
 
-Every response is validated with zod (`src/api/schemas.ts`). If a static or live
-request fails for any reason (network, HTTP error, schema mismatch), the client
-falls back to the sample model and the app shows a friendly banner. The
-"Sample data" badge stays on screen whenever `dataSource` is `"sample"`.
+When these are done, `grep -rn TODO src` should return only code comments.
 
-## The contract
+---
 
-Types live in `src/api/types.ts` and must match the backend exactly. Field names
-are final; tell the front-end team before changing any.
+## 2. How to update the data (every time)
 
-- Request: `PlanRequest` (region, acres, `waterCapAfPerAcre` 0.5 to 6.0, `riskLevel` 0 to 1,
-  `minSoilScore` 0 to 100, optional `maxShare`, `waterCostPerAf`, `irrigationEfficiency`,
-  `currentMix`, `lang`).
-- Response: `PlanResponse` with `schemaVersion: "1.0"` and `dataSource` set to
-  `"live"` (API) or `"static"` (precomputed files). Use `"sample"` only for placeholder numbers.
-- Text fields (rotation names, explanations, stress-test labels, backtest strategy
-  names, assumptions) come back in the requested `lang`.
+```bash
+npm run check:data -- path/to/real_data.json
+```
 
-### Changed meaning: `current`
+1. Copy the file to `public/data/real_data.json`.
+2. Run the checker. It must print `OK`.
+3. Optional: run `npm run export-sample` to rewrite the static-mode files in `public/results/` from it.
+4. Run `npm run check` (typecheck, lint, tests, build). Then commit and push to `main`; Vercel deploys it.
 
-`current` is now the farmer's current plan **cut back to fit the water budget**
-(`fitToBudget` in `src/model/engine.ts`): take the plan's highest-need year across
-the scenario years; if it needs more than the cap, scale every irrigated rotation by
-`cap / need` and move the rest to fallow. A plan that already fits is unchanged. Use
-the same rule for `stressTests[].current*` and the backtest's current-plan row (fit
-on the training years). Send the untrimmed plan as `currentAsFarmed`.
+If one section is wrong, the site still uses the rest of the file and falls back to
+sample data for that section only. The browser console says which one and why, for example:
+`[real-data] fell back to sample for context.graceTwsCm: ...date must be "YYYY-MM"`.
 
-### Optional fields (judging upgrades)
+---
 
-All optional; the UI hides a feature when its field is missing. The sample engine
-fills every one, so `public/results/` has exact examples.
+## 3. `real_data.json` at a glance
+
+Full rules are in [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md).
+
+| Field | Required? | What it drives |
+| --- | --- | --- |
+| `schemaVersion` (`"real-1.0"`), `region` | **Required** | |
+| `years` (20 years in a row) | **Required** | Every per-year array follows this order |
+| `rotations.<id>`: `revenue`, `nonWaterCost`, `profit`, `waterAf`, `source` | **Required**, all five rotations | The optimizer: every plan, metric, and chart |
+| `soil.<id>`: five parts, 0 to 20 | **Required** | Soil scores everywhere |
+| `waterCost` | Optional, **strongly needed** | Default water price (else the $200 placeholder) |
+| `calendars` | Optional | Calendars, bare months, heat and frost marks |
+| `context.graceTwsCm` | Optional | /why groundwater panel, "NASA data behind this plan" |
+| `context.heatDaysPerYear`, `context.et0MonthlyMm` | Optional (both needed for the `weather` badge) | /why heat and ET0 panels |
+| `context.monthlyRisk` | Optional | Heat and frost marks, /why monthly chart |
+| `context.etCheck` | Optional | /why "satellite vs. model" panel |
+| `context.otherRegions` | Optional | /why "Same pressure elsewhere" |
+| `waterPresets` | Optional | Water situation chips, home quick start, zero-canal-water headline |
+| `validation` | Optional | "How we checked our work" |
+| `sources` | Optional (missing = sample) | Every Sample badge and the data-sources Status column |
+| `generatedAt`, `notes` | Optional | For people only |
+
+---
+
+## 4. Other ways to deliver results (optional, not needed for the deadline)
+
+The site can also read finished plans instead of computing them. Set `VITE_DATA_MODE`
+at build time (see `.env.example`):
+
+| Mode | What happens |
+| --- | --- |
+| `sample` (default, **what the live site uses**) | Runs the optimizer in the browser on `real_data.json` (or placeholders). |
+| `static` | Loads precomputed plans from `public/results/{region}/w{cap}_r{risk}_s{soil}.json`, rounded to a grid. Settings off the grid (other water prices, soil goals) run in the browser instead. |
+| `live` | `POST {VITE_API_BASE_URL}/api/plan` to a running FastAPI backend. |
+
+Every response is checked with zod (`src/api/schemas.ts`). If a static or live request
+fails, the site falls back to the browser optimizer and shows a banner.
+
+### The API contract (static and live modes only)
+
+Types are in `src/api/types.ts`; field names are final. Text fields come back in the
+requested `lang`.
+
+**Request, `PlanRequest`.** Required: `region`, `acres`, `waterCapAfPerAcre` (0.5 to 6.0),
+`riskLevel` (0 to 1), `minSoilScore` (0 to 100), `currentMix`, `lang`.
+Optional: `maxShare`, `waterCostPerAf` (the site always sends it), `irrigationEfficiency`,
+`soilParts` (soil goals to count; omitted = all five; the score becomes the selected
+parts rescaled to 0 to 100).
+
+**Response, `PlanResponse`.** Required: `schemaVersion: "1.0"`, `dataSource` (`"live"`
+or `"static"`), `recommended`, `current`, `frontier`, `rotations`, `stressTests`,
+`backtest`, `correlations`, `context` (`graceTwsCm`, `heatDaysPerYear`, `et0MonthlyMm`,
+`etCheck`), `assumptions`.
+
+`current` is the farmer's plan **cut back to fit the water budget**: find the plan's
+highest-need year; if it needs more than the cap, scale every irrigated rotation by
+`cap / need` and move the rest to fallow (`fitToBudget` in `src/model/engine.ts`). Use the
+same rule for `stressTests` and the backtest's current-plan row.
+
+**Optional response fields.** The site hides a feature when its field is missing. The
+browser optimizer fills every one, so `public/results/` has exact examples.
 
 | Field | What it is |
 | --- | --- |
-| `currentAsFarmed` | `{ mix, metrics }` for the current plan before the cut. Shown only on Show the math. |
-| `sources` | Per-dataset flag, `"sample"` or `"real"`, for `weather`, `grace`, `etCheck`, `cropBudgets`, `prices`, `soil`, `otherRegions`. A missing dataset counts as sample. Drives every Sample tag and the Status column. |
-| `validation.lpCrossCheck` | `{ method, maxShareDifference (0 to 1), note }` from an exact solver run on the same data. Shown in "How we checked our work" (Pass when within one 5% grid step). |
-| `sensitivity[]` | `{ case, value, avgProfit, worst1in5, mix, mixChanged }` for `profitDown`/`profitUp` (profit of every rotation but fallow x0.8/x1.2), `waterCostDown`/`waterCostUp` (only when a water cost is set), `efficiencyLow`/`efficiencyHigh` (0.65/0.85). Null numbers and mix when nothing fits. |
-| `classic` | `{ points[], atSuggested, largestGap }`: the mean-variance efficient set among feasible mixes (no mix has both higher average and lower standard deviation) and the worst-years gap vs. our best plan at the same or higher average. |
-| `riskMetrics` | `{ recommended, current, fallowAvg }`, each `{ sd, sharpe, sortino, diversification }`. Benchmark is the fallow average; Sortino uses downside deviation below it. Nulls when undefined. |
-| `context.otherRegions[]` | `{ id, label, series: { date, value }[], source }`: GRACE storage (cm) for other farm regions. |
+| `currentAsFarmed` | `{ mix, metrics }`: the current plan before the cut |
+| `sources` | `"sample"` or `"real"` per dataset; missing counts as sample |
+| `goals` | `{ income, water, soil }`, each `{ mix, metrics }`: best feasible mix for highest average profit, lowest highest-year water, highest soil score |
+| `soilFrontier[]` | `{ soilScore, avgProfit, mix }`: feasible mixes no other beats on both, by soil |
+| `sensitivity[]` | Suggested plan re-run with profit ±20%, water price ±20%, efficiency 0.65 / 0.85 |
+| `classic` | Classic mean-variance efficient set and its gap vs. ours |
+| `riskMetrics` | Sharpe, Sortino, diversification for the suggested and current plans |
+| `waterPresets` | Same as in `real_data.json` |
+| `validation` | `lpCrossCheck` and `checks[]`, same as in `real_data.json` |
+| `context.otherRegions[]`, `context.monthlyRisk[]` | Same as in `real_data.json` |
+| `Metrics.yearlyWater[]` | `{ year, water }`: applied AF/acre each year |
+| `RotationCard.yearlyWaterAf[]` | Applied AF/acre each year, rotation on every acre |
+| `RotationCard.calendarCrops[]` | Crop each month, `null` = bare (calendar letters) |
+| `RotationCard.families[]` | Botanical families grown (e.g. `Fabaceae`) |
+| `RotationCard.pests`, `.infiltration` | One plain sentence each |
 
-### Optional fields (Field Shift additions)
-
-| Field | What it is |
-| --- | --- |
-| `PlanRequest.soilParts` | Soil goals to count, any of `legume`, `livingRoots`, `residue`, `lowTillage`, `diversity`. Omitted = all five. The soil score (minimum, metrics, card `soil.total`, soil frontier, goals) becomes the selected parts rescaled to 0 to 100: `sum(selected) * 100 / (20 * count)`. Static mode runs the browser engine when it is set. |
-| `goals` | `{ income, water, soil }`, each `{ mix, metrics }`: the feasible mix (same grid, water cap, soil minimum, share limits) with the highest average profit, the lowest highest-year water, and the highest soil score. |
-| `soilFrontier[]` | `{ soilScore, avgProfit, mix }`: feasible mixes no other feasible mix beats on both soil score and average profit, sorted by soil. |
-| `waterPresets` | `{ full?, cut2022?, zero2023? }`, each `{ afPerAcre, label, source }` (same as in real_data.json). Without it the UI shows TODO placeholders with a Sample badge. |
-| `validation.checks[]` | `{ id, label, result: "pass" \| "partial" \| "fail", detail, source? }`. List the checks you fail too. |
-| `context.monthlyRisk[]` | 12 entries `{ month, heatDays, frostDays }`: average days per calendar month with max >= 43.3 C and min <= 0 C. |
-| `Metrics.yearlyWater[]` | `{ year, water }`: applied AF/acre each year (fits-your-water counts and water saved). |
-| `RotationCard.yearlyWaterAf[]` | Applied AF/acre each year for the rotation on every acre, same order as the years. |
-| `RotationCard.families[]` | Botanical families grown (e.g. `Fabaceae`), for counting crop families. |
-| `RotationCard.pests`, `.infiltration` | One plain sentence each, in the requested language. |
-
-
-### When no mix fits
-
-Return **HTTP 422** with this body. The UI tells the farmer which limit to relax and
-offers one-tap fixes.
+**When no mix fits**, return HTTP 422:
 
 ```json
 { "code": "infeasible", "relax": "soil", "maxSoilAtThisWater": 42, "minWaterForThisSoil": 2.9 }
 ```
 
-`relax` is one of `"soil"`, `"water"`, `"maxShare"`. Both numbers are optional.
+`relax` is `"soil"`, `"water"`, or `"maxShare"`; both numbers are optional.
 
-## Static files
+### Static files
 
-Grid (`src/api/grid.ts`):
-
-- water: 0.6 to 6.0 in steps of 0.3 (file name uses one decimal: `w2.4`)
-- risk: 0, 20, 40, 60, 80, 100 (slider units; `riskLevel = risk / 100`)
-- soil: 0, 15, 30, 45, 60, 75, 90
-
-File layout:
+Grid (`src/api/grid.ts`): water 0.6 to 6.0 in steps of 0.3 (file name `w2.4`), risk
+0/20/40/60/80/100, soil 0/15/30/45/60/75/90. Layout:
 
 ```
-public/results/pinal/w2.4_r40_s30.json             English response
-public/results/pinal/es/w2.4_r40_s30.json          Spanish response (optional; falls back to English)
-public/results/pinal/w0.6_r0_s90.infeasible.json   422 body for points with no plan
+public/results/pinal/w2.4_r40_s30.json             English
+public/results/pinal/es/w2.4_r40_s30.json          Spanish (optional; falls back to English)
+public/results/pinal/w0.6_r0_s90.infeasible.json   422 body where no plan fits
 public/results/pinal/index.json                    grid and file list
 ```
 
-To drop in real results, write files with the same names and shapes (with
-`"dataSource": "static"`), then build with `VITE_DATA_MODE=static`.
+`npm run export-sample` writes all of them from the browser optimizer and the current
+`real_data.json`, at the default water price.
 
-`npm run export-sample` regenerates the example files from the sample engine
-(about 21 MB for English and Spanish; `npm run export-sample -- --en` for English
-only). They keep `"dataSource": "sample"` because they are placeholder numbers.
-
-## Checking a backend locally
+### Checking a live backend locally
 
 ```bash
 VITE_DATA_MODE=live VITE_API_BASE_URL=http://localhost:8000 npm run dev
 ```
 
-The backend must allow CORS from the front end's origin. Open the browser console:
-schema problems are logged by zod and trigger the fallback banner.
+The backend must allow CORS from the site's origin. Schema problems show in the browser
+console and trigger the fallback banner.

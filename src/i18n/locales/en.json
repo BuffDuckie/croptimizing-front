@@ -251,8 +251,8 @@
     "more": "More options",
     "maxShare": "Most you would plant of each rotation",
     "maxShareText": "{{n}} percent at most",
-    "waterCost": "Extra cost per acre-foot",
-    "waterCostHelp": "Leave at $0 if your crop budgets already count water.",
+    "waterCost": "Water price per acre-foot",
+    "waterCostHelp": "{{v}} for each acre-foot of water applied is taken off profit.",
     "efficiency": "Irrigation efficiency",
     "efficiencyHelp": "Drip and good scheduling raise this. Higher means less water per acre for the same crop.",
     "efficiencyText": "{{n}} percent",
@@ -393,7 +393,10 @@
       "neutralMore": "In a zero-canal-water year like {{year}} ({{w}} AF/acre), the plan for that water changes profit by {{xd}} per acre vs. your current plan cut back to fit, with fields covered {{nd}} more months.",
       "neutralLess": "In a zero-canal-water year like {{year}} ({{w}} AF/acre), the plan for that water changes profit by {{xd}} per acre vs. your current plan cut back to fit, with fields covered {{nd}} fewer months.",
       "note": "Uses {{year}} weather and prices with a {{w}} acre-feet per acre budget and your other settings."
-    }
+    },
+    "waterCostDefault": "The default, {{v}}, comes from {{source}}. Type your own price.",
+    "waterCostPlaceholder": "The default, {{v}}, is a placeholder until the crop budget's water price is added (TODO). Type your own price.",
+    "waterCostReset": "Back to the default ({{v}})"
   },
   "strip": {
     "titleBetter": "Your suggested plan holds up better in bad years",
@@ -826,7 +829,7 @@
         "plan": "Your plan"
       }
     },
-    "unitsNote": "Profit leaves out the cost of buying water (add it under More options). Water is applied irrigation water at 75% efficiency.",
+    "unitsNote": "Profit in the data leaves out buying water; the tool takes off your water price ({{c}} per acre-foot) times the water applied. Water is applied irrigation water at 75% efficiency.",
     "soilRubric": {
       "intro": "Each rotation gets up to 20 points on five parts, and the soil score is their sum (0 to 100). Four parts follow the USDA NRCS soil-health principles; the fifth counts nitrogen from legumes.",
       "caption": "Soil-score rubric: each part, the NRCS principle it follows, and each rotation's points with the reason.",

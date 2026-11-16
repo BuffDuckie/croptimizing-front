@@ -111,7 +111,11 @@ export async function getPlan(req: PlanRequest): Promise<PlanResponse> {
   // Sample mode validates request and response inside the worker, so zod stays off the main thread.
   if (m === 'sample') return runSample(req);
   // Static files cover the default soil goals only; other goals run in the browser engine.
-  if (m === 'static' && req.soilParts) return runSample(req);
+  if (m === 'static') {
+    const { FALLBACK_WATER_COST_PER_AF } = await import('../config/waterCost');
+    const fileCost = (await realDataset())?.waterCost?.perAf ?? FALLBACK_WATER_COST_PER_AF;
+    if (req.soilParts || (req.waterCostPerAf !== undefined && req.waterCostPerAf !== fileCost)) return runSample(req);
+  }
   const { planRequestSchema, planResponseSchema } = await import('./schemas');
   const valid = planRequestSchema.parse(req) as PlanRequest;
   try {

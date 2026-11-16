@@ -42,6 +42,8 @@ const file = {
     etCheck: ds.context.etCheck,
     otherRegions: (ds.context.otherRegions ?? []).map((r) => ({ ...r, source: 'sample' })),
   },
+  calendars: ds.calendars,
+  waterCost: { perAf: 200, source: 'TODO: the crop budget this water price comes from (name and link)' },
   waterPresets: {
     full: { afPerAcre: 4.5, label: 'Full canal allotment', source: 'TODO: link to the source for this number' },
     cut2022: { afPerAcre: 3.2, label: '2022-style cut', source: 'TODO: link to the source for this number' },

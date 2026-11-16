@@ -90,6 +90,27 @@ export const contextSchemas = {
 export type ContextKey = keyof typeof contextSchemas;
 export const CONTEXT_KEYS = Object.keys(contextSchemas) as ContextKey[];
 
+/** Crop in the field each month (Jan to Dec), or null for bare ground. */
+const calendarMonths = z
+  .array(z.union([z.string().min(1), z.null()]))
+  .length(12, 'calendar must have 12 months (Jan to Dec)');
+export const calendarsSchema = z
+  .object({
+    alfalfa: calendarMonths,
+    cotton_barley: calendarMonths,
+    durum_sorghum: calendarMonths,
+    barley_fallow: calendarMonths,
+    fallow: calendarMonths,
+  })
+  .strict()
+  .superRefine((c, ctx) => {
+    c.fallow.forEach((m, i) => {
+      if (m !== null) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['fallow', i], message: 'fallow has no crop in any month (use null)' });
+    });
+  });
+
+export const waterCostSchema = z.object({ perAf: finite.min(0).max(1000), source: z.string() }).strict();
+
 const preset = z.object({ afPerAcre: finite.min(0).max(6), label: z.string().min(1), source: z.string() });
 export const waterPresetsSchema = z.object({ full: preset.optional(), cut2022: preset.optional(), zero2023: preset.optional() }).strict();
 
@@ -132,6 +153,8 @@ export const realDataSchema = z
     rotations: rotationsSchema,
     soil: soilSchema,
     context: z.object(contextSchemas).partial().strict().optional(),
+    calendars: calendarsSchema.optional(),
+    waterCost: waterCostSchema.optional(),
     waterPresets: waterPresetsSchema.optional(),
     validation: validationSchema.optional(),
     sources: sourcesSchema.optional(),

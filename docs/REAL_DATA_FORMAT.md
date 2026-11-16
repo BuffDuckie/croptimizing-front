@@ -39,6 +39,12 @@ missing, the site runs on sample data exactly as before.
     "alfalfa": { "legume": 20, "livingRoots": 20, "residue": 12, "lowTillage": 18, "diversity": 15 },
     ...
   },
+  "calendars": {                             // optional: crop in the field each month, Jan to Dec; null = bare
+    "alfalfa":       ["alfalfa", "alfalfa", ..., "alfalfa"],
+    "cotton_barley": ["barley", "barley", "barley", "cotton", ..., "cotton", null, "barley"],
+    ...                                      // all five rotations; fallow is all null
+  },
+  "waterCost": { "perAf": 75, "source": "UA AZ2168 Pinal 2025 budget, water line (link)" },  // optional: default $/AF
   "context": {                               // optional, and each series is optional
     "graceTwsCm":      [{ "date": "2005-01", "value": 3.1 }],
     "heatDaysPerYear": [{ "year": 2005, "days": 41 }],
@@ -77,6 +83,8 @@ missing, the site runs on sample data exactly as before.
 | `monthlyRisk` | Average days per calendar month over the 20 years with daily max temperature 43.3 °C (110 °F) or more (`heatDays`) and daily min 0 °C or less (`frostDays`). Calendar strips mark a heat month at 5 or more days and a frost month at 1 or more. |
 | `checks[].result` | `"pass"`, `"partial"`, or `"fail"`. List the checks you fail too. |
 | Source flags | `"real"` or `"sample"`. |
+| `calendars` | 12 entries per rotation, all five rotations. A crop name (any text, e.g. `"cotton"`) means a crop is in the field that month; `null` means bare. The first letter labels the calendar strip. `fallow` must be all `null`. |
+| `waterCost.perAf` | Default price of water, dollars per acre-foot of applied water (0 to 1000), and where it comes from. The engine takes `perAf x waterAf` off each year's profit; farmers can change it. Without it the site uses a $200 placeholder marked TODO. |
 | Required sections | `years`, `rotations`, `soil`. Everything else is optional. |
 
 ## What happens with a bad section
@@ -88,8 +96,8 @@ the rest and sample data for that section only, and logs in the browser console:
 [real-data] fell back to sample for context.graceTwsCm: context.graceTwsCm.5.date: date must be "YYYY-MM"
 ```
 
-Sections: `years` + `rotations` (together: one scenario table), `soil`, each
-`context.*` series, `waterPresets`, `validation`, `sources`.
+Sections: `years` + `rotations` (together: one scenario table), `soil`, `calendars`,
+`waterCost`, each `context.*` series, `waterPresets`, `validation`, `sources`.
 
 A dataset's badge drops only when the file marks it `"real"` **and** every
 section behind it loaded from the file:

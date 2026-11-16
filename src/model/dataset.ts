@@ -5,7 +5,7 @@
 
 import type { DatasetId, PlanResponse, RotationId, SoilPartId, SourceFlag, Validation, WaterPreset, WaterPresetId } from '../api/types';
 import { ROTATION_IDS, SOIL_PART_IDS } from '../api/types';
-import { getSampleContext, getScenarioData, SOIL_PARTS } from './sampleData';
+import { getSampleContext, getScenarioData, SAMPLE_CALENDARS, SOIL_PARTS } from './sampleData';
 
 export type SoilParts = Record<SoilPartId, number>;
 
@@ -25,6 +25,10 @@ export type Dataset = {
   soilParts: Record<RotationId, SoilParts>;
   context: PlanResponse['context'];
   waterPresets?: Partial<Record<WaterPresetId, WaterPreset>>;
+  /** Crop in the field each month (Jan to Dec), null = bare. Illustrative in the sample. */
+  calendars: Record<RotationId, (string | null)[]>;
+  /** Default price of water from the data file, $/AF, with its source. */
+  waterCost?: { perAf: number; source: string };
   validation?: Validation;
   sources: Partial<Record<DatasetId, SourceFlag>>;
   /** True when any section came from the real data file. */
@@ -50,6 +54,7 @@ export function sampleDataset(): Dataset {
     scenario: { years: d.years, profit: d.profit, water: d.water, soil },
     soilParts,
     context: getSampleContext(),
+    calendars: SAMPLE_CALENDARS,
     sources: { weather: 'sample', grace: 'sample', etCheck: 'sample', cropBudgets: 'sample', prices: 'sample', soil: 'sample', otherRegions: 'sample' },
     fromFile: false,
   };
