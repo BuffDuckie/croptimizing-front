@@ -17,27 +17,12 @@ data and keeps its Sample badge.
 Status of `real_data.json` and `soil_rubric_reasons.json` as committed on Nov 15, 2026
 (evening). Work top to bottom.
 
-### Data: one step left
+### Data: done
 
-Every dataset is marked real. The satellite crop-water check (OpenET/ECOSTRESS) was
-not done and is no longer shown; the water model is checked against measured Pinal
-applied water instead (in `validation.checks`).
-
-**Operating costs only.** The team decided profit should leave out fixed costs, like
-land rent already is. To also leave out machinery ownership and insurance, put each
-crop's $/acre per year (from the UA AZ2168 Pinal 2025 budget line items) in a file:
-
-```json
-{ "source": "UA AZ2168 Pinal 2025 budgets, machinery ownership + insurance", "alfalfa": 0, "cotton": 0, "barley": 0, "durum": 0, "sorghum": 0 }
-```
-
-```bash
-npm run apply-operating-costs -- fixed-costs.json
-```
-
-It lowers each rotation's `nonWaterCost` by its crops' fixed costs, raises `profit` by
-the same amount, adds a sentence to `notes`, prints the before and after averages, and
-runs the checker. Then follow section 2.
+Every dataset is marked real. Costs are the UA AZ2168 Pinal 2025 budgets without the
+water-purchase line and without land rent (team decision, Nov 15). The satellite
+crop-water check (OpenET/ECOSTRESS) was not done and is no longer shown; the water model
+is checked against measured Pinal applied water instead (in `validation.checks`).
 
 ### Words the team writes (front-end files, not the data file)
 
