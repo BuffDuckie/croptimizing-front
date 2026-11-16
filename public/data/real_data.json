@@ -4167,6 +4167,6 @@
   "cropBudgets": "real",
   "prices": "sample",
   "otherRegions": "real",
-  "soil": "sample"
+  "soil": "real"
  }
 }

@@ -22,13 +22,13 @@ Status of `real_data.json` and `soil_rubric_reasons.json` as committed on Nov 15
 | # | Field | Status now | What to do |
 | --- | --- | --- | --- |
 | 1 | `prices` flag | `"sample"`: cotton (4 years) and durum/sorghum (13 years) prices or yields are imputed, so the `cotton_barley` and `durum_sorghum` rotations are flagged `"sample"`. That also keeps the **crop budgets** badge on sample (it needs every rotation real). | Fill the missing years from another source, or keep the imputation and explain it in `notes`. Once you trust it, set `sources.prices` and both rotations' `source` to `"real"`. |
-| 2 | `soil` flag | Scores come from the team's rubric (`soil_rubric.py`) but are flagged `"sample"` because no agronomist has reviewed them, so soil numbers keep the Sample badge. | When the team is satisfied (ideally after a local expert looks), set `sources.soil` to `"real"`. |
-| 3 | `context.etCheck` | Missing (the /why panel shows sample bars). | Modeled vs. OpenET/ECOSTRESS crop water use, mm per year, for each crop. Then set `sources.etCheck` to `"real"`. |
-| 4 | `validation.checks`, `validation.lpCrossCheck` | Missing. "How we checked our work" shows "Not run yet". | List every check you ran, **including the ones you fail**, and the exact-solver comparison. |
+| 2 | `context.etCheck` | Missing (the /why panel shows sample bars). | Modeled vs. OpenET/ECOSTRESS crop water use, mm per year, for each crop. Then set `sources.etCheck` to `"real"`. |
+| 3 | `validation.checks`, `validation.lpCrossCheck` | Missing. "How we checked our work" shows "Not run yet". | List every check you ran, **including the ones you fail**, and the exact-solver comparison. |
 
 Done and live: `waterCost` ($70/AF from the UA budget), `waterPresets` (3.44 / 2.54 /
 2.05 AF/acre with sources; the slider shows them rounded to 0.1), `calendars`, soil
-scores and their reasons (`soil_rubric_reasons.json`), GRACE, weather (FAO-56 water,
+scores (marked real by the team on Nov 15; the site still says no agronomist has
+reviewed them) and their reasons (`soil_rubric_reasons.json`), GRACE, weather (FAO-56 water,
 heat days, ET0, monthly heat and frost), and other regions. Alfalfa water is the
 grower-reported 5.0 AF/acre every year; the site says so on the alfalfa card.
 
