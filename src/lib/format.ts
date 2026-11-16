@@ -52,6 +52,11 @@ export function pct(share: number, lang: Lang = 'en'): string {
   return `${whole(share * 100, lang)}%`;
 }
 
+/** True for text someone has written; a "TODO" placeholder (or nothing) stays off the screen. */
+export function written(s: string | undefined | null): s is string {
+  return !!s && !/^\s*TODO\b/i.test(s);
+}
+
 /** Ordered list of non-zero rotations in a mix. */
 export function mixEntries(mix: Mix): { id: RotationId; share: number }[] {
   return ROTATION_IDS.filter((id) => (mix[id] ?? 0) > 0.0001).map((id) => ({ id, share: mix[id] ?? 0 }));

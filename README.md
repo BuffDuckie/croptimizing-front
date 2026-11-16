@@ -63,6 +63,11 @@ No backend, login, database, or cookies.
 - `src/hooks/usePlan.ts` debounced data hook; components never touch the model or `fetch`
 - `docs/BACKEND_INTEGRATION.md` how to plug in static files or the live API
 
+## Logo
+
+The logo files (SVG and PNG, for light and dark backgrounds, plus the app icon) are in
+[`assets/logo/`](assets/logo/README.md).
+
 ## Deploy
 
 The build is static. Both configs rewrite every route to `index.html`.

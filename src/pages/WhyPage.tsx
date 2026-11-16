@@ -12,7 +12,7 @@ const WhyPanels = lazy(() => import('../components/lazy/WhyPanels'));
 export default function WhyPage() {
   const { t } = useTranslation();
   const { data } = usePlanContext();
-  const anySample = isSample(data, ['grace', 'weather', 'etCheck']) || data?.context.otherRegions?.some((r) => r.source !== 'real');
+  const anySample = isSample(data, ['grace', 'weather']) || data?.context.otherRegions?.some((r) => r.source !== 'real');
   return (
     <div className="container-content page-enter">
       <PageIntro title={t('pages.why.title')} intro={t('pages.why.intro')} />

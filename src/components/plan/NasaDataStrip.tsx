@@ -2,7 +2,8 @@ import { ArrowRight, Satellite } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { DatasetId, PlanResponse } from '../../api/types';
-import { graceDropCm, etMaxGapPct } from '../../lib/context';
+import { graceDropCm } from '../../lib/context';
+import { FROST_DAYS_MIN, HEAT_DAYS_MIN } from '../../lib/risk';
 import { whole } from '../../lib/format';
 import { isSample } from '../../lib/sources';
 import { useYears } from '../../state/PlanContext';
@@ -21,7 +22,10 @@ export function NasaDataStrip({ data }: { data: PlanResponse }) {
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const yrs = useYears();
   const drop = graceDropCm(data.context.graceTwsCm);
-  const gap = etMaxGapPct(data.context.etCheck);
+  const months = t('months', { returnObjects: true }) as string[];
+  const risk = data.context.monthlyRisk ?? [];
+  const heat = risk.filter((r) => r.heatDays >= HEAT_DAYS_MIN).map((r) => months[r.month - 1]);
+  const frost = risk.filter((r) => r.frostDays >= FROST_DAYS_MIN).map((r) => months[r.month - 1]);
   const items: { key: string; mission: string; text: string; to: string; ds: DatasetId; role: string }[] = [
     {
       key: 'power',
@@ -39,14 +43,18 @@ export function NasaDataStrip({ data }: { data: PlanResponse }) {
       ds: 'grace',
       role: t('plan.nasa.context'),
     },
-    {
-      key: 'openet',
-      mission: 'OpenET / NASA ECOSTRESS',
-      text: gap === null ? t('plan.nasa.openetNone') : t('plan.nasa.openet', { v: whole(gap, lang) }),
-      to: '/why#et-check',
-      ds: 'etCheck',
-      role: t('plan.nasa.check'),
-    },
+    ...(risk.length
+      ? [
+          {
+            key: 'risk',
+            mission: 'NASA POWER',
+            text: t('plan.nasa.risk', { heat: heat.join(', ') || '-', frost: frost.join(', ') || '-' }),
+            to: '/why#monthly-risk',
+            ds: 'weather' as DatasetId,
+            role: t('plan.nasa.timing'),
+          },
+        ]
+      : []),
   ];
   return (
     <section className="card" aria-labelledby="nasa-strip-title">

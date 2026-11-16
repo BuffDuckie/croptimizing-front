@@ -26,8 +26,7 @@
   },
   "footer": {
     "disclaimer": "Esta herramienta apoya su criterio; no lo reemplaza. Revise sus planes con su agente de extensión local.",
-    "credits": "Clima: NASA POWER. Agua subterránea: NASA GRACE y GRACE-FO. Uso de agua de cultivos: OpenET y NASA ECOSTRESS.",
-    "built": "Hecho para el NASA Space Apps Challenge 2026, Field Shift: explorar rotaciones que pueden mejorar la salud del suelo y la resiliencia ante cambios de clima y agua.",
+    "credits": "Clima: NASA POWER. Agua subterránea: NASA GRACE y GRACE-FO.",
     "notAffiliated": "No es un producto oficial de la NASA."
   },
   "pages": {
@@ -236,7 +235,7 @@
     "controls": "Sus ajustes",
     "edit": "Cambiar ajustes",
     "hide": "Ocultar ajustes",
-    "summary": "Agua {{water}} AF · Riesgo {{risk}} · Suelo {{soil}}",
+    "summary": "Agua {{water}} AF, riesgo {{risk}}, suelo {{soil}}",
     "water": "Presupuesto de agua",
     "waterUnit": "AF por acre",
     "waterText": "{{n}} acre-pies por acre",
@@ -311,13 +310,12 @@
       "title": "Datos de la NASA detrás de este plan",
       "drives": "Fija su necesidad de agua",
       "context": "Contexto regional",
-      "check": "Verifica nuestro modelo",
       "power": "{{years}} años ({{days}} días) de clima diario fijan cuánta agua necesita cada cultivo en cada año que probamos.",
       "grace": "El agua subterránea aquí bajó unos {{v}} cm desde {{from}}. Es contexto de la región; no cambia el plan.",
       "graceNone": "Tendencia regional del agua subterránea, como contexto de la región.",
-      "openet": "El uso de agua de los cultivos medido por satélite está a menos de {{v}}% de lo que predice nuestro modelo de agua.",
-      "openetNone": "Uso de agua de los cultivos medido por satélite, para verificar nuestro modelo de agua.",
-      "see": "Ver los datos"
+      "see": "Ver los datos",
+      "risk": "Las máximas y mínimas diarias marcan los meses en que un cultivo en el campo enfrenta calor extremo ({{heat}}) o heladas ({{frost}}).",
+      "timing": "Marca meses de riesgo"
     },
     "soilPanel": {
       "title": {
@@ -375,7 +373,8 @@
       "sets": "Fija su presupuesto de agua en {{v}} acre-pies por acre.",
       "source": "De dónde sale este número",
       "noSource": "Número de prueba, todavía sin fuente (TODO).",
-      "exact": "Los datos dicen {{v}} AF/acre; el control se mueve en pasos de 0.1."
+      "exact": "Los datos dicen {{v}} AF/acre; el control se mueve en pasos de 0.1.",
+      "value": "{{v}} AF/acre"
     },
     "fits": {
       "plan": "Cabe en su agua en {{k}} de {{n}} años.",
@@ -505,7 +504,7 @@
       "gaps": "Lo que no sabemos",
       "checkLocally": "Revise localmente"
     },
-    "math": "Cada número es un promedio de 20 años para un acre de esa rotación sola, con los mismos datos de muestra que su plan. Por acre-pie divide la ganancia promedio entre el agua aplicada promedio. Peores 1 de 5 es el promedio de sus 4 peores años.",
+    "math": "Cada número es un promedio de 20 años para un acre de esa rotación sola, con los mismos datos que su plan. Por acre-pie divide la ganancia promedio entre el agua aplicada promedio. Peores 1 de 5 es el promedio de sus 4 peores años.",
     "tableCaption": "Rotaciones lado a lado",
     "risk": {
       "heat": "Mes caluroso con el cultivo en el campo ({{n}} o más días a 110°F o más)",
@@ -564,15 +563,6 @@
     "et0Short": "ET de referencia",
     "mmMonth": "mm/mes",
     "month": "Mes",
-    "etTitle": "Nuestro modelo de agua está a menos de {{v}}% de lo que miden los satélites",
-    "etRes": "Conjunto OpenET con ECOSTRESS, 30 a 70 m, escala de campo.",
-    "etHow1": "Las barras azules son el agua que usa cada cultivo en nuestro modelo. Las barras cian son lo que midieron los satélites en campos reales aquí.",
-    "etHow2": "Barras de altura parecida significan que los números de agua del modelo son creíbles.",
-    "etCaption": "Uso de agua de cultivos: modelo vs. satélite (mm por año)",
-    "etAria": "Barras pareadas para cinco cultivos: el modelo y el satélite coinciden dentro de {{v}} por ciento.",
-    "modeled": "Nuestro modelo",
-    "satellite": "Satélite (OpenET / ECOSTRESS)",
-    "mmYear": "mm/año",
     "crop": "Cultivo",
     "crops": {
       "alfalfa": "Alfalfa",
@@ -637,7 +627,7 @@
     "print": "Imprimir o guardar como PDF",
     "stale": "Sus ajustes actuales no tienen plan, así que este informe muestra su último plan que funcionó.",
     "heading": "Plan de rotación para {{name}}",
-    "meta": "{{acres}} acres · Presupuesto de agua {{water}} AF/acre · Riesgo {{risk}}/100 · Suelo mínimo {{soil}}/100 · {{date}}",
+    "meta": "{{acres}} acres. Presupuesto de agua {{water}} AF/acre, riesgo {{risk}}/100, suelo mínimo {{soil}}/100. {{date}}",
     "mix": "Mezcla sugerida",
     "numbers": "Lo que habría ganado",
     "today": "Hoy",
@@ -710,9 +700,9 @@
         "Mensual, unos 300 km"
       ],
       [
-        "Verificación del uso de agua",
-        "Conjunto OpenET, NASA ECOSTRESS",
-        "30 a 70 m"
+        "Revisión del agua de los cultivos",
+        "Universidad de Arizona WRRC, informe de agua de la AMA de Pinal (agua aplicada medida)",
+        "Distritos de riego"
       ],
       [
         "Costos e ingresos de cultivos",
@@ -725,9 +715,9 @@
         "Condado y estado, anual"
       ],
       [
-        "Propiedades del suelo",
-        "USDA Web Soil Survey",
-        "Unidad de mapa"
+        "Puntajes de salud del suelo",
+        "Rúbrica del equipo sobre los principios de salud del suelo del USDA NRCS; pasadas de labranza de los presupuestos de cultivo de la Universidad de Arizona",
+        "Por rotación"
       ],
       [
         "Recortes de agua",
@@ -761,8 +751,7 @@
       "No conoce sus campos. El suelo, los pozos y los contratos cambian de una granja a otra.",
       "Supone que los próximos años se parecerán a alguna mezcla de los últimos 20. Puede llegar un tipo de año nuevo.",
       "No modela plagas, enfermedades, mano de obra ni el costo de cambiar de equipo.",
-      "Las proporciones cambian en pasos de 5%, así que el mejor plan entre pasos puede variar un poco.",
-      "Cada número en esta versión son datos de muestra hasta que carguen los datos reales del equipo."
+      "Las proporciones cambian en pasos de 5%, así que el mejor plan entre pasos puede variar un poco."
     ],
     "asFarmedTitle": "Su plan actual, antes y después del recorte",
     "asFarmedIntro": "Cada comparación en esta herramienta usa su plan actual recortado para caber en su agua. Este es el único lugar donde aparece el plan tal como cultiva hoy.",
@@ -783,7 +772,7 @@
       "titleMany": "Su plan depende de estos datos: la mezcla cambia en {{n}} de {{total}} casos",
       "sub": "Cambio en la ganancia de un año promedio respecto a los {{avg}} por acre de su plan, repitiendo la búsqueda en cada caso.",
       "how1": "Cada fila cambia un dato y repite la búsqueda. La barra muestra cómo se mueve la ganancia de un año promedio: a la derecha es más, a la izquierda es menos.",
-      "how2": "La etiqueta Nueva mezcla significa que otra mezcla gana en ese caso. Nuestros datos de muestra solo tienen ganancia, así que los cambios de precio se aplican a la ganancia de cada rotación (un choque de ganancia); el descanso no cambia.",
+      "how2": "La etiqueta Nueva mezcla significa que otra mezcla gana en ese caso. Los cambios de precio se aplican a la ganancia de cada rotación (un choque de ganancia); el descanso no cambia.",
       "axis": "Cambio en la ganancia de un año promedio ($/acre)",
       "aria": "Gráfica de barras de la ganancia de un año promedio con precios y costos cambiados. La mezcla sugerida cambia en {{n}} de {{total}} casos.",
       "caption": "Plan sugerido con precios y costos cambiados (por acre)",
@@ -814,22 +803,22 @@
       "diversification": "Beneficio de diversificación",
       "noDownside": "Ningún año quedó debajo del descanso"
     },
-    "flowIntro": "El clima fija la necesidad de agua de cada año, los presupuestos y precios fijan la ganancia de cada año, y juntos forman los años pasados que prueba el optimizador. El agua subterránea es contexto; el uso de agua medido por satélite verifica nuestro modelo de agua.",
+    "flowIntro": "El clima fija el agua que necesita cada cultivo cada año; los presupuestos y precios fijan la ganancia de cada año, y juntos forman los años pasados que prueba el optimizador. El agua subterránea da contexto; el agua medida en granjas de Pinal revisa nuestro modelo de agua.",
     "flow": {
       "title": "Cómo fluyen los datos hacia su plan",
-      "desc": "El clima de NASA POWER fija la necesidad de agua por año. Los precios de USDA NASS y los presupuestos de la Universidad de Arizona fijan la ganancia por año. Ambos forman los escenarios de años pasados que usa el optimizador para elegir su plan. El agua subterránea de NASA GRACE da contexto regional. El uso de agua por satélite de OpenET y NASA ECOSTRESS verifica nuestro modelo de agua.",
+      "desc": "El clima de NASA POWER fija el agua que necesita cada cultivo por año. Los precios de USDA NASS y los presupuestos de cultivo de la Universidad de Arizona fijan la ganancia por año. Ambos forman los escenarios de años pasados, que el optimizador usa para elegir su plan. El agua subterránea de NASA GRACE da contexto regional. El agua aplicada medida en granjas de Pinal (informe WRRC de la Universidad de Arizona) revisa nuestro modelo de agua.",
       "box": {
         "power": "NASA POWER|clima",
         "budgets": "USDA NASS + UA|presupuestos",
         "grace": "NASA GRACE /|GRACE-FO subterránea",
-        "openet": "OpenET /|NASA ECOSTRESS",
         "need": "Agua que necesita|el cultivo por año",
         "profit": "Ganancia|por año",
         "context": "Contexto|regional",
         "check": "Verificación del|modelo de agua",
         "scenarios": "Años pasados|como escenarios",
         "optimizer": "Optimizador",
-        "plan": "Su plan"
+        "plan": "Su plan",
+        "measured": "Agua medida en|granjas de Pinal"
       }
     },
     "unitsNote": "La ganancia en los datos no incluye la compra de agua; la herramienta resta su precio del agua ({{c}} por acre-pie) por el agua aplicada. El agua es agua de riego aplicada con 75% de eficiencia.",
@@ -953,7 +942,7 @@
       "Después, el método del inversionista: comparamos cuánto gana un plan en sus {{k}} peores años con su promedio, y mostramos la compensación abiertamente."
     ],
     "realTitle": "Qué es real y qué es supuesto",
-    "realIntro": "Cada conjunto de datos tiene su propia etiqueta. Esta lista se actualiza sola cuando los datos reales reemplacen a los de muestra.",
+    "realIntro": "De dónde sale cada dato. Cada uno lleva su propia marca, y todos los datos detrás del plan son reales.",
     "teamTitle": "Equipo",
     "siTitle": "Declaración de uso de SI",
     "siText": "Nuestro equipo usó SI para ayudar a diseñar, depurar y modificar la aplicación. La SI nos ayudó a crear prototipos rápidamente e iterar sobre nuestras ideas."

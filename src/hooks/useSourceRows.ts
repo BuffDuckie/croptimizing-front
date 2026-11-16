@@ -4,7 +4,7 @@ import { isSample } from '../lib/sources';
 import { usePlanContext } from '../state/PlanContext';
 
 /** Dataset behind each row of the sources table (null: used in text only). */
-const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', 'etCheck', 'cropBudgets', 'prices', 'soil', null];
+const SOURCE_DATASETS: (DatasetId | null)[] = ['weather', 'grace', null, 'cropBudgets', 'prices', 'soil', null];
 
 export type SourceRow = { cells: string[]; status: 'sample' | 'real' | 'text' };
 

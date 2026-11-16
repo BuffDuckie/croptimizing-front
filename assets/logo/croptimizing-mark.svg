@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="512" height="512">
+  <title>Croptimizing mark: four field parcels seen from above, one of them water</title>
+  <rect x="2" y="2" width="11" height="11" rx="2.5" fill="#00805C"/>
+  <rect x="15" y="2" width="11" height="11" rx="2.5" fill="#00C2FF"/>
+  <rect x="2" y="15" width="11" height="11" rx="2.5" fill="#D55E00"/>
+  <rect x="15" y="15" width="11" height="11" rx="2.5" fill="#00805C" fill-opacity="0.65"/>
+</svg>

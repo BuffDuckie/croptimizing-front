@@ -53,7 +53,9 @@ export function CorrelationHeatmap({ correlations }: { correlations: PlanRespons
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const r = (a: RotationId, b: RotationId) => correlations.find((c) => c.a === a && c.b === b)?.r ?? (a === b ? 1 : 0);
   const fmt = (v: number) => new Intl.NumberFormat(lang === 'es' ? 'es-US' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
-  const pairs = ROTATION_IDS.flatMap((a, i) => ROTATION_IDS.slice(i + 1).map((b) => ({ a, b, v: r(a, b) })));
+  // Fallow's profit is the same every year, so its correlation means nothing; leave it out of the finding.
+  const crops = ROTATION_IDS.filter((id) => id !== 'fallow');
+  const pairs = crops.flatMap((a, i) => crops.slice(i + 1).map((b) => ({ a, b, v: r(a, b) })));
   const lowest = pairs.reduce((m, p) => (p.v < m.v ? p : m));
   const short = (id: RotationId) => t(`method.short.${id}`);
 

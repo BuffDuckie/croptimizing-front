@@ -8,7 +8,7 @@ import { ROT_BG } from '../components/charts/rotation';
 import { FieldsReplan } from '../components/hero/FieldsReplan';
 import { QuickStart } from '../components/plan/QuickStart';
 import { InfoTip } from '../components/ui/InfoTip';
-import { af, whole } from '../lib/format';
+import { af, mixEntries, whole } from '../lib/format';
 import { isSample } from '../lib/sources';
 import { DEMO_FARM, usePlanContext, type Region, useYears } from '../state/PlanContext';
 
@@ -110,6 +110,9 @@ function Stats() {
 function Steps() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
+  const { data } = usePlanContext();
+  // The demo farm's suggested mix, the same one My plan opens on.
+  const previewMix = data ? mixEntries(data.recommended.mix) : [];
   return (
     <section className="container-content py-16 md:py-24" aria-labelledby="steps-title">
       <h2 id="steps-title" className="max-w-2xl text-3xl font-semibold md:text-4xl">
@@ -125,11 +128,10 @@ function Steps() {
         <StepCard n={3} title={t('start.steps.s3t')} body={t('start.steps.s3d')}>
           <div>
             <p className="text-sm font-semibold text-text-muted">{t('start.steps.previewPlan')}</p>
-            <div className="mt-2 flex h-7 overflow-hidden rounded-md" aria-hidden="true">
-              <div className="w-[15%] bg-rot-alfalfa" />
-              <div className="w-[25%] border-l-2 border-white bg-rot-durum_sorghum" />
-              <div className="w-[25%] border-l-2 border-white bg-rot-barley_fallow" />
-              <div className="hatch w-[35%] border-l-2 border-white bg-rot-fallow" />
+            <div className="mt-2 flex h-7 overflow-hidden rounded-md bg-border" aria-hidden="true">
+              {previewMix.map((e, i) => (
+                <div key={e.id} className={`${ROT_BG[e.id]} ${e.id === 'fallow' ? 'hatch' : ''} ${i > 0 ? 'border-l-2 border-white' : ''}`} style={{ width: `${e.share * 100}%` }} />
+              ))}
             </div>
           </div>
         </StepCard>
@@ -312,7 +314,7 @@ function SetupForm() {
               aria-live="polite"
             >
               {!totalErr && <Check aria-hidden="true" className="h-4 w-4" />}
-              {t('start.form.total', { n: whole(total, lang) })} · {totalErr ? t('start.form.totalBad') : t('start.form.totalOk')}
+              {t('start.form.total', { n: whole(total, lang) })}. {totalErr ? t('start.form.totalBad') : t('start.form.totalOk')}
             </p>
           </fieldset>
           <div className="sm:col-span-2">

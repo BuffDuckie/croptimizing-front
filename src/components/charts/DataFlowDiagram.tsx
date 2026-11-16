@@ -34,7 +34,7 @@ const WIDE: { w: number; h: number; boxes: Box[] } = {
     { id: 'need', x: 270, y: 20, w: 200, tone: 'step' },
     { id: 'profit', x: 270, y: 130, w: 200, tone: 'step' },
     { id: 'context', x: 270, y: 290, w: 200, tone: 'step' },
-    { id: 'openet', x: 510, y: 290, w: 220, tone: 'nasa' },
+    { id: 'measured', x: 510, y: 290, w: 220, tone: 'money' },
     { id: 'check', x: 770, y: 290, w: 220, tone: 'step' },
     { id: 'scenarios', x: 510, y: 75, w: 170, tone: 'core' },
     { id: 'optimizer', x: 715, y: 75, w: 130, tone: 'core' },
@@ -55,7 +55,7 @@ const TALL: { w: number; h: number; boxes: Box[] } = {
     { id: 'optimizer', x: 70, y: 296, w: 220, tone: 'core' },
     { id: 'plan', x: 70, y: 392, w: 220, tone: 'plan' },
     { id: 'grace', x: 6, y: 500, w: 168, tone: 'nasa' },
-    { id: 'openet', x: 186, y: 500, w: 168, tone: 'nasa' },
+    { id: 'measured', x: 186, y: 500, w: 168, tone: 'money' },
     { id: 'context', x: 6, y: 590, w: 168, tone: 'step' },
     { id: 'check', x: 186, y: 590, w: 168, tone: 'step' },
   ],
@@ -69,7 +69,7 @@ const EDGES_WIDE: Edge[] = [
   { from: 'scenarios', to: 'optimizer' },
   { from: 'optimizer', to: 'plan' },
   { from: 'grace', to: 'context' },
-  { from: 'openet', to: 'check', dashed: true },
+  { from: 'measured', to: 'check', dashed: true },
 ];
 const EDGES_TALL: Edge[] = [
   { from: 'power', to: 'need' },
@@ -79,7 +79,7 @@ const EDGES_TALL: Edge[] = [
   { from: 'scenarios', to: 'optimizer' },
   { from: 'optimizer', to: 'plan' },
   { from: 'grace', to: 'context' },
-  { from: 'openet', to: 'check', dashed: true },
+  { from: 'measured', to: 'check', dashed: true },
 ];
 
 function anchor(a: Box, b: Box): [number, number, number, number] {

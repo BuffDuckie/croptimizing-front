@@ -457,7 +457,7 @@ export function runPlan(req: PlanRequest): PlanResponse {
   const netProfit = Object.fromEntries(ROTATION_IDS.map((id) => [id, seriesForMix({ [id]: 1 }, adjust).map((x) => x.profit)])) as Record<RotationId, number[]>;
   const correlations: PlanResponse['correlations'] = [];
   for (const a of ROTATION_IDS)
-    for (const b of ROTATION_IDS) correlations.push({ a, b, r: round(correlation(netProfit[a], netProfit[b]), 3) });
+    for (const b of ROTATION_IDS) correlations.push({ a, b, r: a === b ? 1 : round(correlation(netProfit[a], netProfit[b]), 3) });
 
   return {
     schemaVersion: '1.0',

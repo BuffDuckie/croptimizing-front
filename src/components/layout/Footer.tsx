@@ -13,12 +13,11 @@ export function Footer() {
           {t('footer.disclaimer')}
         </p>
         <div className="mt-8 flex flex-col gap-4 border-t border-border-soft pt-6 text-sm text-text-muted md:flex-row md:items-center md:justify-between print:hidden">
-          <div className="flex items-center gap-2">
-            <LogoMark className="h-5 w-5" />
-            <span className="font-semibold text-text">Croptimizing</span>
-            <span aria-hidden="true">·</span>
-            <span>{t('footer.built')}</span>
-            <span aria-hidden="true">·</span>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-2">
+              <LogoMark className="h-5 w-5" />
+              <span className="font-semibold text-text">Croptimizing</span>
+            </span>
             <Link to="/about" className="inline-flex min-h-[44px] items-center font-semibold">
               {t('nav.about')}
             </Link>

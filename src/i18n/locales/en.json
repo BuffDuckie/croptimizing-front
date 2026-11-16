@@ -25,8 +25,7 @@
   },
   "footer": {
     "disclaimer": "This tool supports your judgment; it does not replace it. Check plans with your local extension agent.",
-    "credits": "Weather: NASA POWER. Groundwater: NASA GRACE and GRACE-FO. Crop water use: OpenET and NASA ECOSTRESS.",
-    "built": "Built for the NASA Space Apps Challenge 2026, Field Shift: exploring rotations that may improve soil health and strengthen resilience to changing weather and water.",
+    "credits": "Weather: NASA POWER. Groundwater: NASA GRACE and GRACE-FO.",
     "notAffiliated": "Not an official NASA product."
   },
   "pages": {
@@ -235,7 +234,7 @@
     "controls": "Your settings",
     "edit": "Change settings",
     "hide": "Hide settings",
-    "summary": "Water {{water}} AF · Risk {{risk}} · Soil {{soil}}",
+    "summary": "Water {{water}} AF, risk {{risk}}, soil {{soil}}",
     "water": "Water budget",
     "waterUnit": "AF per acre",
     "waterText": "{{n}} acre-feet per acre",
@@ -310,13 +309,12 @@
       "title": "NASA data behind this plan",
       "drives": "Sets your water need",
       "context": "Regional context",
-      "check": "Checks our model",
       "power": "{{years}} years ({{days}} days) of daily weather set how much water each crop needs in every year we test.",
       "grace": "Groundwater here dropped about {{v}} cm since {{from}}. This is context for the region; it does not change the plan.",
       "graceNone": "Regional groundwater trend, shown as context for the region.",
-      "openet": "Satellite-measured crop water use is within {{v}}% of what our water model predicts.",
-      "openetNone": "Satellite-measured crop water use, used to check our water model.",
-      "see": "See the data"
+      "see": "See the data",
+      "risk": "Daily highs and lows mark the months a crop in the field faces extreme heat ({{heat}}) or frost ({{frost}}).",
+      "timing": "Marks risky months"
     },
     "soilPanel": {
       "title": {
@@ -374,7 +372,8 @@
       "sets": "Sets your water budget to {{v}} acre-feet per acre.",
       "source": "Where this number comes from",
       "noSource": "Placeholder number, not yet from a source (TODO).",
-      "exact": "The data says {{v}} AF/acre; the slider moves in steps of 0.1."
+      "exact": "The data says {{v}} AF/acre; the slider moves in steps of 0.1.",
+      "value": "{{v}} AF/acre"
     },
     "fits": {
       "plan": "Fits your water in {{k}} of {{n}} years.",
@@ -504,7 +503,7 @@
       "gaps": "What we don't know",
       "checkLocally": "Check locally"
     },
-    "math": "Each number is a 20-year average for one acre of that rotation alone, using the same sample data as your plan. Per acre-foot divides average profit by average applied water. Worst 1-in-5 is the average of its 4 worst years.",
+    "math": "Each number is a 20-year average for one acre of that rotation alone, using the same data as your plan. Per acre-foot divides average profit by average applied water. Worst 1-in-5 is the average of its 4 worst years.",
     "tableCaption": "Rotations side by side",
     "risk": {
       "heat": "Hot month while the crop is in the field ({{n}} or more days at 110°F or above)",
@@ -563,15 +562,6 @@
     "et0Short": "Reference ET",
     "mmMonth": "mm/month",
     "month": "Month",
-    "etTitle": "Our water model is within {{v}}% of satellite-measured crop water use",
-    "etRes": "OpenET ensemble with ECOSTRESS, 30 to 70 m, field scale.",
-    "etHow1": "Navy bars are the water each crop uses in our model. Cyan bars are what satellites measured on real fields here.",
-    "etHow2": "Bars of similar height mean the model's water numbers are believable.",
-    "etCaption": "Modeled vs. satellite crop water use (mm per year)",
-    "etAria": "Paired bars for five crops: modeled and satellite water use agree within {{v}} percent.",
-    "modeled": "Our model",
-    "satellite": "Satellite (OpenET / ECOSTRESS)",
-    "mmYear": "mm/year",
     "crop": "Crop",
     "crops": {
       "alfalfa": "Alfalfa",
@@ -636,7 +626,7 @@
     "print": "Print or save as PDF",
     "stale": "Your current settings have no plan, so this report shows your last plan that worked.",
     "heading": "Rotation plan for {{name}}",
-    "meta": "{{acres}} acres · Water budget {{water}} AF/acre · Risk {{risk}}/100 · Soil minimum {{soil}}/100 · {{date}}",
+    "meta": "{{acres}} acres. Water budget {{water}} AF/acre, risk {{risk}}/100, soil minimum {{soil}}/100. {{date}}",
     "mix": "Suggested mix",
     "numbers": "What it would have earned",
     "today": "Today",
@@ -710,8 +700,8 @@
       ],
       [
         "Crop water use check",
-        "OpenET ensemble, NASA ECOSTRESS",
-        "30 to 70 m"
+        "University of Arizona WRRC, Pinal AMA water report (measured applied water)",
+        "Irrigation districts"
       ],
       [
         "Crop costs and returns",
@@ -724,9 +714,9 @@
         "County and state, yearly"
       ],
       [
-        "Soil properties",
-        "USDA Web Soil Survey",
-        "Map unit"
+        "Soil-health scores",
+        "Team rubric on the USDA NRCS soil-health principles; tillage passes from the University of Arizona crop budgets",
+        "Per rotation"
       ],
       [
         "Water cuts",
@@ -760,8 +750,7 @@
       "It does not know your fields. Soil, wells, and contracts differ from farm to farm.",
       "It assumes the next years look like some mix of the last 20. A new kind of year is possible.",
       "It does not model pests, diseases, labor, or the cost of switching equipment.",
-      "Shares move in 5% steps, so the best plan between steps can differ slightly.",
-      "Every number in this build is sample data until the team's real data loads."
+      "Shares move in 5% steps, so the best plan between steps can differ slightly."
     ],
     "asFarmedTitle": "Your current plan, before and after the cut",
     "asFarmedIntro": "Every comparison in this tool uses your current plan cut back to fit your water. This is the only place the plan as you farm it today appears.",
@@ -782,7 +771,7 @@
       "titleMany": "Your plan depends on these inputs: the mix changes in {{n}} of {{total}} cases",
       "sub": "Change in average-year profit from your plan's {{avg}} per acre, with the search re-run for each case.",
       "how1": "Each row changes one input and re-runs the search. The bar shows how average-year profit moves: right is more, left is less.",
-      "how2": "A New mix tag means a different mix wins under that case. Our sample data only has profit, so price changes are applied to the profit of every crop rotation (a profit shock); fallow is unchanged.",
+      "how2": "A New mix tag means a different mix wins under that case. Price changes are applied to the profit of every crop rotation (a profit shock); fallow is unchanged.",
       "axis": "Change in average-year profit ($/acre)",
       "aria": "Bar chart of average-year profit under changed prices and costs. The suggested mix changes in {{n}} of {{total}} cases.",
       "caption": "Suggested plan under changed prices and costs (per acre)",
@@ -813,22 +802,22 @@
       "diversification": "Diversification benefit",
       "noDownside": "No year fell below fallow"
     },
-    "flowIntro": "Weather sets each year's crop water need, budgets and prices set each year's profit, and together they make the past years the optimizer tests. Groundwater is context; satellite crop water use checks our water model.",
+    "flowIntro": "Weather sets each year's crop water need, budgets and prices set each year's profit, and together they make the past years the optimizer tests. Groundwater is context; measured water use on Pinal farms checks our water model.",
     "flow": {
       "title": "How data flows into your plan",
-      "desc": "NASA POWER weather sets crop water need per year. USDA NASS prices and University of Arizona crop budgets set profit per year. Both make the past-year scenarios, which the optimizer uses to pick your plan. NASA GRACE groundwater gives regional context. OpenET and NASA ECOSTRESS satellite crop water use check our water model.",
+      "desc": "NASA POWER weather sets crop water need per year. USDA NASS prices and University of Arizona crop budgets set profit per year. Both make the past-year scenarios, which the optimizer uses to pick your plan. NASA GRACE groundwater gives regional context. Measured applied water on Pinal farms (University of Arizona WRRC report) checks our water model.",
       "box": {
         "power": "NASA POWER|weather",
         "budgets": "USDA NASS + UA|crop budgets",
         "grace": "NASA GRACE /|GRACE-FO groundwater",
-        "openet": "OpenET /|NASA ECOSTRESS",
         "need": "Crop water need|per year",
         "profit": "Profit|per year",
         "context": "Regional|context",
         "check": "Check on our|water model",
         "scenarios": "Past years as|scenarios",
         "optimizer": "Optimizer",
-        "plan": "Your plan"
+        "plan": "Your plan",
+        "measured": "Measured Pinal|farm water use"
       }
     },
     "unitsNote": "Profit in the data leaves out buying water; the tool takes off your water price ({{c}} per acre-foot) times the water applied. Water is applied irrigation water at 75% efficiency.",
@@ -914,7 +903,7 @@
       "Then the investor's method: we weigh how much a plan earns in its {{k}} worst years against its average, and show the trade-off openly."
     ],
     "realTitle": "What's real and what's assumed",
-    "realIntro": "Each dataset carries its own flag. This list updates by itself when real data replaces the sample data.",
+    "realIntro": "Where every input comes from. Each one carries its own flag, and all the data behind the plan is real.",
     "teamTitle": "Team",
     "siTitle": "SI-use statement",
     "siText": "Our team used SI to help design, debug, and modify the application. SI helped us rapidly prototype and iterate on our ideas."

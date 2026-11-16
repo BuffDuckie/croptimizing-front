@@ -48,8 +48,6 @@ export default function WhyPanels() {
   const months = t('months', { returnObjects: true }) as string[];
   const et0 = ctx.et0MonthlyMm.map((m) => ({ ...m, name: months[m.month - 1] }));
   const peak = et0.reduce((a, b) => (b.mm > a.mm ? b : a));
-  const etCheck = ctx.etCheck.map((c) => ({ ...c, name: t(`why.crops.${c.crop}`, { defaultValue: c.crop }) }));
-  const maxGap = Math.max(...ctx.etCheck.map((c) => Math.abs(c.modeledMm - c.satelliteMm) / c.satelliteMm)) * 100;
 
   return (
     <>
@@ -148,39 +146,9 @@ export default function WhyPanels() {
           </div>
         </ChartCard>
 
-        <ChartCard
-          title={t('why.etTitle', { v: nf(maxGap) })}
-          subtitle={<Source mission="OpenET / NASA ECOSTRESS" detail={t('why.etRes')} />}
-          howTo={
-            <>
-              <p>{t('why.etHow1')}</p>
-              <p className="flex items-center gap-1">
-                {t('why.etHow2')} <InfoTip term="et" />
-              </p>
-            </>
-          }
-          table={<DataTable caption={t('why.etCaption')} head={[t('why.crop'), t('why.modeled'), t('why.satellite')]} rows={etCheck.map((c) => [c.name, c.modeledMm, c.satelliteMm])} />}
-          sample={isSample(data, ['etCheck'])}
-          id="et-check"
-          className="scroll-mt-36"
-        >
-          <div className="h-64" role="img" aria-label={t('why.etAria', { v: nf(maxGap) })}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={etCheck} margin={{ top: 8, right: 12, left: 0, bottom: 8 }} barGap={2}>
-                <CartesianGrid stroke={gridStroke} vertical={false} />
-                <XAxis dataKey="name" tick={axisTick} axisLine={axisLine} tickLine={false} />
-                <YAxis tick={axisTick} axisLine={false} tickLine={false} width={52} label={{ value: t('why.mmYear'), angle: -90, position: 'insideLeft', fill: colors['text-muted'], fontSize: 14, dy: 30 }} />
-                <Tooltip {...tooltipStyle} formatter={(v: number, name: string) => [`${v} mm`, name]} />
-                <Legend wrapperStyle={{ fontSize: 14, color: colors.text }} iconType="square" />
-                <Bar name={t('why.modeled')} dataKey="modeledMm" fill={colors.primary} radius={[4, 4, 0, 0]} isAnimationActive={false} />
-                <Bar name={t('why.satellite')} dataKey="satelliteMm" fill={colors.accent} stroke={colors['accent-strong']} radius={[4, 4, 0, 0]} isAnimationActive={false} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
+        {/* Fourth panel: monthly heat and frost from the same NASA POWER daily weather. */}
+        {ctx.monthlyRisk && ctx.monthlyRisk.length > 0 && <MonthlyRisk rows={ctx.monthlyRisk} sample={isSample(data, ['weather'])} />}
       </div>
-
-      {ctx.monthlyRisk && ctx.monthlyRisk.length > 0 && <MonthlyRisk rows={ctx.monthlyRisk} sample={isSample(data, ['weather'])} />}
 
       {ctx.otherRegions && ctx.otherRegions.length > 0 && <OtherRegions regions={ctx.otherRegions} />}
     </>
@@ -282,7 +250,6 @@ function MonthlyRisk({ rows, sample }: { rows: RiskRow[]; sample: boolean }) {
         ? t('why.risk.titleFrost', { m: peak.name, v: nf(peak.heatDays), f: frost })
         : t('why.risk.title', { m: peak.name, v: nf(peak.heatDays) });
   return (
-    <div className="mt-6">
       <ChartCard
         title={title}
         subtitle={<Source mission="NASA POWER" detail={t('why.risk.res', yrs)} />}
@@ -297,7 +264,7 @@ function MonthlyRisk({ rows, sample }: { rows: RiskRow[]; sample: boolean }) {
         id="monthly-risk"
         className="scroll-mt-36"
       >
-        <div className="h-56" role="img" aria-label={t('why.risk.aria', { m: peak.name, v: nf(peak.heatDays), f: frost || '-' })}>
+        <div className="h-64" role="img" aria-label={t('why.risk.aria', { m: peak.name, v: nf(peak.heatDays), f: frost || '-' })}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={pts} margin={{ top: 8, right: 12, left: 0, bottom: 8 }} barGap={2}>
               <CartesianGrid stroke={gridStroke} vertical={false} />
@@ -311,6 +278,5 @@ function MonthlyRisk({ rows, sample }: { rows: RiskRow[]; sample: boolean }) {
           </ResponsiveContainer>
         </div>
       </ChartCard>
-    </div>
   );
 }

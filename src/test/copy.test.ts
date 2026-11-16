@@ -28,6 +28,14 @@ describe('words on screen', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('never uses a middle dot as a separator in source or locale files', () => {
+    const DOT = String.fromCharCode(0x00b7);
+    const offenders = walk(join(__dirname, '..'))
+      .filter((f) => /\.(tsx?|json|css)$/.test(f))
+      .filter((f) => readFileSync(f, 'utf8').includes(DOT));
+    expect(offenders).toEqual([]);
+  });
+
   it('never makes promises the model cannot keep', () => {
     const text = JSON.stringify(en) + JSON.stringify(es);
     for (const re of BANNED) expect(text).not.toMatch(re);

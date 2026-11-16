@@ -216,9 +216,16 @@ export function FrontierChart({
 
           {/* current plan: hollow charcoal circle */}
           <circle cx={X(current.worst1in5)} cy={Y(current.avgProfit)} r={active === 'cur' ? 11 : 9} fill={colors.surface} stroke={colors.text} strokeWidth={2.5} />
-          <text x={X(current.worst1in5) - 14} y={Y(current.avgProfit) + 5} textAnchor="end" className="fill-text text-[14px] font-semibold">
-            {curShort}
-          </text>
+          {/* Label to the left of the dot, or to the right when it would run past the chart's left edge. */}
+          {(() => {
+            const cx = X(current.worst1in5);
+            const left = cx - 14 - curShort.length * 7.6 > 4;
+            return (
+              <text x={left ? cx - 14 : cx + 14} y={Y(current.avgProfit) + 5} textAnchor={left ? 'end' : 'start'} className="fill-text text-[14px] font-semibold">
+                {curShort}
+              </text>
+            );
+          })()}
 
           {/* recommended: cyan star, navy outline */}
           <path

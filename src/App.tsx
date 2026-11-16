@@ -41,7 +41,7 @@ function RouteEffects() {
   useEffect(() => {
     const key = pathname === '/' ? 'start' : pathname.slice(1);
     const title = t(`pages.${key}.title`, { defaultValue: '' });
-    document.title = title && key !== 'start' ? `${title} · Croptimizing` : 'Croptimizing';
+    document.title = title && key !== 'start' ? `${title} | Croptimizing` : 'Croptimizing';
   }, [pathname, t, i18n.language]);
   return null;
 }

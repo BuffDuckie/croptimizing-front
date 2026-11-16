@@ -1,10 +1,10 @@
 {
  "schemaVersion": "real-1.0",
  "region": "pinal",
- "generatedAt": "2026-11-15T18:46:15-07:00",
- "notes": "Pinal County. Dollars are 2025 dollars (CPI-U). Revenue = USDA NASS Arizona price x Pinal yield (Arizona yield where Pinal is withheld). nonWaterCost = UA AZ2168 Pinal 2025 budget minus the water purchase line, constant every year; land rent ($170) left out as a fixed cost the same for every rotation. waterAf = FAO-56 ET from NASA POWER at Casa Grande (32.88 N, 111.76 W), 0.75 efficiency, for every rotation except alfalfa. Alfalfa uses the UA AZ2168 grower-reported 5.0 AF/acre every year (team decision; the weather model gave 7.8, above the 6-7 AF measured range in Pinal), so alfalfa water does not vary with weather. Imputed years (price and/or yield missing in NASS): cotton_barley 4, durum_sorghum 13 (sorghum has no yield or price after 2015); those two rotations are flagged sample. Imputation: durum/sorghum price = mean price x barley price index; cotton price and sorghum yield = own mean. Cotton is lint only. Soil scores follow the rules in soil_rubric.py (tillage passes counted from the UA budgets, living-root months from the crop calendars; residue ratings are judgment) and have not been reviewed by an agronomist. The 2005 winter-crop water uses climate averages for Nov-Dec 2004 (before the weather download starts). GRACE: JPL RL06.3Mv04 mascon, 32-34 N, 113.5-111 W; months with two solutions are averaged.",
+ "generatedAt": "2026-11-15T20:55:51-07:00",
+ "notes": "Pinal County. Dollars are 2025 dollars (CPI-U). Revenue = USDA NASS Arizona price x Pinal yield (Arizona yield where Pinal is withheld). nonWaterCost = UA AZ2168 Pinal 2025 budget minus the water purchase line, constant every year; land rent ($170) left out as a fixed cost the same for every rotation. waterAf = FAO-56 ET from NASA POWER at Casa Grande (32.88 N, 111.76 W), 0.75 efficiency, for every rotation except alfalfa. Alfalfa uses the UA AZ2168 grower-reported 5.0 AF/acre every year (team decision; the weather model gave 7.8, above the 6-7 AF measured range in Pinal), so alfalfa water does not vary with weather. Imputed years (price and/or yield missing in NASS): cotton_barley 4, durum_sorghum 13 (sorghum has no yield or price after 2015); the team counts these imputed values as real data (Nov 15). Imputation: durum price = mean price x barley price index; sorghum price = national sorghum price + the average Arizona premium; cotton price = national cotton price x the average Arizona/national ratio; sorghum yield = own mean. Cotton is lint only. Soil scores follow the rules in soil_rubric.py (tillage passes counted from the UA budgets, living-root months from the crop calendars; residue ratings are judgment) and have not been reviewed by an agronomist. The 2005 winter-crop water uses climate averages for Nov-Dec 2004 (before the weather download starts). GRACE: JPL RL06.3Mv04 mascon, 32-34 N, 113.5-111 W; months with two solutions are averaged.",
  "waterCost": {
-  "perAf": 70.0,
+  "perAf": 70,
   "source": "UA AZ2168 Pinal County 2025 field crop budgets: irrigation water $70 per acre-foot (the line nonWaterCost leaves out). https://repository.arizona.edu/handle/10150/678680"
  },
  "waterPresets": {
@@ -22,6 +22,63 @@
    "afPerAcre": 2.05,
    "label": "Zero canal water (like 2023)",
    "source": "https://azwaterinnovation.asu.edu/impacts-colorado-river-water-shortages-agriculture-central-arizona (ag pool cut 100% in 2023); groundwater and other supply left = 59.7%"
+  }
+ },
+ "validation": {
+  "checks": [
+   {
+    "id": "budget-inputs",
+    "label": "Revenue inputs vs. the UA crop budgets' assumptions",
+    "result": "partial",
+    "detail": "Yields agree: alfalfa 8.4 t/acre (budget 8), cotton 1,413 lb (1,400), barley 120 bu (120), sorghum 96 bu (100); these use Pinal County values, or Arizona values where Pinal has none. Prices agree only for alfalfa. The 2005-2024 USDA average in 2025 dollars is $250/ton for alfalfa (budget $240), but $0.95/lb for cotton (budget $0.75), $6.23/bu for barley ($4.20) and $7.42/bu for sorghum ($5.60), so the budgets assume lower prices than the 20-year history.",
+    "source": "https://repository.arizona.edu/handle/10150/678680"
+   },
+   {
+    "id": "cost-rebuild",
+    "label": "Costs rebuilt from the UA budget line items",
+    "result": "pass",
+    "detail": "Variable cost + insurance + land rent + machinery ownership add up to the budget's printed total for barley ($920.41), durum ($1,194.94), sorghum (within $0.01) and cotton (within $0.01). The alfalfa total printed in the PDF ($1,845.83) is $18.00 above its own line items ($1,827.83); we used the line items.",
+    "source": "https://repository.arizona.edu/handle/10150/678680"
+   },
+   {
+    "id": "water-pinal",
+    "label": "Modeled crop water vs. measured Pinal applied water",
+    "result": "partial",
+    "detail": "Cotton (4.5 AF/acre) sits inside the measured 3-6 AF range. Durum (2.9) is just under the measured 3-3.5 AF for wheat. The report gives no measured range for barley or sorghum.",
+    "source": "https://wrrc.arizona.edu/sites/wrrc.arizona.edu/files/2023-02/final_june-12-2020_wrrc_pinal_ama_water_report.pdf"
+   },
+   {
+    "id": "water-alfalfa",
+    "label": "Weather-model alfalfa water vs. measured Pinal applied water",
+    "result": "fail",
+    "detail": "The NASA POWER weather model gave 7.3 to 8.5 AF/acre a year (average 7.8) at 75% efficiency. The average is 11% above the top and 30% above the bottom of the measured 6 to 7 AF. The team therefore uses the UA budget's grower-reported 5.0 AF/acre for alfalfa, so alfalfa water does not vary with weather.",
+    "source": "https://wrrc.arizona.edu/sites/wrrc.arizona.edu/files/2023-02/final_june-12-2020_wrrc_pinal_ama_water_report.pdf"
+   },
+   {
+    "id": "crop-overlap",
+    "label": "Double-crop seasons do not overlap on the same acre",
+    "result": "pass",
+    "detail": "An earlier version let the second crop's season overlap the first crop's, which counted water twice. Windows are now sequential: barley ends Apr 25 and cotton starts May 1; durum ends May 24 and sorghum starts Jun 1. Rotation water is now 6.4 AF (cotton-barley) and 5.7 AF (durum-sorghum)."
+   },
+   {
+    "id": "grace-regions",
+    "label": "GRACE method on a known hotspot (northwest India)",
+    "result": "partial",
+    "detail": "Rodell et al. 2009 report groundwater depletion of 4.0 +/- 1.0 cm/yr (a 109 km3 net loss) over Rajasthan, Punjab and Haryana from Aug 2002 to Oct 2008. Our method on the same months gives -4.9 +/- 0.3 cm/yr of total water storage for our Punjab-Haryana box: the same sign and size, but not an exact match. Total storage also includes soil moisture, and the areas differ: a wider box covering most of Rajasthan gives -1.7 cm/yr. Our 2005-2024 trend for the Punjab-Haryana box is -4.2 cm/yr, the steepest of the three other regions (Central Valley -1.2, High Plains -0.9).",
+    "source": "https://www.nature.com/articles/nature08238"
+   },
+   {
+    "id": "price-imputation",
+    "label": "Estimated prices and yields are flagged and tested",
+    "result": "partial",
+    "detail": "13 durum-sorghum years and 4 cotton-barley years contain estimates, and the team counts them as real data. Each estimate was tested by hiding every known Arizona year in turn and predicting it. Cotton price (2015, 2016, 2023, 2024) comes from the national upland cotton price scaled to Arizona: correlation 0.88, error about 6%, against about 13% using the cotton average. Sorghum price (2016-2024) comes from the national sorghum price plus the average Arizona premium: correlation 0.88, error about 9%, against about 11% using the barley price index. Durum price (2011-2014) still follows the Arizona barley price (correlation 0.57, error about 13%); the national all-wheat price was no better (correlation 0.54). Sorghum yield after 2015 uses its 2005-2015 average (error about 12%); the national yield did not track Arizona's (correlation -0.11). The sorghum fits rest on 11 years (2005-2015) and cannot be checked for 2016-2024.",
+    "source": "https://quickstats.nass.usda.gov"
+   }
+  ],
+  "lpCrossCheck": {
+   "method": "Exact linear program (scipy HiGHS), worst 1-in-5 years written as CVaR",
+   "maxShareDifference": 0.108,
+   "note": "Checked against the site's 5% grid search at all 504 settings of the water, risk and soil grid where the site finds a plan, at $70 per acre-foot. Difference = how far the site's mix is from the nearest exactly optimal mix, in share of acres. Median 0.01; 95% of settings within one grid step (0.05); the worst, 0.11, is at risk 0 with a soil minimum of 45. The exact answer scores higher on the risk-weighted objective by a median $0.11 an acre and at most $15.68, because the site moves shares in 5% steps. The exact solver never scored lower (down to rounding). In 6 settings the grid finds no plan although one exists between grid points."
   }
  },
  "calendars": {
@@ -170,43 +227,43 @@
     525.7,
     1126.5,
     271.9,
-    273.0,
-    1526.0,
+    273,
+    1526,
     1252.1,
     1150.6,
     1419.6,
     496.6,
     333.5,
     601.1,
-    1010.0,
+    1010,
     834.9,
     627.1,
     802.5,
     1614.9,
-    1060.0,
+    1060,
     85.7
    ],
    "waterAf": [
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5
    ],
    "source": "real"
   },
@@ -222,16 +279,16 @@
     2430.8,
     2466.5,
     2051.8,
-    2099.7,
-    2066.7,
-    2041.0,
+    1954.2,
+    2045.6,
+    2041,
     1575.1,
-    1453.0,
+    1453,
     1651.5,
     1909.2,
     2584.6,
-    2519.2,
-    1884.1
+    2362.9,
+    1515.8
    ],
    "nonWaterCost": [
     1945.6,
@@ -266,16 +323,16 @@
     485.2,
     520.9,
     106.2,
-    154.1,
-    121.1,
+    8.6,
+    100,
     95.4,
     -370.5,
     -492.6,
     -294.1,
     -36.4,
-    639.0,
-    573.6,
-    -61.5
+    639,
+    417.3,
+    -429.8
    ],
    "waterAf": [
     6.04,
@@ -299,7 +356,7 @@
     6.65,
     6.55
    ],
-   "source": "sample"
+   "source": "real"
   },
   "durum_sorghum": {
    "revenue": [
@@ -314,15 +371,15 @@
     1809.5,
     1812.6,
     1888.1,
-    1482.0,
-    1553.2,
-    1500.1,
-    1465.9,
-    1637.5,
-    1529.2,
-    2202.4,
-    2170.0,
-    1695.4
+    1359.4,
+    1513.2,
+    1479.6,
+    1412.9,
+    1732.9,
+    1681,
+    2085.1,
+    1691.6,
+    1503.6
    ],
    "nonWaterCost": [
     1428.1,
@@ -348,25 +405,25 @@
    ],
    "profit": [
     -268.6,
-    -46.0,
+    -46,
     326.1,
     463.1,
     207.6,
     423.1,
     595.6,
-    993.0,
+    993,
     381.4,
     384.5,
-    460.0,
-    53.9,
-    125.1,
-    72.0,
-    37.8,
-    209.4,
-    101.1,
-    774.3,
-    741.9,
-    267.3
+    460,
+    -68.7,
+    85.1,
+    51.5,
+    -15.2,
+    304.8,
+    252.9,
+    657,
+    263.5,
+    75.5
    ],
    "waterAf": [
     5.2,
@@ -390,18 +447,18 @@
     5.81,
     5.67
    ],
-   "source": "sample"
+   "source": "real"
   },
   "barley_fallow": {
    "revenue": [
-    428.0,
+    428,
     590.7,
     695.6,
     933.1,
     656.6,
     775.5,
     869.5,
-    851.0,
+    851,
     836.6,
     754.7,
     676.4,
@@ -448,13 +505,13 @@
     275.6,
     261.2,
     179.3,
-    101.0,
-    70.0,
+    101,
+    70,
     97.3,
     -83.1,
     83.1,
     115.1,
-    221.0,
+    221,
     511.4,
     755.8,
     78.9
@@ -485,131 +542,131 @@
   },
   "fallow": {
    "revenue": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
    ],
    "nonWaterCost": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
    ],
    "profit": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
    ],
    "waterAf": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
    ],
    "source": "real"
   }
  },
  "soil": {
   "alfalfa": {
-   "legume": 20.0,
-   "livingRoots": 20.0,
-   "residue": 12.0,
+   "legume": 20,
+   "livingRoots": 20,
+   "residue": 12,
    "lowTillage": 17.3,
-   "diversity": 10.0
+   "diversity": 10
   },
   "cotton_barley": {
-   "legume": 0.0,
+   "legume": 0,
    "livingRoots": 18.3,
-   "residue": 13.0,
-   "lowTillage": 6.0,
-   "diversity": 20.0
+   "residue": 13,
+   "lowTillage": 6,
+   "diversity": 20
   },
   "durum_sorghum": {
-   "legume": 0.0,
+   "legume": 0,
    "livingRoots": 16.7,
    "residue": 14.3,
    "lowTillage": 5.3,
-   "diversity": 20.0
+   "diversity": 20
   },
   "barley_fallow": {
-   "legume": 0.0,
+   "legume": 0,
    "livingRoots": 8.3,
-   "residue": 9.0,
+   "residue": 9,
    "lowTillage": 14.7,
-   "diversity": 10.0
+   "diversity": 10
   },
   "fallow": {
-   "legume": 0.0,
-   "livingRoots": 0.0,
-   "residue": 4.0,
+   "legume": 0,
+   "livingRoots": 0,
+   "residue": 4,
    "lowTillage": 18.7,
-   "diversity": 0.0
+   "diversity": 0
   }
  },
  "context": {
@@ -1556,7 +1613,7 @@
    },
    {
     "month": 7,
-    "mm": 249.0
+    "mm": 249
    },
    {
     "month": 8,
@@ -1572,7 +1629,7 @@
    },
    {
     "month": 11,
-    "mm": 99.0
+    "mm": 99
    },
    {
     "month": 12,
@@ -1582,62 +1639,62 @@
   "monthlyRisk": [
    {
     "month": 1,
-    "heatDays": 0.0,
+    "heatDays": 0,
     "frostDays": 2.3
    },
    {
     "month": 2,
-    "heatDays": 0.0,
+    "heatDays": 0,
     "frostDays": 1.1
    },
    {
     "month": 3,
-    "heatDays": 0.0,
-    "frostDays": 0.0
+    "heatDays": 0,
+    "frostDays": 0
    },
    {
     "month": 4,
-    "heatDays": 0.0,
-    "frostDays": 0.0
+    "heatDays": 0,
+    "frostDays": 0
    },
    {
     "month": 5,
     "heatDays": 0.1,
-    "frostDays": 0.0
+    "frostDays": 0
    },
    {
     "month": 6,
     "heatDays": 7.2,
-    "frostDays": 0.0
+    "frostDays": 0
    },
    {
     "month": 7,
     "heatDays": 10.2,
-    "frostDays": 0.0
+    "frostDays": 0
    },
    {
     "month": 8,
     "heatDays": 5.5,
-    "frostDays": 0.0
+    "frostDays": 0
    },
    {
     "month": 9,
     "heatDays": 0.7,
-    "frostDays": 0.0
+    "frostDays": 0
    },
    {
     "month": 10,
     "heatDays": 0.1,
-    "frostDays": 0.0
+    "frostDays": 0
    },
    {
     "month": 11,
-    "heatDays": 0.0,
+    "heatDays": 0,
     "frostDays": 0.2
    },
    {
     "month": 12,
-    "heatDays": 0.0,
+    "heatDays": 0,
     "frostDays": 1.9
    }
   ],
@@ -1932,7 +1989,7 @@
      },
      {
       "date": "2010-12",
-      "value": -1.0
+      "value": -1
      },
      {
       "date": "2011-02",
@@ -2300,7 +2357,7 @@
      },
      {
       "date": "2021-04",
-      "value": -18.0
+      "value": -18
      },
      {
       "date": "2021-05",
@@ -3850,7 +3907,7 @@
      },
      {
       "date": "2018-06",
-      "value": -61.0
+      "value": -61
      },
      {
       "date": "2018-07",
@@ -4086,7 +4143,7 @@
      },
      {
       "date": "2023-07",
-      "value": -58.0
+      "value": -58
      },
      {
       "date": "2023-08",
@@ -4165,7 +4222,7 @@
   "weather": "real",
   "grace": "real",
   "cropBudgets": "real",
-  "prices": "sample",
+  "prices": "real",
   "otherRegions": "real",
   "soil": "real"
  }

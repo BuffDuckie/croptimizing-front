@@ -30,7 +30,7 @@ export function WaterMeter({ used, budget, compareUsed, scaleMax = 6 }: { used: 
       <p className={`mt-2 flex items-center gap-1.5 text-sm font-semibold ${over ? 'text-danger' : 'text-accent-strong'}`}>
         {over ? <AlertTriangle aria-hidden="true" className="h-4 w-4" /> : <Check aria-hidden="true" className="h-4 w-4" />}
         {over ? t('plan.overShort') : t('plan.withinShort')}
-        <span className="font-normal text-text-muted">· {t('plan.waterOf', { budget: af(budget, lang) })}</span>
+        <span className="font-normal text-text-muted">({t('plan.waterOf', { budget: af(budget, lang) })})</span>
       </p>
     </div>
   );

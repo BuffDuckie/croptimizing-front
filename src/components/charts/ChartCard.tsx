@@ -33,7 +33,8 @@ export function ChartCard({
   const H = headingLevel === 2 ? 'h2' : 'h3';
   return (
     <section id={id} className={`card ${className}`}>
-      <div className="flex items-start justify-between gap-3">
+      {/* Phones: the "How to read this" button goes under the title so the title keeps the full width. */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <div className="min-w-0">
           {sample && (
             <div className="mb-2">
@@ -44,8 +45,8 @@ export function ChartCard({
           {subtitle && <div className="mt-1 text-base text-text-muted">{subtitle}</div>}
         </div>
         {howTo && (
-          <div className="-mr-2 -mt-2 shrink-0">
-            <HowToRead>{howTo}</HowToRead>
+          <div className="-ml-2 shrink-0 sm:-mr-2 sm:-mt-2 sm:ml-0">
+            <HowToRead align="start">{howTo}</HowToRead>
           </div>
         )}
       </div>

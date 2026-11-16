@@ -11,7 +11,7 @@ import { SamplePill } from '../components/layout/SampleBadge';
 import { Disclosure } from '../components/ui/Disclosure';
 import { InfoTip } from '../components/ui/InfoTip';
 import { SoilScoreInfo } from '../components/ui/SoilScoreInfo';
-import { af, money, pct, whole } from '../lib/format';
+import { af, money, pct, whole, written } from '../lib/format';
 import { FROST_DAYS_MIN, HEAT_DAYS_MIN, riskMonths } from '../lib/risk';
 import { isSample } from '../lib/sources';
 import { yearsFit } from '../lib/water';
@@ -187,16 +187,22 @@ function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: Rot
         <SoilBreakdown soil={card.soil} selected={controls.soilParts} />
       </section>
 
-      <dl className="space-y-2 rounded-ctl bg-secondary-tint/60 p-4 text-base">
-        <div>
-          <dt className="inline font-semibold text-text">{t('compare.pests')} </dt>
-          <dd className="inline text-text">{card.pests ?? t('compare.todoLine')}</dd>
-        </div>
-        <div>
-          <dt className="inline font-semibold text-text">{t('compare.infiltration')} </dt>
-          <dd className="inline text-text">{card.infiltration ?? t('compare.todoLine')}</dd>
-        </div>
-      </dl>
+      {(written(card.pests) || written(card.infiltration)) && (
+        <dl className="space-y-2 rounded-ctl bg-secondary-tint/60 p-4 text-base">
+          {written(card.pests) && (
+            <div>
+              <dt className="inline font-semibold text-text">{t('compare.pests')} </dt>
+              <dd className="inline text-text">{card.pests}</dd>
+            </div>
+          )}
+          {written(card.infiltration) && (
+            <div>
+              <dt className="inline font-semibold text-text">{t('compare.infiltration')} </dt>
+              <dd className="inline text-text">{card.infiltration}</dd>
+            </div>
+          )}
+        </dl>
+      )}
 
       <div className="space-y-4 border-t border-border-soft pt-5">
         {blocks.map((b) => (

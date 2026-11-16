@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { RotationCard } from '../../api/types';
 import { ALFALFA_STAND_YEARS } from '../../config/rotations';
+import { written } from '../../lib/format';
 import { ROT_BG } from './rotation';
 
 const YEARS = [1, 2, 3, 4];
@@ -31,7 +32,7 @@ export function SequenceStrip({ card }: { card: RotationCard }) {
           </li>
         ))}
       </ol>
-      {card.id !== 'fallow' && (
+      {card.id !== 'fallow' && written(t('compare.seq.carryTodo')) && (
         <p className="mt-2 text-sm text-text">
           <span className="font-semibold">{t('compare.seq.carry')}</span> {t('compare.seq.carryTodo')}
         </p>
