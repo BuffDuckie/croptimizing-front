@@ -3,7 +3,7 @@
 import { InfeasibleError } from '../api/errors';
 import type { Classic, Metrics, Mix, PlanRequest, PlanResponse, RiskStats, RotationCard, RotationId, SensitivityRow, SoilPartId } from '../api/types';
 import { ROTATION_IDS, SOIL_PART_IDS } from '../api/types';
-import { ASSUMPTIONS, BACKTEST_LABELS, ROTATION_FAMILIES, ROTATION_TEXT, STRESS_LABELS, whyText } from './content';
+import { ASSUMPTIONS, BACKTEST_LABELS, fallowGaps, fixedWaterNote, SAMPLE_PARTS, ROTATION_FAMILIES, ROTATION_TEXT, seasonsFrom, STRESS_LABELS, whyText } from './content';
 import {
   correlation,
   enumerateMixes,
@@ -332,10 +332,26 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
     const avgWater = mean(water);
     const avgProfit = mean(profits);
     const parts = ds.soilParts[id];
+    // Words that depend on the data: fallow's cost, and water that never changes with the weather.
+    const dollars = `$${Math.round(Math.abs(avgProfit)).toLocaleString('en-US')}`;
+    const fixedWater = avgWater > 0 && water.every((w) => Math.abs(w - water[0]) < 1e-9);
+    const recShare = recommended[id] ?? 0;
+    const crops: RotationId[] = ROTATION_IDS.filter((r) => r !== 'fallow');
+    const avgOf = (r: RotationId) => mean(data.profit[r].map((p, t) => p - adjust.waterCostPerAf * data.water[r][t] * scale));
+    const rank = [...crops].sort((a, b) => avgOf(b) - avgOf(a)).indexOf(id);
+    const why = whyText(lang, id, recShare, (current[id] ?? 0) > 0, {
+      avg: avgProfit,
+      avgText: dollars,
+      rank,
+      of: crops.length,
+      water: (Math.round(avgWater * 10) / 10).toFixed(1),
+      soil: String(Math.round(rotSoil[id])),
+    });
+    const gaps = id === 'fallow' ? fallowGaps(lang, avgProfit, dollars) : txt.gaps + (fixedWater ? fixedWaterNote(lang, (Math.round(water[0] * 10) / 10).toFixed(1)) : '');
     return {
       id,
       name: txt.name,
-      seasons: txt.seasons,
+      seasons: seasonsFrom(lang, id, ds.calendars[id]),
       calendar: ds.calendars[id].map((c) => (c ? 'grow' : 'bare')),
       calendarCrops: ds.calendars[id],
       heatRiskMonths: id === 'fallow' ? [] : HEAT_RISK_MONTHS,
@@ -347,13 +363,14 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
         worst1in5: round(worstShareMean(profits)),
         avgWaterAf: round(avgWater, 3),
       },
-      why: whyText(lang, id, recommended[id] ?? 0, (current[id] ?? 0) > 0),
+      why,
       evidence: txt.evidence,
       benefits: txt.benefits,
-      gaps: txt.gaps,
+      gaps,
       checkLocally: txt.checkLocally,
       yearlyWaterAf: water.map((w) => round(w, 3)),
       families: ROTATION_FAMILIES[id],
+      ...(ds.soilReasons ? { soilReasons: ds.soilReasons[id] } : {}),
       pests: txt.pests,
       infiltration: txt.infiltration,
     };
@@ -469,9 +486,12 @@ export function runPlan(req: PlanRequest): PlanResponse {
 
 /** The sample warning shows only while the optimizer's inputs include sample data. */
 function assumptionsFor(lang: 'en' | 'es', ds: ReturnType<typeof getDataset>, waterCost: number): string[] {
-  const planReal = (['weather', 'cropBudgets', 'prices', 'soil'] as const).every((id) => ds.sources[id] === 'real');
+  // The first line warns about sample data: all of it, only the parts still sample, or (all real) nothing.
+  const still = (['weather', 'cropBudgets', 'prices', 'soil'] as const).filter((id) => ds.sources[id] !== 'real');
   const list = ASSUMPTIONS[lang](yearRange(ds.scenario.years), `$${Math.round(waterCost)}`);
-  return planReal ? list.slice(1) : list;
+  if (still.length === 0) return list.slice(1);
+  if (still.length === 4) return list;
+  return [SAMPLE_PARTS[lang](still.map((id) => SAMPLE_PARTS.names[lang][id])), ...list.slice(1)];
 }
 
 /** First and last scenario year, and the split used by the backtest. */

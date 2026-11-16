@@ -25,7 +25,9 @@ const langs: ('en' | 'es')[] = process.argv.includes('--en') ? ['en'] : ['en', '
 // Use the real data file when it is there, exactly as the site does.
 const realPath = join(root, 'data', 'real_data.json');
 if (existsSync(realPath)) {
-  const ds = buildDataset(JSON.parse(readFileSync(realPath, 'utf8')));
+  const reasonsPath = join(root, 'data', 'soil_rubric_reasons.json');
+  const reasons = existsSync(reasonsPath) ? JSON.parse(readFileSync(reasonsPath, 'utf8')) : undefined;
+  const ds = buildDataset(JSON.parse(readFileSync(realPath, 'utf8')), undefined, reasons);
   if (ds) {
     setDataset(ds);
     console.log('Using public/data/real_data.json');

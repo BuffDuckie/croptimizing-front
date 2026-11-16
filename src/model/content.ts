@@ -8,6 +8,7 @@ type Lang = 'en' | 'es';
 type RotationText = {
   name: string;
   seasons: string[];
+  /** Written reasons; only fallow's are shown (crops get facts computed from the data). */
   reason: string;
   notChosen: string;
   evidence: string;
@@ -27,7 +28,7 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       notChosen: 'It needs the most water of any rotation, so at this budget it would push you over in hot years.',
       evidence: 'Alfalfa is the thirstiest common crop in central Arizona, often 5 to 6 acre-feet per acre per year. It is a legume, so it adds its own nitrogen.',
       benefits: 'Steady hay income, living roots all year, nitrogen for the next crop, and almost no tillage once planted.',
-      gaps: 'We model alfalfa as a 4-year stand averaged per year. We do not model stand decline, pests, or hay quality discounts.',
+      gaps: 'We model alfalfa as a 3-year stand averaged per year. We do not model stand decline, pests, or hay quality discounts.',
       checkLocally: 'Ask about your stand age, hay contracts, and whether deficit irrigation in summer makes sense on your soil.',
       pests: 'TODO: how this rotation affects pest cycles, in one plain sentence.',
       infiltration: 'TODO: how this rotation affects water soaking in, in one plain sentence.',
@@ -89,7 +90,7 @@ export const ROTATION_TEXT: Record<Lang, Record<RotationId, RotationText>> = {
       notChosen: 'Es la rotación que más agua necesita, así que con este presupuesto se pasaría en los años calurosos.',
       evidence: 'La alfalfa es el cultivo común que más agua usa en el centro de Arizona, a menudo de 5 a 6 acre-pies por acre al año. Es leguminosa, así que aporta su propio nitrógeno.',
       benefits: 'Ingreso estable de heno, raíces vivas todo el año, nitrógeno para el siguiente cultivo y casi nada de labranza una vez sembrada.',
-      gaps: 'Modelamos la alfalfa como un cultivo de 4 años promediado por año. No modelamos el deterioro del cultivo, plagas ni descuentos por calidad del heno.',
+      gaps: 'Modelamos la alfalfa como un cultivo de 3 años promediado por año. No modelamos el deterioro del cultivo, plagas ni descuentos por calidad del heno.',
       checkLocally: 'Pregunte por la edad de su alfalfa, contratos de heno y si el riego deficitario en verano conviene en su suelo.',
       pests: 'TODO: cómo afecta esta rotación los ciclos de plagas, en una oración sencilla.',
       infiltration: 'TODO: cómo afecta esta rotación la infiltración del agua, en una oración sencilla.',
@@ -154,15 +155,107 @@ export const ROTATION_FAMILIES: Record<RotationId, string[]> = {
   fallow: [],
 };
 
-export function whyText(lang: Lang, id: RotationId, share: number, isCurrent: boolean): string {
+/** Crop names for season labels, by the crop keys used in calendars. */
+const CROP_NAMES: Record<Lang, Record<string, string>> = {
+  en: { alfalfa: 'Alfalfa', barley: 'Barley', cotton: 'Cotton', durum: 'Durum wheat', sorghum: 'Sorghum', fallow: 'Fallow' },
+  es: { alfalfa: 'Alfalfa', barley: 'Cebada', cotton: 'Algodón', durum: 'Trigo duro', sorghum: 'Sorgo', fallow: 'Barbecho' },
+};
+const MONTHS: Record<Lang, string[]> = {
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+};
+
+/**
+ * Season labels from a 12-month calendar ("Barley: Dec to Apr"). Crops follow the
+ * rotation's name order; bare months show as fallow only in fallow rotations.
+ * An all-year alfalfa calendar keeps its written label (cuts per year).
+ */
+export function seasonsFrom(lang: Lang, id: RotationId, cal: (string | null)[]): string[] {
+  const written = ROTATION_TEXT[lang][id].seasons;
+  if (id === 'alfalfa' && cal.every((c) => c === 'alfalfa')) return written;
+  const name = (c: string) => CROP_NAMES[lang][c] ?? c.charAt(0).toUpperCase() + c.slice(1);
+  if (cal.every((c) => c === null)) return written;
+  // Runs of the same value, joined across Dec to Jan.
+  type Run = { key: string; start: number; end: number };
+  const runs: Run[] = [];
+  for (let m = 0; m < 12; m++) {
+    const key = cal[m] ?? 'fallow';
+    const last = runs[runs.length - 1];
+    if (last && last.key === key && last.end === m - 1) last.end = m;
+    else runs.push({ key, start: m, end: m });
+  }
+  if (runs.length > 1 && runs[0].key === runs[runs.length - 1].key && runs[0].start === 0 && runs[runs.length - 1].end === 11) {
+    const tail = runs.pop()!;
+    runs[0] = { key: tail.key, start: tail.start, end: runs[0].end };
+  }
+  const order = id.split('_');
+  const rank = (k: string) => (order.indexOf(k) < 0 ? 99 : order.indexOf(k));
+  const shown = runs.filter((r) => r.key !== 'fallow' || id.includes('fallow')).sort((a, b) => rank(a.key) - rank(b.key) || a.start - b.start);
+  const to = lang === 'es' ? 'a' : 'to';
+  const M = MONTHS[lang];
+  return shown.map((r) => (r.start === r.end ? `${name(r.key)}: ${M[r.start]}` : `${name(r.key)}: ${M[r.start]} ${to} ${M[r.end]}`));
+}
+
+/** Data-driven sentences that replace written ones when the data says otherwise. */
+export function fallowNotChosen(lang: Lang, avgProfit: number, money: string): string {
+  if (avgProfit < -0.5)
+    return lang === 'es'
+      ? `Pierde un poco de dinero cada año (unos ${money} por acre) y aporta poco al suelo, así que el modelo lo evita cuando el agua alcanza.`
+      : `It loses a little money each year (about ${money} per acre) and does little for soil, so the model avoids it when water allows.`;
+  return lang === 'es'
+    ? 'No gana nada y aporta poco al suelo, así que el modelo lo evita cuando el agua alcanza.'
+    : 'It earns nothing and does little for soil, so the model avoids it when water allows.';
+}
+
+export function fallowGaps(lang: Lang, avgProfit: number, money: string): string {
+  if (avgProfit < -0.5)
+    return lang === 'es'
+      ? `Usamos un costo de unos ${money} por acre al año. Los costos reales dependen de malezas, reglas de polvo y pagos de tierra.`
+      : `We use a cost of about ${money} per acre a year. Real costs depend on weeds, dust rules, and land payments.`;
+  return lang === 'es'
+    ? 'Los datos no cuentan costo para la tierra sin cultivo. Los costos reales dependen de malezas, reglas de polvo y pagos de tierra.'
+    : 'The data counts no cost for idle ground. Real costs depend on weeds, dust rules, and land payments.';
+}
+
+export function fixedWaterNote(lang: Lang, af: string): string {
+  return lang === 'es'
+    ? ` En estos datos su agua es fija, ${af} acre-pies por acre cada año, así que no cambia con el clima.`
+    : ` In this data its water is a fixed ${af} acre-feet per acre every year, so it does not change with the weather.`;
+}
+
+/** Facts from the data for one rotation, already formatted. */
+export type RotationFacts = { avg: number; avgText: string; rank: number; of: number; water: string; soil: string };
+
+function rankWords(lang: Lang, rank: number, of: number): string {
+  if (lang === 'es') {
+    const pos = rank === 0 ? 'la ganancia más alta' : rank === of - 1 ? 'la ganancia más baja' : `la ${['', 'segunda', 'tercera', 'cuarta'][rank] ?? `${rank + 1}.a`} ganancia más alta`;
+    return `${pos} de las ${of} rotaciones con cultivo`;
+  }
+  const pos = rank === 0 ? 'the highest profit' : rank === of - 1 ? 'the lowest profit' : `the ${['', 'second', 'third', 'fourth'][rank] ?? `${rank + 1}th`}-highest profit`;
+  return `${pos} of the ${of} crop rotations`;
+}
+
+/**
+ * "Why suggested": the share in the plan, then facts computed from the data (so
+ * the words always match the numbers on screen). Fallow keeps its written reason.
+ */
+export function whyText(lang: Lang, id: RotationId, share: number, isCurrent: boolean, f: RotationFacts): string {
   const t = ROTATION_TEXT[lang][id];
   const pct = Math.round(share * 100);
-  if (lang === 'es') {
-    if (share > 0) return `Ocupa el ${pct}% de sus acres en el plan sugerido. ${t.reason}`;
-    return `${isCurrent ? 'Está en su plan actual pero no' : 'No'} está en el plan sugerido con estos ajustes. ${t.notChosen}`;
-  }
-  if (share > 0) return `Takes ${pct}% of your acres in the suggested plan. ${t.reason}`;
-  return `${isCurrent ? 'Part of your current plan, but not' : 'Not'} in the suggested plan at these settings. ${t.notChosen}`;
+  const lead =
+    lang === 'es'
+      ? share > 0
+        ? `Ocupa el ${pct}% de sus acres en el plan sugerido.`
+        : `${isCurrent ? 'Está en su plan actual pero no' : 'No'} está en el plan sugerido con estos ajustes.`
+      : share > 0
+        ? `Takes ${pct}% of your acres in the suggested plan.`
+        : `${isCurrent ? 'Part of your current plan, but not' : 'Not'} in the suggested plan at these settings.`;
+  if (id === 'fallow') return `${lead} ${share > 0 ? t.reason : fallowNotChosen(lang, f.avg, f.avgText)}`;
+  const facts =
+    lang === 'es'
+      ? `En los datos ${f.avg < 0 ? 'pierde' : 'gana'} unos ${f.avgText} por acre en un año promedio (${rankWords(lang, f.rank, f.of)}), usa unos ${f.water} acre-pies por acre y tiene ${f.soil} de puntaje de suelo.`
+      : `In the data it ${f.avg < 0 ? 'loses' : 'earns'} about ${f.avgText} per acre in an average year (${rankWords(lang, f.rank, f.of)}), uses about ${f.water} acre-feet per acre, and scores ${f.soil} for soil.`;
+  return `${lead} ${facts}`;
 }
 
 export const STRESS_LABELS: Record<Lang, Record<number, string>> = {
@@ -199,6 +292,16 @@ export const BACKTEST_LABELS: Record<Lang, (y: Range) => { suggested: string; cu
   }),
 };
 
+/** Sample warning when only some of the plan's inputs are still sample data. */
+export const SAMPLE_PARTS = {
+  names: {
+    en: { weather: 'weather', cropBudgets: 'crop budgets', prices: 'crop prices', soil: 'soil scores' },
+    es: { weather: 'clima', cropBudgets: 'presupuestos de cultivo', prices: 'precios de cultivos', soil: 'puntajes de suelo' },
+  },
+  en: (names: string[]) => `PARTLY SAMPLE DATA: ${names.join(', ')} still use placeholder or filled-in values. The other inputs are real; Show the math lists every source.`,
+  es: (names: string[]) => `DATOS EN PARTE DE MUESTRA: ${names.join(', ')} todavía usan valores de prueba o estimados. Los demás datos son reales; Ver los cálculos lista cada fuente.`,
+};
+
 /** The first line is the sample warning; the engine drops it once the plan's inputs are real. */
 export const ASSUMPTIONS: Record<Lang, (y: Range, waterCost: string) => string[]> = {
   en: (y, waterCost) => [
@@ -207,7 +310,7 @@ export const ASSUMPTIONS: Record<Lang, (y: Range, waterCost: string) => string[]
     'Your water budget must hold in every one of those years, including the hottest.',
     `Profits are per acre in 2025 dollars. Water is charged at ${waterCost} per acre-foot of applied water; change the price under More options.`,
     'Applied water assumes 75% irrigation efficiency unless you change it under More options.',
-    'Alfalfa is modeled as a 4-year stand, averaged per year. Pests, diseases, and hay quality are not modeled.',
+    'Alfalfa is modeled as a 3-year stand, averaged per year. Pests, diseases, and hay quality are not modeled.',
     'Shares move in 5% steps, so the suggested plan is the best of 10,626 possible mixes.',
     'Soil scores follow the four USDA NRCS soil-health principles (maximize soil cover, maximize continuous living roots, minimize disturbance, maximize biodiversity) plus nitrogen from legumes. An agronomist has not reviewed them yet; check them with a local expert.',
   ],
@@ -217,7 +320,7 @@ export const ASSUMPTIONS: Record<Lang, (y: Range, waterCost: string) => string[]
     'Su presupuesto de agua debe cumplirse en cada uno de esos años, incluido el más caluroso.',
     `Las ganancias son por acre en dólares de 2025. El agua se cobra a ${waterCost} por acre-pie de agua aplicada; cambie el precio en Más opciones.`,
     'El agua aplicada supone 75% de eficiencia de riego, salvo que la cambie en Más opciones.',
-    'La alfalfa se modela como un cultivo de 4 años promediado por año. No se modelan plagas, enfermedades ni calidad del heno.',
+    'La alfalfa se modela como un cultivo de 3 años promediado por año. No se modelan plagas, enfermedades ni calidad del heno.',
     'Las proporciones cambian en pasos de 5%, así que el plan sugerido es el mejor de 10,626 mezclas posibles.',
     'Los puntajes de suelo siguen los cuatro principios de salud del suelo del USDA NRCS (maximizar la cobertura del suelo, maximizar las raíces vivas continuas, minimizar la alteración, maximizar la biodiversidad) más el nitrógeno de las leguminosas. Un agrónomo todavía no los ha revisado; revíselos con un experto local.',
   ],

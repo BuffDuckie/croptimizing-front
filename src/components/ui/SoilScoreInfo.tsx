@@ -2,7 +2,7 @@ import { ExternalLink, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { SoilPartId } from '../../api/types';
 import { SOIL_PART_IDS } from '../../api/types';
-import { af, whole } from '../../lib/format';
+import { points, whole } from '../../lib/format';
 import { usePlanContext } from '../../state/PlanContext';
 import { Popover } from './Popover';
 
@@ -10,7 +10,18 @@ import { Popover } from './Popover';
  * Info button for a 0-100 soil score: its five parts, the points each earns
  * (out of 20), and the NRCS principle each follows. Opens on tap, focus, or hover.
  */
-export function SoilScoreInfo({ parts, score, align = 'center' }: { parts: Record<SoilPartId, number>; score: number; align?: 'start' | 'center' | 'end' }) {
+export function SoilScoreInfo({
+  parts,
+  score,
+  align = 'center',
+  reasons,
+}: {
+  parts: Record<SoilPartId, number>;
+  score: number;
+  align?: 'start' | 'center' | 'end';
+  /** One sentence per part (a single rotation's card), shown under each part. */
+  reasons?: Record<SoilPartId, string>;
+}) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
   const { controls } = usePlanContext();
@@ -31,12 +42,13 @@ export function SoilScoreInfo({ parts, score, align = 'center' }: { parts: Recor
             <li key={p} className={counted ? '' : 'opacity-60'}>
               <span className="flex items-baseline justify-between gap-3">
                 <span className="font-semibold text-text">{t(`compare.soil.${p}`)}</span>
-                <span className="tnum whitespace-nowrap font-semibold text-secondary">{t('soilInfo.points', { v: af(parts[p], lang) })}</span>
+                <span className="tnum whitespace-nowrap font-semibold text-secondary">{t('soilInfo.points', { v: points(parts[p], lang) })}</span>
               </span>
               <span className="block text-text-muted">
                 {t(`soilPrinciple.${p}`)}
                 {!counted && ` (${t('compare.soil.notCounted')})`}
               </span>
+              {reasons && <span className="mt-0.5 block text-text">{reasons[p]}</span>}
             </li>
           );
         })}

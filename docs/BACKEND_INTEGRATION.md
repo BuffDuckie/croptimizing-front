@@ -5,6 +5,7 @@ optimizer in the browser on that file; no server is needed. Every chart, number,
 "Sample data" badge follows the file. Anything missing from it falls back to placeholder
 data and keeps its Sample badge.
 
+- Soil reasons: `public/data/soil_rubric_reasons.json`, one sentence per rotation and soil part
 - Format, field by field: [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md)
 - A complete example with every field: [`public/data/real_data.example.json`](../public/data/real_data.example.json)
 - Checker: `npm run check:data` (prints `OK`, or each bad field and why)
@@ -13,38 +14,32 @@ data and keeps its Sample badge.
 
 ## 1. What is still needed (to-do list)
 
-Status of the `real_data.json` committed on Nov 15, 2026. Work top to bottom; the first
-item changes every number on the site.
+Status of `real_data.json` and `soil_rubric_reasons.json` as committed on Nov 15, 2026
+(evening). Work top to bottom.
 
-### Data the backend team adds to `real_data.json`
+### Data the backend team still adds or confirms
 
 | # | Field | Status now | What to do |
 | --- | --- | --- | --- |
-| 1 | `waterCost` **(add first)** | Missing. The site uses a **$200/AF placeholder** marked TODO. At $200, every rotation loses money in this data and the suggested plan is about 75% fallow at any water budget. | Add `"waterCost": { "perAf": <price>, "source": "<budget name and link>" }`, using the water price in the UA AZ2168 Pinal budget's water-purchase line (the line `nonWaterCost` leaves out). Farmers can still type their own price. |
-| 2 | `prices` flag | `"sample"`: cotton and durum/sorghum years are imputed (the `cotton_barley` and `durum_sorghum` rotations are flagged `"sample"`). | Fill the missing years from another source, or keep the imputation and explain it in `notes`. Once you trust it, set `sources.prices` and both rotations' `source` to `"real"`. |
-| 3 | `soil` | Copied from the placeholders, flagged `"sample"`. | The science teammate scores each rotation on the five parts (0 to 20 each, NRCS principles) and sets `sources.soil` to `"real"`. |
-| 4 | `context.etCheck` | Missing (the /why panel shows sample bars). | Modeled vs. OpenET/ECOSTRESS crop water use, mm per year, for each crop. Then set `sources.etCheck` to `"real"`. |
-| 5 | `waterPresets` | Missing. The chips show TODO values (4.5 / 3.2 / 2.0 AF/acre). | `full`, `cut2022`, `zero2023`: AF/acre with a source link each. **The water slider stops at 6.0 AF/acre**, so a larger value shows as 6.0. |
-| 6 | `calendars` | Missing. The site uses illustrative growing calendars. | Crop in the field each month, Jan to Dec, `null` for bare (see the format). These drive the calendar strips, heat and frost marks, bare-ground months, and the soil panel. |
-| 7 | `validation.checks`, `validation.lpCrossCheck` | Missing. "How we checked our work" shows "Not run yet". | List every check you ran, **including the ones you fail**, and the exact-solver comparison. |
+| 1 | `prices` flag | `"sample"`: cotton (4 years) and durum/sorghum (13 years) prices or yields are imputed, so the `cotton_barley` and `durum_sorghum` rotations are flagged `"sample"`. That also keeps the **crop budgets** badge on sample (it needs every rotation real). | Fill the missing years from another source, or keep the imputation and explain it in `notes`. Once you trust it, set `sources.prices` and both rotations' `source` to `"real"`. |
+| 2 | `soil` flag | Scores come from the team's rubric (`soil_rubric.py`) but are flagged `"sample"` because no agronomist has reviewed them, so soil numbers keep the Sample badge. | When the team is satisfied (ideally after a local expert looks), set `sources.soil` to `"real"`. |
+| 3 | `context.etCheck` | Missing (the /why panel shows sample bars). | Modeled vs. OpenET/ECOSTRESS crop water use, mm per year, for each crop. Then set `sources.etCheck` to `"real"`. |
+| 4 | `validation.checks`, `validation.lpCrossCheck` | Missing. "How we checked our work" shows "Not run yet". | List every check you ran, **including the ones you fail**, and the exact-solver comparison. |
 
-Already real in the file: `weather` (FAO-56 water from NASA POWER, heat days, ET0,
-monthly heat and frost), `grace`, `cropBudgets`, and `otherRegions` (Central Valley,
-High Plains, NW India).
-
-**Worth a sanity check:** in the file, alfalfa needs 7.8 AF/acre of applied water on
-average (8.5 in the highest year), above the slider's 6.0 maximum. If that is right, the
-farmer's current plan as farmed can never fit, and the tool always compares against it
-cut back.
+Done and live: `waterCost` ($70/AF from the UA budget), `waterPresets` (3.44 / 2.54 /
+2.05 AF/acre with sources; the slider shows them rounded to 0.1), `calendars`, soil
+scores and their reasons (`soil_rubric_reasons.json`), GRACE, weather (FAO-56 water,
+heat days, ET0, monthly heat and frost), and other regions. Alfalfa water is the
+grower-reported 5.0 AF/acre every year; the site says so on the alfalfa card.
 
 ### Words the team writes (front-end files, not the data file)
 
 | What | Where | Count |
 | --- | --- | --- |
-| One-line reason for each soil score | `method.soilRubric.reason.<rotation>.<part>` in `src/i18n/locales/en.json` and `es.json` | 25 per language |
 | "Pest cycles" and "Water soaking in" lines | `pests`, `infiltration` in `src/model/content.ts` (English and Spanish) | 10 per language |
 | Nitrogen carryover line | `compare.seq.carryTodo` in both locale files | 1 per language |
-| Spanish review | every Spanish string; new ones are marked by `_reviewJudging` and `_reviewFieldShift` in `es.json` | all |
+| Spanish soil reasons | `method.soilRubric.reasonEs` in `es.json`: a draft translation of `soil_rubric_reasons.json`. **Update it whenever that file changes.** | 25 |
+| Spanish review | every Spanish string; new ones are marked by `_reviewJudging`, `_reviewFieldShift`, and `_reviewSoilReasons` in `es.json` | all |
 
 When these are done, `grep -rn TODO src` should return only code comments.
 
@@ -56,8 +51,8 @@ When these are done, `grep -rn TODO src` should return only code comments.
 npm run check:data -- path/to/real_data.json
 ```
 
-1. Copy the file to `public/data/real_data.json`.
-2. Run the checker. It must print `OK`.
+1. Copy the file to `public/data/real_data.json` (and `soil_rubric_reasons.json` next to it, if the soil scores changed).
+2. Run the checker. It checks both files and must print `OK` for each.
 3. Optional: run `npm run export-sample` to rewrite the static-mode files in `public/results/` from it.
 4. Run `npm run check` (typecheck, lint, tests, build). Then commit and push to `main`; Vercel deploys it.
 
@@ -77,7 +72,7 @@ Full rules are in [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md).
 | `years` (20 years in a row) | **Required** | Every per-year array follows this order |
 | `rotations.<id>`: `revenue`, `nonWaterCost`, `profit`, `waterAf`, `source` | **Required**, all five rotations | The optimizer: every plan, metric, and chart |
 | `soil.<id>`: five parts, 0 to 20 | **Required** | Soil scores everywhere |
-| `waterCost` | Optional, **strongly needed** | Default water price (else the $200 placeholder) |
+| `waterCost` | Optional, **strongly needed** | Default water price (else a $200 placeholder) |
 | `calendars` | Optional | Calendars, bare months, heat and frost marks |
 | `context.graceTwsCm` | Optional | /why groundwater panel, "NASA data behind this plan" |
 | `context.heatDaysPerYear`, `context.et0MonthlyMm` | Optional (both needed for the `weather` badge) | /why heat and ET0 panels |
@@ -88,6 +83,7 @@ Full rules are in [REAL_DATA_FORMAT.md](REAL_DATA_FORMAT.md).
 | `validation` | Optional | "How we checked our work" |
 | `sources` | Optional (missing = sample) | Every Sample badge and the data-sources Status column |
 | `generatedAt`, `notes` | Optional | For people only |
+| `soil_rubric_reasons.json` (separate file) | Optional | One-line reason under each soil score (Show the math rubric, Compare soil info). Used only when the `soil` section loads. |
 
 ---
 
@@ -145,6 +141,7 @@ browser optimizer fills every one, so `public/results/` has exact examples.
 | `RotationCard.yearlyWaterAf[]` | Applied AF/acre each year, rotation on every acre |
 | `RotationCard.calendarCrops[]` | Crop each month, `null` = bare (calendar letters) |
 | `RotationCard.families[]` | Botanical families grown (e.g. `Fabaceae`) |
+| `RotationCard.soilReasons` | `{ legume, livingRoots, residue, lowTillage, diversity }`: one sentence each |
 | `RotationCard.pests`, `.infiltration` | One plain sentence each |
 
 **When no mix fits**, return HTTP 422:

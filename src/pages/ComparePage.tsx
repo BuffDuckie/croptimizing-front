@@ -178,7 +178,11 @@ function RotationCardView({ card, recShare, curShare, monthlyRisk }: { card: Rot
       <section aria-label={t('compare.soilTitle')}>
         <h3 className="mb-2 flex items-center gap-1 text-sm font-semibold text-text-muted">
           {t('compare.soilTitle')}
-          <SoilScoreInfo parts={card.soil} score={card.soil.total} />
+          <SoilScoreInfo
+            parts={card.soil}
+            score={card.soil.total}
+            reasons={card.soilReasons && (lang === 'es' ? (Object.fromEntries(Object.entries(card.soilReasons).map(([p, r]) => [p, t(`method.soilRubric.reasonEs.${card.id}.${p}`, { defaultValue: r })])) as typeof card.soilReasons) : card.soilReasons)}
+          />
         </h3>
         <SoilBreakdown soil={card.soil} selected={controls.soilParts} />
       </section>

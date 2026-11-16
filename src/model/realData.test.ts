@@ -4,6 +4,7 @@ import type { PlanRequest } from '../api/types';
 import { getDataset, sampleDataset, setDataset } from './dataset';
 import { runPlan } from './engine';
 import { buildDataset } from './realData';
+import { seasonsFrom } from './content';
 
 const example = () => JSON.parse(readFileSync('public/data/real_data.example.json', 'utf8'));
 
@@ -148,5 +149,42 @@ describe('calendars and water price from the file', () => {
     const ds = buildDataset(f, log)!;
     expect(log.mock.calls[0][0]).toMatch(/fell back to sample for calendars/);
     expect(ds.calendars).toEqual(sampleDataset().calendars);
+  });
+});
+
+describe('soil reasons file', () => {
+  const reasons = () => JSON.parse(readFileSync('public/data/soil_rubric_reasons.json', 'utf8'));
+
+  it('puts each rotation\'s reasons on its card when the soil section loads', () => {
+    setDataset(buildDataset(realFile(), () => {}, reasons()));
+    const card = runPlan(req).rotations.find((r) => r.id === 'alfalfa')!;
+    expect(card.soilReasons?.legume).toMatch(/legume/);
+  });
+
+  it('drops a reasons file with a missing part, and says why', () => {
+    const r = reasons();
+    delete r.fallow.residue;
+    const log = vi.fn();
+    const ds = buildDataset(realFile(), log, r)!;
+    expect(ds.soilReasons).toBeUndefined();
+    expect(log.mock.calls[0][0]).toMatch(/fell back to sample for soil_rubric_reasons\.json: fallow\.residue/);
+  });
+
+  it('ignores reasons when the soil scores did not load (they would not match)', () => {
+    const f = realFile();
+    f.soil.alfalfa.legume = 99;
+    const log = vi.fn();
+    expect(buildDataset(f, log, reasons())!.soilReasons).toBeUndefined();
+    expect(log.mock.calls.some((c) => /soil section did not load/.test(c[0]))).toBe(true);
+  });
+});
+
+describe('season labels from the calendars', () => {
+  it('joins runs across December and names fallow only in fallow rotations', () => {
+    const B = 'barley';
+    const C = 'cotton';
+    expect(seasonsFrom('en', 'cotton_barley', [B, B, B, B, C, C, C, C, C, C, null, B])).toEqual(['Cotton: May to Oct', 'Barley: Dec to Apr']);
+    expect(seasonsFrom('en', 'barley_fallow', [B, B, B, B, null, null, null, null, null, null, null, B])).toEqual(['Barley: Dec to Apr', 'Fallow: May to Nov']);
+    expect(seasonsFrom('es', 'cotton_barley', [B, B, B, B, C, C, C, C, C, C, null, B])).toEqual(['Algodón: may a oct', 'Cebada: dic a abr']);
   });
 });

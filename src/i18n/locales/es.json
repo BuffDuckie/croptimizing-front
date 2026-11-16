@@ -374,7 +374,8 @@
       "sourceFor": "Fuente de {{name}}",
       "sets": "Fija su presupuesto de agua en {{v}} acre-pies por acre.",
       "source": "De dónde sale este número",
-      "noSource": "Número de prueba, todavía sin fuente (TODO)."
+      "noSource": "Número de prueba, todavía sin fuente (TODO).",
+      "exact": "Los datos dicen {{v}} AF/acre; el control se mueve en pasos de 0.1."
     },
     "fits": {
       "plan": "Cabe en su agua en {{k}} de {{n}} años.",
@@ -395,7 +396,7 @@
       "neutralLess": "En un año sin agua del canal como {{year}} ({{w}} AF/acre), el plan para esa agua cambia la ganancia en {{xd}} por acre frente a su plan actual recortado para caber, con los campos cubiertos {{nd}} meses menos.",
       "note": "Usa el clima y los precios de {{year}} con un presupuesto de {{w}} acre-pies por acre y sus otros ajustes."
     },
-    "waterCostDefault": "El valor predeterminado, {{v}}, sale de {{source}}. Escriba su propio precio.",
+    "waterCostDefault": "El valor predeterminado, {{v}}, viene del archivo de datos. Escriba su propio precio.",
     "waterCostPlaceholder": "El valor predeterminado, {{v}}, es de prueba hasta que se agregue el precio del agua del presupuesto de cultivo (TODO). Escriba su propio precio.",
     "waterCostReset": "Volver al predeterminado ({{v}})"
   },
@@ -529,7 +530,8 @@
       "fallow": "Barbecho",
       "aria": "{{name}} en cuatro años: {{list}}.",
       "carry": "Nitrógeno que queda:",
-      "carryTodo": "TODO: cuánto nitrógeno deja esta rotación para el siguiente cultivo, del equipo de ciencia."
+      "carryTodo": "TODO: cuánto nitrógeno deja esta rotación para el siguiente cultivo, del equipo de ciencia.",
+      "replant": "Alfalfa resembrada, año 1 del cultivo"
     }
   },
   "why": {
@@ -874,6 +876,43 @@
           "lowTillage": "TODO: una línea con la razón de este puntaje.",
           "diversity": "TODO: una línea con la razón de este puntaje."
         }
+      },
+      "reasonEs": {
+        "alfalfa": {
+          "legume": "La alfalfa es una leguminosa que fija nitrógeno todo el año.",
+          "livingRoots": "Hay un cultivo creciendo en 12 de 12 meses (0 sin cultivo).",
+          "residue": "Residuo calificado por cultivo (paja de cereal alta; tallos de algodón y raíces de alfalfa, media); los meses sin cultivo cuentan como poca cobertura.",
+          "lowTillage": "Unas 2 pasadas de labranza al año en los presupuestos 2025 de la UA para Pinal (6 pasadas para establecer la alfalfa, repartidas en un cultivo de 3 años).",
+          "diversity": "1 cultivo en la rotación (alfalfa)."
+        },
+        "cotton_barley": {
+          "legume": "No hay leguminosa en esta rotación, así que no se fija nitrógeno.",
+          "livingRoots": "Hay un cultivo creciendo en 11 de 12 meses (1 sin cultivo).",
+          "residue": "Residuo calificado por cultivo (paja de cereal alta; tallos de algodón y raíces de alfalfa, media); los meses sin cultivo cuentan como poca cobertura.",
+          "lowTillage": "Unas 10.5 pasadas de labranza al año en los presupuestos 2025 de la UA para Pinal.",
+          "diversity": "2 cultivos en la rotación (cebada y algodón)."
+        },
+        "durum_sorghum": {
+          "legume": "No hay leguminosa en esta rotación, así que no se fija nitrógeno.",
+          "livingRoots": "Hay un cultivo creciendo en 10 de 12 meses (2 sin cultivo).",
+          "residue": "Residuo calificado por cultivo (paja de cereal alta; tallos de algodón y raíces de alfalfa, media); los meses sin cultivo cuentan como poca cobertura.",
+          "lowTillage": "Unas 11 pasadas de labranza al año en los presupuestos 2025 de la UA para Pinal.",
+          "diversity": "2 cultivos en la rotación (trigo duro y sorgo)."
+        },
+        "barley_fallow": {
+          "legume": "No hay leguminosa en esta rotación, así que no se fija nitrógeno.",
+          "livingRoots": "Hay un cultivo creciendo en 5 de 12 meses (7 sin cultivo).",
+          "residue": "Residuo calificado por cultivo (paja de cereal alta; tallos de algodón y raíces de alfalfa, media); los meses sin cultivo cuentan como poca cobertura.",
+          "lowTillage": "Unas 4 pasadas de labranza al año en los presupuestos 2025 de la UA para Pinal.",
+          "diversity": "1 cultivo en la rotación (cebada)."
+        },
+        "fallow": {
+          "legume": "No hay leguminosa en esta rotación, así que no se fija nitrógeno.",
+          "livingRoots": "El suelo está desnudo los 12 meses.",
+          "residue": "Solo las malezas cubren el suelo.",
+          "lowTillage": "Más o menos 1 pasada de labranza al año en los presupuestos 2025 de la UA para Pinal (un disqueo para controlar malezas).",
+          "diversity": "No se siembra ningún cultivo, así que no hay diversidad."
+        }
       }
     },
     "checks": {
@@ -936,5 +975,6 @@
     "sum": "El puntaje es la suma de las cinco partes.",
     "rescaled": "El puntaje cuenta solo sus metas de suelo, ajustado a 0 a 100.",
     "source": "Principios de salud del suelo del USDA NRCS"
-  }
+  },
+  "_reviewSoilReasons": "method.soilRubric.reasonEs: borrador en español de public/data/soil_rubric_reasons.json; actualícelo si cambia ese archivo."
 }

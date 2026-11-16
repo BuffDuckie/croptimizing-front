@@ -4,6 +4,7 @@
 
 import {
   calendarsSchema,
+  soilReasonsSchema,
   CONTEXT_KEYS,
   waterCostSchema,
   contextSchemas,
@@ -38,7 +39,7 @@ function obj(x: unknown): Record<string, unknown> | null {
  * logged and replaced with the sample section. Returns null when nothing in the
  * file is usable (not an object, or the wrong schema version).
  */
-export function buildDataset(raw: unknown, log: Logger = defaultLog): Dataset | null {
+export function buildDataset(raw: unknown, log: Logger = defaultLog, reasonsRaw?: unknown): Dataset | null {
   const file = obj(raw);
   if (!file) {
     log('[real-data] fell back to sample for (root): the file is not a JSON object');
@@ -111,6 +112,15 @@ export function buildDataset(raw: unknown, log: Logger = defaultLog): Dataset | 
     } else fellBack(log, 'waterPresets', issuesOf(p.error, ['waterPresets']));
   }
 
+  // Soil reasons live in their own file; they only describe real soil scores, so they need the soil section too.
+  let soilReasons: Dataset['soilReasons'];
+  if (reasonsRaw !== undefined) {
+    const p = soilReasonsSchema.safeParse(reasonsRaw);
+    if (!p.success) fellBack(log, 'soil_rubric_reasons.json', issuesOf(p.error));
+    else if (!soilReal) fellBack(log, 'soil_rubric_reasons.json', 'the soil section did not load, so these reasons would not match the scores');
+    else soilReasons = p.data;
+  }
+
   let calendars = sample.calendars;
   if (file.calendars !== undefined) {
     const p = calendarsSchema.safeParse(file.calendars);
@@ -161,5 +171,5 @@ export function buildDataset(raw: unknown, log: Logger = defaultLog): Dataset | 
   };
 
   const scenario: Scenario = { years, profit, water, soil };
-  return { scenario, soilParts, context, calendars, waterCost, waterPresets, validation, sources, fromFile: true };
+  return { scenario, soilParts, soilReasons, context, calendars, waterCost, waterPresets, validation, sources, fromFile: true };
 }

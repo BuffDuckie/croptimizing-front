@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ROTATION_IDS, SOIL_PART_IDS } from '../../api/types';
 import { af, money, whole } from '../../lib/format';
 import { presetBudget, useWaterPresets } from '../../hooks/useWaterPresets';
+import { splitSource } from '../../lib/sourceText';
 import { usePlanContext } from '../../state/PlanContext';
 import { SamplePill } from '../layout/SampleBadge';
 import { Popover } from '../ui/Popover';
@@ -51,8 +52,16 @@ function WaterPresets() {
               >
                 <p className="font-semibold text-primary">{p.label}</p>
                 <p className="mt-1 text-text">{t('plan.preset.sets', { v: af(budget, lang) })}</p>
-                {p.source ? (
-                  <a href={p.source} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-[44px] items-center gap-1 font-semibold">
+                {p.fromData && Math.abs(p.afPerAcre - budget) > 0.001 && (
+                  <p className="tnum mt-1 text-text-muted">{t('plan.preset.exact', { v: p.afPerAcre.toFixed(2) })}</p>
+                )}
+                {p.note && (
+                  <p className="mt-2 text-text-muted" lang="en">
+                    {p.note}
+                  </p>
+                )}
+                {p.url ? (
+                  <a href={p.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-[44px] items-center gap-1 font-semibold">
                     {t('plan.preset.source')} <ExternalLink aria-hidden="true" className="h-4 w-4" />
                   </a>
                 ) : (
@@ -228,10 +237,21 @@ function MoreOptions() {
           </div>
           <p id="water-cost-help" className="mt-1.5 text-sm text-text-muted">
             {t('plan.waterCostHelp', { v: money(cost, lang) })}{' '}
-            {waterCostDefault.fromData
-              ? t('plan.waterCostDefault', { v: money(waterCostDefault.perAf, lang), source: waterCostDefault.source })
-              : t('plan.waterCostPlaceholder', { v: money(waterCostDefault.perAf, lang) })}
+            {waterCostDefault.fromData ? t('plan.waterCostDefault', { v: money(waterCostDefault.perAf, lang) }) : t('plan.waterCostPlaceholder', { v: money(waterCostDefault.perAf, lang) })}
           </p>
+          {waterCostDefault.fromData && (() => {
+            const src = splitSource(waterCostDefault.source);
+            return (
+              <p className="mt-1 text-sm text-text-muted">
+                {src.text && <span lang="en">{src.text}. </span>}
+                {src.url && (
+                  <a href={src.url} target="_blank" rel="noreferrer" className="inline-flex min-h-[44px] items-center gap-1 font-semibold">
+                    {t('plan.preset.source')} <ExternalLink aria-hidden="true" className="h-4 w-4" />
+                  </a>
+                )}
+              </p>
+            );
+          })()}
           {controls.waterCost !== null && controls.waterCost !== waterCostDefault.perAf && (
             <button type="button" onClick={() => setControl('waterCost', null)} className="btn btn-ghost -ml-2 mt-1 min-h-[44px] px-2 text-sm font-semibold">
               {t('plan.waterCostReset', { v: money(waterCostDefault.perAf, lang) })}

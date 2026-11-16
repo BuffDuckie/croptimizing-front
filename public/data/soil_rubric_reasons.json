@@ -1,0 +1,37 @@
+{
+ "alfalfa": {
+  "legume": "Alfalfa is a legume that fixes nitrogen all year.",
+  "livingRoots": "A crop is growing in 12 of 12 months (0 bare).",
+  "residue": "Crop residue rated by crop (cereal straw high, cotton stalks and alfalfa roots medium); bare months count as low cover.",
+  "lowTillage": "About 2 tillage passes a year in the UA 2025 Pinal budgets (6 passes to establish alfalfa, spread over a 3-year stand).",
+  "diversity": "1 crop in the rotation (alfalfa)."
+ },
+ "cotton_barley": {
+  "legume": "No legume in this rotation, so no nitrogen is fixed.",
+  "livingRoots": "A crop is growing in 11 of 12 months (1 bare).",
+  "residue": "Crop residue rated by crop (cereal straw high, cotton stalks and alfalfa roots medium); bare months count as low cover.",
+  "lowTillage": "About 10.5 tillage passes a year in the UA 2025 Pinal budgets.",
+  "diversity": "2 crops in the rotation (barley and cotton)."
+ },
+ "durum_sorghum": {
+  "legume": "No legume in this rotation, so no nitrogen is fixed.",
+  "livingRoots": "A crop is growing in 10 of 12 months (2 bare).",
+  "residue": "Crop residue rated by crop (cereal straw high, cotton stalks and alfalfa roots medium); bare months count as low cover.",
+  "lowTillage": "About 11 tillage passes a year in the UA 2025 Pinal budgets.",
+  "diversity": "2 crops in the rotation (durum and sorghum)."
+ },
+ "barley_fallow": {
+  "legume": "No legume in this rotation, so no nitrogen is fixed.",
+  "livingRoots": "A crop is growing in 5 of 12 months (7 bare).",
+  "residue": "Crop residue rated by crop (cereal straw high, cotton stalks and alfalfa roots medium); bare months count as low cover.",
+  "lowTillage": "About 4 tillage passes a year in the UA 2025 Pinal budgets.",
+  "diversity": "1 crop in the rotation (barley)."
+ },
+ "fallow": {
+  "legume": "No legume in this rotation, so no nitrogen is fixed.",
+  "livingRoots": "The ground is bare all 12 months.",
+  "residue": "Only weeds cover the ground.",
+  "lowTillage": "About 1 tillage pass a year in the UA 2025 Pinal budgets (one disking for weed control).",
+  "diversity": "No crop grown, so no diversity."
+ }
+}

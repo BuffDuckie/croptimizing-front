@@ -1,8 +1,8 @@
 import { ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { RotationCard } from '../../api/types';
+import type { RotationCard, SoilPartId } from '../../api/types';
 import { SOIL_PART_IDS } from '../../api/types';
-import { whole } from '../../lib/format';
+import { points } from '../../lib/format';
 import { ROT_BG } from './rotation';
 
 /**
@@ -12,6 +12,9 @@ import { ROT_BG } from './rotation';
 export function SoilRubric({ rotations }: { rotations: RotationCard[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language === 'es' ? 'es' : 'en';
+  // Reasons come with the data (English); Spanish uses reviewed-draft translations of the same file.
+  const reasonFor = (r: RotationCard, p: SoilPartId) =>
+    r.soilReasons ? (lang === 'es' ? t(`method.soilRubric.reasonEs.${r.id}.${p}`, { defaultValue: r.soilReasons[p] }) : r.soilReasons[p]) : t(`method.soilRubric.reason.${r.id}.${p}`);
   return (
     <div>
       <div className="card overflow-x-auto" tabIndex={0} role="region" aria-label={t('method.soilRubric.caption')}>
@@ -44,8 +47,8 @@ export function SoilRubric({ rotations }: { rotations: RotationCard[] }) {
                 <td className="py-3 pr-4 text-text">{t(`soilPrinciple.${p}`)}</td>
                 {rotations.map((r) => (
                   <td key={r.id} className="py-3 pr-4">
-                    <span className="tnum block font-semibold text-secondary">{t('method.soilRubric.points', { v: whole(r.soil[p], lang) })}</span>
-                    <span className="mt-1 block text-text-muted">{t(`method.soilRubric.reason.${r.id}.${p}`)}</span>
+                    <span className="tnum block font-semibold text-secondary">{t('method.soilRubric.points', { v: points(r.soil[p], lang) })}</span>
+                    <span className="mt-1 block text-text-muted">{reasonFor(r, p)}</span>
                   </td>
                 ))}
               </tr>

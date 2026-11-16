@@ -27,6 +27,8 @@ export type Dataset = {
   waterPresets?: Partial<Record<WaterPresetId, WaterPreset>>;
   /** Crop in the field each month (Jan to Dec), null = bare. Illustrative in the sample. */
   calendars: Record<RotationId, (string | null)[]>;
+  /** One sentence per rotation and soil part saying why it scores what it does (English), from soil_rubric_reasons.json. */
+  soilReasons?: Record<RotationId, Record<SoilPartId, string>>;
   /** Default price of water from the data file, $/AF, with its source. */
   waterCost?: { perAf: number; source: string };
   validation?: Validation;

@@ -87,6 +87,23 @@ missing, the site runs on sample data exactly as before.
 | `waterCost.perAf` | Default price of water, dollars per acre-foot of applied water (0 to 1000), and where it comes from. The engine takes `perAf x waterAf` off each year's profit; farmers can change it. Without it the site uses a $200 placeholder marked TODO. |
 | Required sections | `years`, `rotations`, `soil`. Everything else is optional. |
 
+## Soil reasons (`public/data/soil_rubric_reasons.json`)
+
+A separate, optional file with one plain English sentence per rotation and soil part,
+saying why it scores what it does:
+
+```jsonc
+{
+  "alfalfa": { "legume": "...", "livingRoots": "...", "residue": "...", "lowTillage": "...", "diversity": "..." },
+  "cotton_barley": { ... }, "durum_sorghum": { ... }, "barley_fallow": { ... }, "fallow": { ... }
+}
+```
+
+All five rotations and all five parts are required. The reasons are shown only when the
+`soil` section of `real_data.json` loads (otherwise they would describe other scores).
+Spanish drafts live in `src/i18n/locales/es.json` under `method.soilRubric.reasonEs`;
+update them when this file changes. `npm run check:data` checks this file too.
+
 ## What happens with a bad section
 
 The loader parses each section on its own. If one fails, it uses real data for

@@ -43,6 +43,7 @@ export type RotationCard = {
   yearlyWaterAf?: number[];         // applied AF per acre in each scenario year, same order as the years
   families?: string[];              // botanical families grown, e.g. ["Fabaceae"]
   calendarCrops?: (string | null)[]; // crop in the field each month, Jan-Dec (null = bare); gives the calendar its letters
+  soilReasons?: Record<SoilPartId, string>; // one sentence per soil part: why it scores what it does
   pests?: string;                   // plain words: how this rotation affects pest cycles
   infiltration?: string;            // plain words: how it affects water soaking in
 };

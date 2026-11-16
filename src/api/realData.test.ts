@@ -59,7 +59,8 @@ describe('loading real_data.json in the client', () => {
   });
 
   it('sends the dataset to the worker once, before the first plan, and fetches the file once', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(json(realFile()));
+    const reasons = JSON.parse(readFileSync('public/data/soil_rubric_reasons.json', 'utf8'));
+    const fetchMock = vi.fn((url: string) => Promise.resolve(json(url.endsWith('soil_rubric_reasons.json') ? reasons : realFile())));
     vi.stubGlobal('fetch', fetchMock);
     const posted: { type?: string }[] = [];
     // A stand-in worker that runs the real worker code paths: it keeps the dataset it gets and answers plans.
@@ -79,10 +80,12 @@ describe('loading real_data.json in the client', () => {
     const { client } = await fresh();
     await client.getPlan(req);
     await client.getPlan({ ...req, waterCapAfPerAcre: 3 });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // Each file is fetched once, however many plans follow.
+    expect(fetchMock.mock.calls.map((c) => c[0]).sort()).toEqual(['/data/real_data.json', '/data/soil_rubric_reasons.json']);
     expect(posted.map((m) => m.type)).toEqual(['data', 'plan', 'plan']);
-    const sent = posted[0] as { dataset: { fromFile: boolean; sources: Record<string, string> } };
+    const sent = posted[0] as { dataset: { fromFile: boolean; sources: Record<string, string>; soilReasons?: unknown } };
     expect(sent.dataset.fromFile).toBe(true);
+    expect(sent.dataset.soilReasons).toBeDefined();
     expect(sent.dataset.sources.weather).toBe('real');
   });
 });

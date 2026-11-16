@@ -373,7 +373,8 @@
       "sourceFor": "Source for {{name}}",
       "sets": "Sets your water budget to {{v}} acre-feet per acre.",
       "source": "Where this number comes from",
-      "noSource": "Placeholder number, not yet from a source (TODO)."
+      "noSource": "Placeholder number, not yet from a source (TODO).",
+      "exact": "The data says {{v}} AF/acre; the slider moves in steps of 0.1."
     },
     "fits": {
       "plan": "Fits your water in {{k}} of {{n}} years.",
@@ -394,7 +395,7 @@
       "neutralLess": "In a zero-canal-water year like {{year}} ({{w}} AF/acre), the plan for that water changes profit by {{xd}} per acre vs. your current plan cut back to fit, with fields covered {{nd}} fewer months.",
       "note": "Uses {{year}} weather and prices with a {{w}} acre-feet per acre budget and your other settings."
     },
-    "waterCostDefault": "The default, {{v}}, comes from {{source}}. Type your own price.",
+    "waterCostDefault": "The default, {{v}}, comes from the data file. Type your own price.",
     "waterCostPlaceholder": "The default, {{v}}, is a placeholder until the crop budget's water price is added (TODO). Type your own price.",
     "waterCostReset": "Back to the default ({{v}})"
   },
@@ -528,7 +529,8 @@
       "fallow": "Fallow",
       "aria": "{{name}} over four years: {{list}}.",
       "carry": "Nitrogen carryover:",
-      "carryTodo": "TODO: how much nitrogen this rotation leaves for the next crop, from the science teammate."
+      "carryTodo": "TODO: how much nitrogen this rotation leaves for the next crop, from the science teammate.",
+      "replant": "Alfalfa replanted, stand year 1"
     }
   },
   "why": {

@@ -37,6 +37,11 @@ export function whole(n: number, lang: Lang = 'en'): string {
   return new Intl.NumberFormat(locale(lang), { maximumFractionDigits: 0 }).format(Math.round(n));
 }
 
+/** Soil points: whole when whole (20), one decimal otherwise (17.3). */
+export function points(n: number, lang: Lang = 'en'): string {
+  return Math.abs(n - Math.round(n)) < 0.05 ? whole(n, lang) : af(n, lang);
+}
+
 export function wholeDelta(n: number, lang: Lang = 'en'): string {
   const r = Math.round(n);
   if (r === 0) return '0';

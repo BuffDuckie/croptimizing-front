@@ -109,6 +109,25 @@ export const calendarsSchema = z
     });
   });
 
+const reason = z.string().min(1, 'reason is empty');
+const rotationReasons = z.object({ legume: reason, livingRoots: reason, residue: reason, lowTillage: reason, diversity: reason }).strict();
+/** public/data/soil_rubric_reasons.json: one plain sentence per rotation and soil part (English). */
+export const soilReasonsSchema = z
+  .object({
+    alfalfa: rotationReasons,
+    cotton_barley: rotationReasons,
+    durum_sorghum: rotationReasons,
+    barley_fallow: rotationReasons,
+    fallow: rotationReasons,
+  })
+  .strict();
+
+/** Every problem in a soil reasons file, with its field path. */
+export function checkSoilReasons(raw: unknown): RealIssue[] {
+  const r = soilReasonsSchema.safeParse(raw);
+  return r.success ? [] : issuesOf(r.error);
+}
+
 export const waterCostSchema = z.object({ perAf: finite.min(0).max(1000), source: z.string() }).strict();
 
 const preset = z.object({ afPerAcre: finite.min(0).max(6), label: z.string().min(1), source: z.string() });

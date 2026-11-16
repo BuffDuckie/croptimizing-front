@@ -80,6 +80,7 @@ export const rotationCardSchema = z.object({
   yearlyWaterAf: z.array(finite.min(0)).optional(),
   families: z.array(z.string()).optional(),
   calendarCrops: z.array(z.union([z.string(), z.null()])).length(12).optional(),
+  soilReasons: z.object({ legume: z.string(), livingRoots: z.string(), residue: z.string(), lowTillage: z.string(), diversity: z.string() }).optional(),
   pests: z.string().optional(),
   infiltration: z.string().optional(),
 });

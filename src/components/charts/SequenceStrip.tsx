@@ -1,16 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import type { RotationCard } from '../../api/types';
+import { ALFALFA_STAND_YEARS } from '../../config/rotations';
 import { ROT_BG } from './rotation';
 
 const YEARS = [1, 2, 3, 4];
 
 /**
- * The rotation over four years: alfalfa as one 4-year stand, the others
+ * The rotation over four years: alfalfa as a 3-year stand then replanted, the others
  * repeating their one-year sequence. Plus a TODO line on nitrogen carryover.
  */
 export function SequenceStrip({ card }: { card: RotationCard }) {
   const { t } = useTranslation();
-  const cells = YEARS.map((y) => (card.id === 'alfalfa' ? t('compare.seq.stand', { n: y }) : t(`compare.seq.${card.id}`)));
+  // Alfalfa stays for one stand, then is replanted; the others repeat every year.
+  const cells = YEARS.map((y) => {
+    if (card.id !== 'alfalfa') return t(`compare.seq.${card.id}`);
+    const n = ((y - 1) % ALFALFA_STAND_YEARS) + 1;
+    return y > ALFALFA_STAND_YEARS && n === 1 ? t('compare.seq.replant') : t('compare.seq.stand', { n });
+  });
   return (
     <div>
       <ol className="grid grid-cols-4 gap-[3px]" aria-label={t('compare.seq.aria', { name: card.name, list: cells.map((c, i) => `${t('compare.seq.year', { n: i + 1 })}: ${c}`).join('; ') })}>

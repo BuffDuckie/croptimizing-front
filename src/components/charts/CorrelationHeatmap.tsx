@@ -7,13 +7,42 @@ import { ROT_BG } from './rotation';
 import { useYears, usePlanSample } from '../../state/PlanContext';
 
 /** Mix a hex color with white. t = 0 is white, 1 is the color. */
-function tint(hex: string, t: number): string {
+function tintRgb(hex: string, t: number): [number, number, number] {
   const n = parseInt(hex.slice(1), 16);
-  const r = (n >> 16) & 255;
-  const g = (n >> 8) & 255;
-  const b = n & 255;
   const m = (c: number) => Math.round(255 + (c - 255) * t);
-  return `rgb(${m(r)}, ${m(g)}, ${m(b)})`;
+  return [m((n >> 16) & 255), m((n >> 8) & 255), m(n & 255)];
+}
+
+/** WCAG relative luminance of an sRGB color. */
+function luminance([r, g, b]: [number, number, number]): number {
+  const lin = (c: number) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+
+function tint(hex: string, t: number): string {
+  const [r, g, b] = tintRgb(hex, t);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/** Text color from the theme's dark text token. */
+const TEXT_LUM = luminance(tintRgb(colors.text, 1));
+
+/**
+ * Cell fill and text: dark text while it reads at 4.5:1; past that, white text on
+ * a fill deepened just enough for white to read (no mid-tone where neither does).
+ */
+function cellStyle(hex: string, t: number): { bg: string; white: boolean } {
+  let k = t;
+  let rgb = tintRgb(hex, k);
+  if ((luminance(rgb) + 0.05) / (TEXT_LUM + 0.05) >= 4.5) return { bg: `rgb(${rgb.join(', ')})`, white: false };
+  while (1.05 / (luminance(rgb) + 0.05) < 4.5 && k < 1) {
+    k = Math.min(1, k + 0.02);
+    rgb = tintRgb(hex, k);
+  }
+  return { bg: `rgb(${rgb.join(', ')})`, white: true };
 }
 
 /** Diverging scale: warning-orange for negative, navy for positive, white at zero. Values printed in cells. */
@@ -65,8 +94,7 @@ export function CorrelationHeatmap({ correlations }: { correlations: PlanRespons
               </div>
               {ROTATION_IDS.map((b) => {
                 const v = r(a, b);
-                const bg = v >= 0 ? tint(colors.primary, Math.min(1, v) * 0.9) : tint(colors.warning, Math.min(1, -v) * 0.9);
-                const dark = Math.abs(v) > 0.5;
+                const { bg, white: dark } = v >= 0 ? cellStyle(colors.primary, Math.min(1, v) * 0.9) : cellStyle(colors.warning, Math.min(1, -v) * 0.9);
                 return (
                   <div
                     key={b}
