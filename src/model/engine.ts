@@ -369,6 +369,7 @@ function rotationCards(lang: 'en' | 'es', recommended: Mix, current: Mix, adjust
       gaps,
       checkLocally: txt.checkLocally,
       yearlyWaterAf: water.map((w) => round(w, 3)),
+      yearlyProfit: profits.map((p) => round(p)),
       families: ROTATION_FAMILIES[id],
       ...(ds.soilReasons ? { soilReasons: ds.soilReasons[id] } : {}),
       pests: txt.pests,

@@ -28,28 +28,30 @@ function Hero() {
   const { t } = useTranslation();
   const yrs = useYears();
   const navigate = useNavigate();
-  const { data, controls, setFarm, farm, resetControls } = usePlanContext();
+  const { data, controls, setFarm, setControl, farm, resetControls } = usePlanContext();
   // "NASA weather and real prices" only once those datasets really are real.
   const heroReal = !isSample(data, ['weather', 'prices']);
   const startDemo = () => {
+    // The demo opens with the water the visitor set on the animation; everything else resets.
+    const water = controls.water;
     setFarm(DEMO_FARM);
     resetControls();
+    setControl('water', water);
     navigate('/plan');
   };
   return (
     <section className="on-dark relative overflow-hidden bg-primary text-white" aria-labelledby="hero-title">
       {/* Soft horizon glow; static. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_85%_10%,rgba(0,194,255,0.14),transparent_60%)]" />
-      <div className="container-content relative grid items-center gap-10 pb-16 pt-12 md:pb-24 md:pt-16 lg:grid-cols-[1.02fr_1fr] lg:gap-14">
+      <div className="container-content relative grid items-center gap-8 pb-14 pt-8 md:pb-20 md:pt-10 lg:grid-cols-[1.02fr_1fr] lg:gap-12">
         <div className="hero-copy">
-          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-accent">{t('start.eyebrow')}</p>
-          <h1 id="hero-title" className="mt-4 text-[2.375rem] font-semibold leading-[1.06] tracking-[-0.03em] text-white sm:text-5xl lg:text-[3.5rem]">
+          <h1 id="hero-title" className="text-[2.375rem] font-semibold leading-[1.06] tracking-[-0.03em] text-white sm:text-5xl lg:text-[3.5rem]">
             {t('start.headlineA')}
             <span className="text-accent">{t('start.headlineWater')}</span>
             {t('start.headlineB')}
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">{t(heroReal ? 'start.sub' : 'start.subSample', yrs)}</p>
-          <p className="mt-8 text-base font-medium text-white">{t('pages.start.intro')}</p>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/80">{t(heroReal ? 'start.sub' : 'start.subSample', yrs)}</p>
+          <p className="mt-6 text-base font-medium text-white">{t('pages.start.intro')}</p>
           <div className="mt-4 flex flex-col flex-wrap gap-3 sm:flex-row">
             <button type="button" onClick={startDemo} className="btn btn-on-dark min-h-[52px] whitespace-nowrap px-6 text-lg">
               {t('start.cta')}
@@ -59,7 +61,7 @@ function Hero() {
               {t('start.ctaOwn')}
             </a>
           </div>
-          <p className="mt-6 text-sm text-white/60">{t('start.credit')}</p>
+          <p className="mt-5 text-sm text-white/60">{t('start.credit')}</p>
         </div>
         <div className="hero-visual mx-auto w-full max-w-[560px]">
           <FieldsReplan
@@ -69,6 +71,10 @@ function Hero() {
             budget={controls.water}
             avg={data?.recommended.metrics.avgProfitPerAcre ?? null}
             worst={data?.recommended.metrics.worst1in5PerAcre ?? null}
+            planMaxWater={data?.recommended.metrics.maxWaterAfPerAcre ?? null}
+            rotations={data?.rotations ?? null}
+            acres={farm.acres}
+            onBudget={(v) => setControl('water', v)}
           />
         </div>
       </div>
@@ -86,11 +92,11 @@ function Stats() {
   ];
   return (
     <section className="border-b border-border-soft bg-surface" aria-labelledby="stats-title">
-      <div className="container-content py-14 md:py-20">
+      <div className="container-content py-10 md:py-14">
         <h2 id="stats-title" className="max-w-2xl text-3xl font-semibold md:text-4xl">
           {t('start.stats.title')}
         </h2>
-        <dl className="mt-10 grid gap-8 md:grid-cols-3 md:gap-0 md:divide-x md:divide-border-soft">
+        <dl className="mt-8 grid gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-border-soft">
           {items.map((it, i) => (
             <div key={it.big} className={`${i > 0 ? 'md:pl-10' : ''} md:pr-10`}>
               <dt className="sr-only">{it.text}</dt>
@@ -101,7 +107,7 @@ function Stats() {
             </div>
           ))}
         </dl>
-        <p className="mt-10 text-sm text-text-muted">{t('start.stats.source')}</p>
+        <p className="mt-6 text-sm text-text-muted">{t('start.stats.source')}</p>
       </div>
     </section>
   );
@@ -114,11 +120,11 @@ function Steps() {
   // The demo farm's suggested mix, the same one My plan opens on.
   const previewMix = data ? mixEntries(data.recommended.mix) : [];
   return (
-    <section className="container-content py-16 md:py-24" aria-labelledby="steps-title">
+    <section className="container-content py-10 md:py-14" aria-labelledby="steps-title">
       <h2 id="steps-title" className="max-w-2xl text-3xl font-semibold md:text-4xl">
         {t('start.steps.title')}
       </h2>
-      <ol className="mt-10 grid gap-5 md:grid-cols-3">
+      <ol className="mt-8 grid gap-5 md:grid-cols-3">
         <StepCard n={1} title={t('start.steps.s1t')} body={t('start.steps.s1d')}>
           <PreviewSlider label={t('start.steps.previewWater')} value={`${af(2.4, lang)} AF/acre`} fill={34} tone="bg-accent-strong" />
         </StepCard>

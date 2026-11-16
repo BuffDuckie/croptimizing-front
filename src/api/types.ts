@@ -41,6 +41,7 @@ export type RotationCard = {
   why: string; evidence: string; benefits: string; gaps: string; checkLocally: string;
   // Optional additions. The UI works without them.
   yearlyWaterAf?: number[];         // applied AF per acre in each scenario year, same order as the years
+  yearlyProfit?: number[];          // profit per acre in each scenario year (after the water price), same order
   families?: string[];              // botanical families grown, e.g. ["Fabaceae"]
   calendarCrops?: (string | null)[]; // crop in the field each month, Jan-Dec (null = bare); gives the calendar its letters
   soilReasons?: Record<SoilPartId, string>; // one sentence per soil part: why it scores what it does

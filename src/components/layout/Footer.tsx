@@ -6,7 +6,7 @@ import { LogoMark } from './Logo';
 export function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="mt-24 border-t border-border-soft bg-surface print:hidden">
+    <footer className="mt-16 border-t border-border-soft bg-surface print:hidden">
       <div className="container-content py-10">
         <p className="flex max-w-3xl items-start gap-3 text-lg font-medium text-text">
           <ShieldCheck aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-secondary" />

@@ -175,6 +175,33 @@
   .frontier-ghost { animation: none !important; opacity: 0.45; }
 }
 
+/* Landing animation, interactive part. A field flips into its new crop (tier 2);
+   re-plans ripple across the farm through per-field delays. */
+@keyframes hero-pop {
+  0% { transform: scaleY(0.35); opacity: 0.55; }
+  70% { transform: scaleY(1.04); opacity: 1; }
+  100% { transform: scaleY(1); }
+}
+.hero-pop { transform-box: fill-box; transform-origin: center; animation: hero-pop 380ms var(--ease-out, ease-out) both; }
+.hero-parcel { outline: none; }
+.hero-parcel .hero-hover { opacity: 0; transition: opacity var(--dur-fast, 120ms) ease-out; }
+.hero-parcel:hover .hero-hover { opacity: 0.12; }
+.hero-parcel:active .hero-hover { opacity: 0.2; }
+.hero-focus { display: none; }
+.hero-parcel:focus-visible .hero-focus, .hero-slider:focus-visible .hero-focus { display: inline; }
+.hero-slider { outline: none; }
+.hero-water, .hero-knob { transition: transform var(--dur-slow, 300ms) var(--ease-out, ease-out); }
+
+/* Hint arrows: the line draws itself, the label pops in with a little overshoot,
+   then both bob a few times and settle. The water hint waits for the field hint. */
+@keyframes hint-draw { from { stroke-dashoffset: 220; } to { stroke-dashoffset: 0; } }
+@keyframes hint-pop { 0% { opacity: 0; transform: translateY(6px) scale(0.92); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hint-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+.hero-hint-arrow { stroke-dasharray: 220; animation: hint-draw 700ms var(--ease-out, ease-out) 300ms both, hint-bob 1.6s ease-in-out 1.1s 4; }
+.hero-hint { animation: hint-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both, hint-bob 1.6s ease-in-out 1.1s 4; }
+.hero-hint-arrow.hero-hint-late { animation-delay: 1100ms, 1.9s; }
+.hero-hint.hero-hint-late { animation-delay: 1000ms, 1.9s; }
+
 /* Print: one clean page for the report. */
 @media print {
   @page { size: letter; margin: 11mm 12mm; }
